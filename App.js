@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import des screens
-import GameScreen from './screens/GameScreen';
+// import GameScreen from './screens/GameScreen';
 import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -29,9 +29,11 @@ const TabNavigator = () => {
 
           if (route.name === 'Map') {
             iconName = 'location-arrow';
-          } else if (route.name === 'Game') {
-            iconName = 'gamepad';
-          } else if (route.name === 'Profil') {
+          } 
+          // else if (route.name === 'Game') {
+          //   iconName = 'gamepad';
+          // } 
+          else if (route.name === 'Profil') {
             iconName = 'user';
           }
 
@@ -44,7 +46,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
-      <Tab.Screen name="Game" component={GameScreen} />
+      {/* <Tab.Screen name="Game" component={GameScreen} /> */}
     </Tab.Navigator>
   );
 };
