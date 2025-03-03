@@ -13,47 +13,50 @@ export default function LoginScreen({ navigation }) {
     const [signUpPassword, setSignUpPassword] = useState('');
     const [logInUsername, setLogInUsername] = useState('');
     const [logInPassword, setLogInPassword] = useState('');
+    const [email, setEmail] = useState('');
+
 
     function signUP() {
-        // fetch('http://localhost:3000/users/signup', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ username: signUpUsername, password: signUpPassword }),
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.result) {
-        dispatch(addUserToStore({ username: signUpUsername/*,token: data.token*/ }));
-        setSignUpUsername('');
-        setSignUpPassword('');
-        setmodalSignUp(false);
-        console.log(signUpUsername)
-        navigation.navigate('TabNavigator');
-        //     } else {
-        //         alert('Informations incorrectes ou manquantes.');
-        //     }
-        // })
+        fetch('http://localhost:3000/users/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, username: signUpUsername, password: signUpPassword }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    dispatch(addUserToStore({ email: email, username: signUpUsername, password: signUpPassword /*,token: data.token*/ }));
+                    setSignUpUsername('');
+                    setSignUpPassword('');
+                    setEmail('')
+                    setmodalSignUp(false);
+                    console.log(signUpUsername)
+                    navigation.navigate('TabNavigator');
+                } else {
+                    alert('Informations incorrectes ou manquantes.');
+                }
+            })
     };
 
     function logIN() {
-        // fetch('http://localhost:3000/users/login', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ username: logInUsername, password: logInPassword }),
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.result) {
-        dispatch(addUserToStore({ username: logInUsername/*, token: data.token*/ }));
-        setLogInUsername('');
-        setLogInPassword('');
-        setmodalLogIn(false);
-        console.log(logInUsername)
-        navigation.navigate('TabNavigator');
-        //     } else {
-        //         alert('Nom d’utilisateur ou mot de passe incorrect.');
-        //     }
-        // })
+        fetch('http://localhost:3000/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: logInPassword }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    dispatch(addUserToStore({ username: logInUsername/*, token: data.token*/ }));
+                    setEmail('');
+                    setLogInPassword('');
+                    setmodalLogIn(false);
+                    console.log(logInUsername)
+                    navigation.navigate('TabNavigator');
+                } else {
+                    alert('Nom d’utilisateur ou mot de passe incorrect.');
+                }
+            })
     };
 
     return (
@@ -81,8 +84,8 @@ export default function LoginScreen({ navigation }) {
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
                                 placeholder="Email"
-                                onChangeText={setLogInUsername}
-                                value={logInUsername}
+                                onChangeText={setEmail}
+                                value={email}
                                 type="email"
                             />
                             <TextInput
