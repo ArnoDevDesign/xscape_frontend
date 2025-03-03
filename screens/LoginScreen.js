@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
+const { checkBody } = require('../modules/checkBody');
 
 export default function LoginScreen({ navigation }) {
     const dispatch = useDispatch();
@@ -11,52 +12,89 @@ export default function LoginScreen({ navigation }) {
 
     const [signUpUsername, setSignUpUsername] = useState('');
     const [signUpPassword, setSignUpPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [logInUsername, setLogInUsername] = useState('');
     const [logInPassword, setLogInPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [checkEmail, setcheckEmail] = useState(false);
 
 
     function signUP() {
-        fetch('http://localhost:3000/users/signup', {
+        console.log("Tentative d'inscription avec :", { email, signUpUsername, signUpPassword, confirmPassword });
+
+        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // if (!pattern.test(email.trim())) {
+        //     setcheckEmail(true);
+        //     alert("Veuillez entrer un email valide.");
+        //     return;
+        // }
+
+        if (!email.trim() || !signUpUsername.trim() || !signUpPassword.trim() || !confirmPassword.trim()) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        if (signUpPassword !== confirmPassword) {
+            alert("Les mots de passe ne correspondent pas.");
+            return;
+        }
+
+        fetch('http://192.168.100.14:3000/users/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, username: signUpUsername, password: signUpPassword }),
+            body: JSON.stringify({ email: email.trim(), username: signUpUsername.trim(), password: signUpPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
-                    dispatch(addUserToStore({ email: email, username: signUpUsername, password: signUpPassword /*,token: data.token*/ }));
+                    dispatch(addUserToStore({ token: data.token }));
                     setSignUpUsername('');
                     setSignUpPassword('');
-                    setEmail('')
+                    setEmail('');
                     setmodalSignUp(false);
-                    console.log(signUpUsername)
+                    console.log("Inscription réussie :", signUpUsername);
                     navigation.navigate('TabNavigator');
                 } else {
                     alert('Informations incorrectes ou manquantes.');
                 }
             })
-    };
+            .catch(error => console.error("Erreur lors de l'inscription :", error));
+    }
+
+
+    function mailcheck(value) {
+        setEmail(value);
+        setcheckEmail(false)
+    }
 
     function logIN() {
-        fetch('http://localhost:3000/users/login', {
+        console.log("Tentative de connection avec :", { email, logInPassword, });
+
+        if (!email.trim() || !logInPassword.trim()) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        fetch('http://192.168.100.14:3000/users/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, password: logInPassword }),
+            body: JSON.stringify({ email: email.trim(), password: logInPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
-                    dispatch(addUserToStore({ username: logInUsername/*, token: data.token*/ }));
+                    dispatch(addUserToStore({ token: data.token }));
                     setEmail('');
                     setLogInPassword('');
                     setmodalLogIn(false);
-                    console.log(logInUsername)
+                    console.log("Connexion réussie :", email);
                     navigation.navigate('TabNavigator');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
                 }
             })
+            .catch(error => console.error("Erreur de connexion :", error));
     };
 
     return (
@@ -74,7 +112,7 @@ export default function LoginScreen({ navigation }) {
                 <Button title="Go to Home" onPress={() => navigation.navigate('TabNavigator')} />
             </View>
 
-            // modal Log in
+            {/* Modal Log in */}
             {modalLogIn && (
                 <Modal visible={modalLogIn} animationType="fade" transparent>
                     <View style={styles.centeredView}>
@@ -84,10 +122,10 @@ export default function LoginScreen({ navigation }) {
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
                                 placeholder="Email"
-                                onChangeText={setEmail}
+                                onChangeText={mailcheck}
                                 value={email}
-                                type="email"
                             />
+                            {checkEmail && <Text>Email invalide</Text>}
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
@@ -107,52 +145,56 @@ export default function LoginScreen({ navigation }) {
                 </Modal>
             )}
 
-//modal sign up
-            {
-                modalSignUp && (
-                    <Modal visible={modalSignUp} animationType="fade" transparent>
-                        <View style={styles.centeredView}>
-                            <View style={styles.modalView}>
-                                <Text style={styles.textButton}>SIGN UP</Text>
-                                <TextInput
-                                    placeholderTextColor={'black'}
-                                    style={styles.inp1}
-                                    placeholder="Email"
-                                    onChangeText={setSignUpUsername}
-                                    value={signUpUsername}
-                                    type="email"
-                                />
-                                <TextInput
-                                    placeholderTextColor={'black'}
-                                    style={styles.inp1}
-                                    placeholder="Username"
-                                    onChangeText={setSignUpUsername}
-                                    value={signUpUsername}
-                                />
-                                <TextInput
-                                    placeholderTextColor={'black'}
-                                    style={styles.inp1}
-                                    placeholder="Password"
-                                    secureTextEntry
-                                    onChangeText={setSignUpPassword}
-                                    value={signUpPassword}
-                                />
-                                <TouchableOpacity onPress={signUP} activeOpacity={0.8}>
-                                    <Text style={styles.textButton}>GO!</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
-                                    <Text style={styles.textButton}>Close</Text>
-                                </TouchableOpacity>
-                            </View>
+            {/* Modal Sign up */}
+            {modalSignUp && (
+                <Modal visible={modalSignUp} animationType="fade" transparent>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.textButton}>SIGN UP</Text>
+                            <TextInput
+                                placeholderTextColor={'black'}
+                                style={styles.inp1}
+                                placeholder="Email"
+                                onChangeText={mailcheck}
+                                value={email}
+                            />
+                            {checkEmail && <Text>Email invalide</Text>}
+                            <TextInput
+                                placeholderTextColor={'black'}
+                                style={styles.inp1}
+                                placeholder="Nom d'utilisateur"
+                                onChangeText={setSignUpUsername}
+                                value={signUpUsername}
+                            />
+                            <TextInput
+                                placeholderTextColor={'black'}
+                                style={styles.inp1}
+                                placeholder="Mot de passe"
+                                secureTextEntry
+                                onChangeText={setSignUpPassword}
+                                value={signUpPassword}
+                            />
+                            <TextInput
+                                placeholderTextColor={'black'}
+                                style={styles.inp1}
+                                placeholder="Confirmation du mdp"
+                                secureTextEntry
+                                onChangeText={setConfirmPassword}
+                                value={confirmPassword}
+                            />
+                            <TouchableOpacity onPress={signUP} activeOpacity={0.8}>
+                                <Text style={styles.textButton}>GO!</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
+                                <Text style={styles.textButton}>Close</Text>
+                            </TouchableOpacity>
                         </View>
-                    </Modal>
-                )
-            }
+                    </View>
+                </Modal>
+            )}
         </View>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     generalContainer: {
@@ -175,13 +217,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'orange',
         margin: 10,
         borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 2,
-            height: 4,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
         elevation: 5,
     },
     centeredView: {
@@ -190,22 +225,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     modalView: {
-        backgroundColor: 'white',
+        backgroundColor: 'orange',
         borderRadius: 30,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 2,
-            height: 4,
-        },
-        justifyContent: 'center',
         alignItems: 'center',
         width: 300,
         height: 300,
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
         elevation: 5,
-        backgroundColor: 'orange'
     },
     inp1: {
         width: '70%',
@@ -216,8 +241,6 @@ const styles = StyleSheet.create({
         paddingLeft: 10
     },
     textButton: {
-        marginTop: 20,
-        marginBottom: 20,
         fontSize: 20
     }
 });
