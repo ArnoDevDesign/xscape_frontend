@@ -6,20 +6,24 @@ import { Navigation } from '@react-navigation/native';
 import { userLogout } from '../reducers/users'
 
 export default function ProfileScreen({ navigation }) {
-    const dsipatch = useDispatch();
-    // const userToken = useSelector((state) => state.users.value.token)
+    const dispatch = useDispatch();
+    const userToken = useSelector((state) => state.users.value.token)
     // États pour infos utilisateur
     const [avatar, setAvatar] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [score, setscore] = useState('');
-    const [scenarios, setscenarios] = useState([]);
+    const [score, setScore] = useState('');
+    const [scenarios, setScenarios] = useState([]);
 
-    // Récupération des données utilisateur au chargement du composant
-    // useEffect(() => {
-    //     if (!userToken) return;
-
-        fetch(`http://192.168.100.229:3000/user/VeknOr19PM9DVp4S4ohPXj6SM-tSN3hR`)
+    // // Récupération des données utilisateur au chargement du composant
+    useEffect(() => {
+        if (!userToken) {
+            console.log("ProfitesScren : Aucun token trouvé !");
+            return;
+        }
+        console.log("ProfitesScren : Token utilisé :", userToken);
+        // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
+        fetch(`http://192.168.100.230:3000/users/${userToken}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Données utilisateur récupérées:', data);
@@ -29,8 +33,8 @@ export default function ProfileScreen({ navigation }) {
                 setScore(data.totalPoints);
                 setScenarios(data.scenarios || []);
             })
-    //         .catch(error => console.error('Erreur de récupération des données:', error));
-    // }, [userToken]);
+            .catch(error => console.error('ProfitesScren : Erreur de récupération des données:', error));
+    }, [userToken]);
 
 
     //Fonction de déconnexion 
@@ -44,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
             <SafeAreaView />
             {/* Avatar */}
             <View style={styles.avatarContainer}>
-                <Image source={avatar ? { uri: avatart } : require('../assets/icon.png')} style={styles.avatar} />
+                <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
             </View>
 
             {/* Infos utilisateur */}
@@ -54,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
             </View>
 
             <Text style={[styles.text, styles.score]}>Score : {score}</Text>
-
+            {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 <Text style={styles.text}>Aventures terminées :</Text>
                 {scenarios.length > 0 ? (
@@ -91,9 +95,9 @@ const styles = StyleSheet.create({
     },
 
     avatarContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
+        width: '45%',
+        height: '25%',
+        borderRadius: 50,
         overflow: 'hidden',
         borderWidth: 2,
         borderColor: 'gray',
