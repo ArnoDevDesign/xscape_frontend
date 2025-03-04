@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogout } from '../reducers/users'
@@ -18,8 +18,17 @@ export default function ProfileScreen({ navigation }) {
     const [modalUserVisible, setUserModalVisible] = useState(false);
     const [modalAvatarVisible, setAvatarModalVisible] = useState(false);
     const [newUsername, setNewUsername] = useState("");
+    const [selectedAvatar, setSelectedAvatar] = useState(null);
+
     console.log(newUsername);
 
+    // Images d'avatarts pour test
+    const images = [
+        require('../assets/avatar01.png'),
+        require('../assets/avatar02.png'),
+        require('../assets/avatar03.png'),
+        require('../assets/avatar04.png'),
+    ];
     // Récupération des données utilisateur au chargement du composant
     useEffect(() => {
         if (!userToken) {
@@ -28,7 +37,7 @@ export default function ProfileScreen({ navigation }) {
         }
         console.log("ProfitesScren : Token utilisé :", userToken);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
-        fetch(`http://192.168.100.230:3000/users/updateProfil`)
+        fetch(`http://192.168.100.230:3000/users/${userToken}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Données utilisateur récupérées:', data);
@@ -46,33 +55,53 @@ export default function ProfileScreen({ navigation }) {
     const handleLogout = () => {
         dispatch(userLogout());
         navigation.navigate('Home');
+        console.log('Déconnexion');
     }
 
-    //Modification du username au clic 
+    //Modification du username et token au clic 
     const updateUsername = () => {
-        fetch(`http://192.168.100.230:3000/users/<NOM_DE_LA_ROUTE>`, {
+        fetch(`http://192.168.100.230:3000/users/updateProfil`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken, username: newUsername })
+            body: JSON.stringify({ token: userToken})
         })
             .then(response => response.json())
             .then(data => {
                 if (data) {
                     setUsername(newUsername);
+                    setAvatar(selectedAvatar);
                     setUserModalVisible(false);
+                    setAvatarModalVisible(false);
                     console.log(newUsername);
+                    console.log(selectedAvatar);
                 }
             })
             .catch(error => console.error('erreur mise à jour username', error));
     };
 
+    function register() {
+        fetch(`http://192.168.100.230:3000/users/updateProfil`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: userToken, username: signUpUsername, avatar: selectedAvatar })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    dispatch(addUserToStore({ token: userToken, username: signUpUsername, avatar: selectedAvatar }))
+                    console.log(signUpUsername);
+                    navigation.navigate('Map');
+                }
+            })
+            .catch(error => console.error('Erreur mise à jour username', error));
+    };
 
     return (
         <View style={styles.generalContainer}>
             <SafeAreaView />
 
             {/* Avatar */}
-            <View style={styles.avatarContainer}>
+            <View style={styles.avatarContainerMain}>
                 <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
                 <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
                     <FontAwesome name='pencil' size={20} color='black' style={styles.updateUser} />
@@ -82,25 +111,27 @@ export default function ProfileScreen({ navigation }) {
             {/* Modal Modification de l'avatar */}
             {modalAvatarVisible && (
                 <Modal visible={modalAvatarVisible} animationType="fade" transparent>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
-                        <TextInput
-                            placeholderTextColor={'black'}
-                            style={styles.inp1}
-                            placeholder="Nouveau Pseudo"
-                            onChangeText={setNewUsername}
-                            value={newUsername}
+                    {/* Carousel d'avatars */}
+                    <View style={styles.avatarContainer}>
+                        <FlatList
+                            data={images}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.carousel}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity onPress={() => setSelectedAvatar(index)}>
+                                    <Image
+                                        source={item}
+                                        style={[
+                                            styles.image,
+                                            selectedAvatar === index && styles.selectedImage
+                                        ]}
+                                    />
+                                </TouchableOpacity>
+                            )}
                         />
-                        <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8}>
-                            <Text style={styles.textButton}>GO!</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setAvatarModalVisible(false)} activeOpacity={0.8}>
-                            <Text style={styles.textButton}>Annuler</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
-            </Modal>
+                </Modal>
             )}
 
             {/* Infos utilisateur */}
@@ -194,7 +225,7 @@ const styles = StyleSheet.create({
     },
 
     // Avatar style
-    avatarContainer: {
+    avatarContainerMain: {
         width: '45%',
         height: '25%',
         borderRadius: 50,
@@ -210,6 +241,22 @@ const styles = StyleSheet.create({
         height: '100%',
         resizeMode: 'cover',
     },
+    avatarContainer: {
+        width: '100%',
+        height: '60%',
+        alignItems: 'center',
+    },
+    carousel: {
+        paddingHorizontal: 10,
+        alignItems: "center",
+    },
+    image: {
+        width: 'width' * 0.7, // Taille des avatars ajustée
+        height: 'width' * 0.7,
+        borderRadius: 50, 
+        marginHorizontal: 10,
+    },
+
     // Username style
     usernameView: {
         backgroundColor: 'blue',

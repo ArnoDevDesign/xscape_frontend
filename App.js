@@ -30,9 +30,9 @@ const TabNavigator = () => {
           if (route.name === 'Map') {
             iconName = 'location-arrow';
           }
-          // else if (route.name === 'Game') {
-          //   iconName = 'gamepad';
-          // } 
+          else if (route.name === 'Avatar') {
+            iconName = 'child';
+          } 
           else if (route.name === 'Profil') {
             iconName = 'user';
           }
@@ -46,6 +46,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
+      <Tab.Screen name="Avatar" component={AvatarScreen} />
       {/* <Tab.Screen name="Game" component={GameScreen} /> */}
     </Tab.Navigator>
   );
