@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
+
 const { checkBody } = require('../modules/checkBody');
 
 export default function LoginScreen({ navigation }) {
@@ -24,11 +25,11 @@ export default function LoginScreen({ navigation }) {
 
         const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        // if (!pattern.test(email.trim())) {
-        //     setcheckEmail(true);
-        //     alert("Veuillez entrer un email valide.");
-        //     return;
-        // }
+        if (!pattern.test(email.trim())) {
+            setcheckEmail(true);
+            // alert("Veuillez entrer un email valide.");
+            return;
+        }
 
         if (!email.trim() || !signUpUsername.trim() || !signUpPassword.trim() || !confirmPassword.trim()) {
             alert("Veuillez remplir tous les champs.");
