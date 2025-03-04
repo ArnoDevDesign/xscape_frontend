@@ -1,9 +1,10 @@
 import React, { use, useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Text, Button, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigation } from '@react-navigation/native';
 import { userLogout } from '../reducers/users'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
@@ -14,8 +15,12 @@ export default function ProfileScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [score, setScore] = useState('');
     const [scenarios, setScenarios] = useState([]);
+    const [modalUserVisible, setUserModalVisible] = useState(false);
+    const [modalAvatarVisible, setAvatarModalVisible] = useState(false);
+    const [newUsername, setNewUsername] = useState("");
+    console.log(newUsername);
 
-    // // Récupération des données utilisateur au chargement du composant
+    // Récupération des données utilisateur au chargement du composant
     useEffect(() => {
         if (!userToken) {
             console.log("ProfitesScren : Aucun token trouvé !");
@@ -23,7 +28,7 @@ export default function ProfileScreen({ navigation }) {
         }
         console.log("ProfitesScren : Token utilisé :", userToken);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
-        fetch(`http://192.168.100.230:3000/users/${userToken}`)
+        fetch(`http://192.168.100.230:3000/users/updateProfil`)
             .then(response => response.json())
             .then(data => {
                 console.log('Données utilisateur récupérées:', data);
@@ -43,21 +48,98 @@ export default function ProfileScreen({ navigation }) {
         navigation.navigate('Home');
     }
 
+    //Modification du username au clic 
+    const updateUsername = () => {
+        fetch(`http://192.168.100.230:3000/users/<NOM_DE_LA_ROUTE>`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: userToken, username: newUsername })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    setUsername(newUsername);
+                    setUserModalVisible(false);
+                    console.log(newUsername);
+                }
+            })
+            .catch(error => console.error('erreur mise à jour username', error));
+    };
+
+
     return (
         <View style={styles.generalContainer}>
             <SafeAreaView />
+
             {/* Avatar */}
             <View style={styles.avatarContainer}>
                 <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
+                <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
+                    <FontAwesome name='pencil' size={20} color='black' style={styles.updateUser} />
+                </TouchableOpacity>
             </View>
+
+            {/* Modal Modification de l'avatar */}
+            {modalAvatarVisible && (
+                <Modal visible={modalAvatarVisible} animationType="fade" transparent>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
+                        <TextInput
+                            placeholderTextColor={'black'}
+                            style={styles.inp1}
+                            placeholder="Nouveau Pseudo"
+                            onChangeText={setNewUsername}
+                            value={newUsername}
+                        />
+                        <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8}>
+                            <Text style={styles.textButton}>GO!</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setAvatarModalVisible(false)} activeOpacity={0.8}>
+                            <Text style={styles.textButton}>Annuler</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            )}
 
             {/* Infos utilisateur */}
             <View style={styles.usernameView}>
                 <Text style={styles.text}>Username : {username}</Text>
+
+                <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit} >
+                    <FontAwesome name='pencil' size={20} color="black" style={styles.updateUser} />
+                </TouchableOpacity>
                 <Text style={styles.text}>Email : {email}</Text>
             </View>
 
+            {/* Modal Modification de l'username */}
+            {modalUserVisible && (
+                <Modal visible={modalUserVisible} animationType="fade" transparent>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
+                            <TextInput
+                                placeholderTextColor={'black'}
+                                style={styles.inp1}
+                                placeholder="Nouveau Pseudo"
+                                onChangeText={setNewUsername}
+                                value={newUsername}
+                            />
+                            <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8}>
+                                <Text style={styles.textButton}>GO!</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setUserModalVisible(false)} activeOpacity={0.8}>
+                                <Text style={styles.textButton}>Annuler</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+
+            {/* Infos Scrore */}
             <Text style={[styles.text, styles.score]}>Score : {score}</Text>
+
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 <Text style={styles.text}>Aventures terminées :</Text>
@@ -80,11 +162,12 @@ export default function ProfileScreen({ navigation }) {
             </TouchableOpacity>
 
             <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+
         </View>
     );
 }
 
-
+// -- CSS STYLE --
 const styles = StyleSheet.create({
     generalContainer: {
         flex: 1,
@@ -94,6 +177,23 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
     },
 
+    // Icon style
+    iconEdit: {
+        position: "absolute",
+        top: 5,
+        right: 5,
+        // backgroundColor: 'white',
+        opacity: 0.8,
+        boderRadius: 10,
+        padding: 5,
+        // elevation: 1, //effet d'ombre Android
+        // shadowColor: '#000', //effet d'ombre IOS
+        // shadowOffset: {width: 0, height: 2},
+        // shadowOpacity: 0.2,
+        // shadowRadius: 2,
+    },
+
+    // Avatar style
     avatarContainer: {
         width: '45%',
         height: '25%',
@@ -110,7 +210,7 @@ const styles = StyleSheet.create({
         height: '100%',
         resizeMode: 'cover',
     },
-
+    // Username style
     usernameView: {
         backgroundColor: 'blue',
         opacity: 0.5,
@@ -120,6 +220,33 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
 
+    //Modal Username Style
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalView: {
+        backgroundColor: 'orange',
+        borderRadius: 30,
+        alignItems: 'center',
+        width: 300,
+        height: 200,
+        elevation: 5,
+    },
+    inp1: {
+        width: '70%',
+        height: 50,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        margin: 10,
+        paddingLeft: 10
+    },
+    textButton: {
+        fontSize: 20
+    },
+
+    // Score Style
     score: {
         backgroundColor: 'yellow',
         opacity: 0.5,
@@ -128,7 +255,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         borderRadius: 10,
     },
-
+    //Scenario Style
     aventureView: {
         backgroundColor: 'green',
         opacity: 0.5,
@@ -138,6 +265,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
 
+    //Bouton Style
     buttonLogOut: {
         padding: 15,
         backgroundColor: 'orange',
