@@ -15,18 +15,18 @@ export default function AvatarScreen({ navigation }) {
     const dispatch = useDispatch();
     // Images d'avatars avec un ID (Utilise des .png au lieu de .svg)
     const images = [
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png
-// https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
         require('../assets/avatar01.png'),
         require('../assets/avatar02.png'),
         require('../assets/avatar03.png'),

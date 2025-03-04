@@ -24,6 +24,18 @@ export default function ProfileScreen({ navigation }) {
 
     // Images d'avatarts pour test
     const images = [
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
+        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
         require('../assets/avatar01.png'),
         require('../assets/avatar02.png'),
         require('../assets/avatar03.png'),
@@ -63,38 +75,29 @@ export default function ProfileScreen({ navigation }) {
         fetch(`http://192.168.100.230:3000/users/updateProfil`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken})
+            body: JSON.stringify({ token: userToken, username: newUsername, avatar: selectedAvatar })
         })
             .then(response => response.json())
             .then(data => {
-                if (data) {
+                if (data.message === 'Utilisateur mis à jour') {
                     setUsername(newUsername);
                     setAvatar(selectedAvatar);
                     setUserModalVisible(false);
                     setAvatarModalVisible(false);
-                    console.log(newUsername);
+                    console.log("Mise à jour réussie !");
+                    alert('Profil mis à jour');
                     console.log(selectedAvatar);
+                } else {
+                    console.log('Erreur mise à jour', data);
+                    alert('Erreur lors de la mise à jour');
                 }
             })
             .catch(error => console.error('erreur mise à jour username', error));
     };
 
-    function register() {
-        fetch(`http://192.168.100.230:3000/users/updateProfil`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken, username: signUpUsername, avatar: selectedAvatar })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    dispatch(addUserToStore({ token: userToken, username: signUpUsername, avatar: selectedAvatar }))
-                    console.log(signUpUsername);
-                    navigation.navigate('Map');
-                }
-            })
-            .catch(error => console.error('Erreur mise à jour username', error));
-    };
+    console.log("Selected Avatar:", selectedAvatar);
+    console.log("Avatar affiché:", images[selectedAvatar]);
+    console.log("Liste d'images disponibles:", images);
 
     return (
         <View style={styles.generalContainer}>
@@ -102,7 +105,9 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Avatar */}
             <View style={styles.avatarContainerMain}>
-                <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
+            <Image source={selectedAvatar !== null ? images[selectedAvatar] : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
+
+                {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
                 <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
                     <FontAwesome name='pencil' size={20} color='black' style={styles.updateUser} />
                 </TouchableOpacity>
@@ -110,26 +115,32 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Modal Modification de l'avatar */}
             {modalAvatarVisible && (
-                <Modal visible={modalAvatarVisible} animationType="fade" transparent>
-                    {/* Carousel d'avatars */}
-                    <View style={styles.avatarContainer}>
-                        <FlatList
-                            data={images}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.carousel}
-                            renderItem={({ item, index }) => (
-                                <TouchableOpacity onPress={() => setSelectedAvatar(index)}>
-                                    <Image
-                                        source={item}
-                                        style={[
-                                            styles.image,
-                                            selectedAvatar === index && styles.selectedImage
-                                        ]}
-                                    />
-                                </TouchableOpacity>
-                            )}
-                        />
+                <Modal visible={modalAvatarVisible} transparent animationType="slide">
+                    <View style={styles.centeredViewAvatar}>
+                        <View style={styles.modalViewAvatar}>
+                            <Text style={styles.text}>Choisis ton avatar</Text>
+                            {/* Carousel d'avatars */}
+                            <FlatList
+                                data={images}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                // keyExtractor={(item, index) => index.toString()} //à vérifier pour les urls
+                                renderItem={({ item, index }) => (
+                                    <TouchableOpacity onPress={() => setSelectedAvatar(item)}>
+                                        <Image
+                                            source={item} // `require()` fonctionne ici
+                                            style={[
+                                                styles.image,
+                                                selectedAvatar === index && styles.selectedImage
+                                            ]}
+                                        />
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.buttonBack}>
+                                <Text style={styles.text}>Fermer</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </Modal>
             )}
@@ -147,8 +158,8 @@ export default function ProfileScreen({ navigation }) {
             {/* Modal Modification de l'username */}
             {modalUserVisible && (
                 <Modal visible={modalUserVisible} animationType="fade" transparent>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
+                    <View style={styles.centeredViewUser}>
+                        <View style={styles.modalViewUser}>
                             <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
                             <TextInput
                                 placeholderTextColor={'black'}
@@ -241,21 +252,75 @@ const styles = StyleSheet.create({
         height: '100%',
         resizeMode: 'cover',
     },
-    avatarContainer: {
-        width: '100%',
-        height: '60%',
+    //Modal Avatar Style
+
+    centeredViewAvatar: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
     },
-    carousel: {
-        paddingHorizontal: 10,
-        alignItems: "center",
+    modalViewAvatar: {
+        backgroundColor: 'transparent',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     image: {
-        width: 'width' * 0.7, // Taille des avatars ajustée
-        height: 'width' * 0.7,
-        borderRadius: 50, 
-        marginHorizontal: 10,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        margin: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
     },
+
+    selectedImage: {
+        borderWidth: 2,
+        borderColor: 'blue',
+    },
+
+    buttonBack: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: 'red',
+        borderRadius: 10,
+    },
+    text: {
+        color: 'white',
+        fontSize: 16,
+    },
+
+// MODAL STYLE FABIO : A VERIFIER !!!
+    // avatarContainer: {
+    //     width: '100%',
+    //     height: '60%',
+    //     alignItems: 'center',
+    //     backgroundColor: 'grey',
+    //     opacity: 0.5,
+    // },
+
+    // carousel: {
+    //     paddingHorizontal: 10,
+    //     alignItems: "center",
+    //     backgroundColor: 'green',
+    //     opacity: 0.5,
+    // },
+    // image: {
+    //     width: 'width' * 0.25, // 25% de la largeur de l'écran
+    //     height: 'width' * 0.25, // Garde une forme carrée
+    //     borderRadius: 9999, // Assure un cercle parfait
+    //     marginHorizontal: 10,
+    //     backgroundColor: 'transparent', // Supprime le bleu
+    // },
+
 
     // Username style
     usernameView: {
@@ -268,12 +333,12 @@ const styles = StyleSheet.create({
     },
 
     //Modal Username Style
-    centeredView: {
+    centeredViewUser: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
-    modalView: {
+    modalViewUser: {
         backgroundColor: 'orange',
         borderRadius: 30,
         alignItems: 'center',
