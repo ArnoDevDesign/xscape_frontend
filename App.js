@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen from './screens/ProfileScreen';
-
+import AvatarScreen from './screens/AvatarScreen'
 // Import Redux
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -29,7 +29,7 @@ const TabNavigator = () => {
 
           if (route.name === 'Map') {
             iconName = 'location-arrow';
-          } 
+          }
           // else if (route.name === 'Game') {
           //   iconName = 'gamepad';
           // } 
@@ -57,6 +57,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={LoginScreen} />
+          <Stack.Screen name="Avatar" component={AvatarScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
           <Stack.Screen name="Profil" component={ProfileScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
