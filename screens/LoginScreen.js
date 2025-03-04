@@ -11,7 +11,7 @@ export default function LoginScreen({ navigation }) {
     const [modalSignUp, setmodalSignUp] = useState(false);
     const [modalLogIn, setmodalLogIn] = useState(false);
 
-    const [signUpUsername, setSignUpUsername] = useState('');
+
     const [signUpPassword, setSignUpPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [logInUsername, setLogInUsername] = useState('');
@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
 
 
     function signUP() {
-        console.log("Tentative d'inscription avec :", { email, signUpUsername, signUpPassword, confirmPassword });
+        console.log("Tentative d'inscription avec :", { email, signUpPassword, confirmPassword });
 
         const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        if (!email.trim() || !signUpUsername.trim() || !signUpPassword.trim() || !confirmPassword.trim()) {
+        if (!email.trim() || !signUpPassword.trim() || !confirmPassword.trim()) {
             alert("Veuillez remplir tous les champs.");
             return;
         }
@@ -44,20 +44,20 @@ export default function LoginScreen({ navigation }) {
         fetch('http://192.168.100.14:3000/users/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.trim(), username: signUpUsername.trim(), password: signUpPassword.trim() }),
+            body: JSON.stringify({ email: email.trim(), password: signUpPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
                     dispatch(addUserToStore({ token: data.token }));
-                    setSignUpUsername('');
                     setSignUpPassword('');
                     setEmail('');
                     setmodalSignUp(false);
-                    console.log("Inscription réussie :", signUpUsername);
-                    navigation.navigate('TabNavigator');
+                    console.log("Inscription réussie :", email);
+                    navigation.navigate('Avatar');
                 } else {
-                    alert('Informations incorrectes ou manquantes.');
+                    console.log(data)
+                    alert('utilisateur deja present');
                 }
             })
             .catch(error => console.error("Erreur lors de l'inscription :", error));
@@ -90,7 +90,7 @@ export default function LoginScreen({ navigation }) {
                     setLogInPassword('');
                     setmodalLogIn(false);
                     console.log("Connexion réussie :", email);
-                    navigation.navigate('TabNavigator');
+                    navigation.navigate('Avatar');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
                 }
@@ -160,13 +160,7 @@ export default function LoginScreen({ navigation }) {
                                 value={email}
                             />
                             {checkEmail && <Text>Email invalide</Text>}
-                            <TextInput
-                                placeholderTextColor={'black'}
-                                style={styles.inp1}
-                                placeholder="Nom d'utilisateur"
-                                onChangeText={setSignUpUsername}
-                                value={signUpUsername}
-                            />
+
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
