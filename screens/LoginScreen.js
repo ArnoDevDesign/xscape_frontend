@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.14:3000/users/signup', {
+        fetch('http://192.168.100.230:3000/users/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: signUpPassword.trim() }),
@@ -60,7 +60,7 @@ export default function LoginScreen({ navigation }) {
                     alert('utilisateur deja present');
                 }
             })
-            .catch(error => console.error("Erreur lors de l'inscription :", error));
+            .catch(error => console.error("LoginScreen : Erreur lors de l'inscription :", error));
     }
 
 
@@ -77,7 +77,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.14:3000/users/signin', {
+        fetch('http://192.168.100.230:3000/users/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: logInPassword.trim() }),
