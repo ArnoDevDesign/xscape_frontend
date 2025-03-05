@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     value: {
         token: '',
+        avatar: '',
+        username: '',
     }
 };
 
@@ -13,6 +15,8 @@ export const usersSlice = createSlice({
     initialState,
     reducers: {
         addUserToStore: (state, action) => {
+            console.log("payload ind redux", action.payload);
+
             state.value = action.payload;
         },
         userLogout: (state) => {

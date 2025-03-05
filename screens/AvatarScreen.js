@@ -15,39 +15,49 @@ export default function AvatarScreen({ navigation }) {
     const dispatch = useDispatch();
     // Images d'avatars avec un ID (Utilise des .png au lieu de .svg)
     const images = [
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
-        require('../assets/avatar01.png'),
-        require('../assets/avatar02.png'),
-        require('../assets/avatar03.png'),
-        require('../assets/avatar04.png'),
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
+
     ];
 
     function register() {
-        fetch(`http://192.168.100.230:3000/users/updateProfil`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken, username: signUpUsername, avatar: selectedAvatar })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    dispatch(addUserToStore({ token: userToken, username: signUpUsername, avatar: selectedAvatar }))
-                    console.log(signUpUsername);
-                    navigation.navigate('Profil');
-                }
-            })
-            .catch(error => console.error('Erreur mise à jour username', error));
+        console.log('button clicked')
+
+        if (!selectedAvatar || signUpUsername.trim() === "") {// VERIFIE SI LES CHAMPS SONT REMPLI ET EVITE UN ENVOI RDE REQUETE POUR RIEN
+            alert("Choisissez un avatar et entrez un pseudo !");
+            return;
+        } else {
+            fetch(`http://192.168.100.14:3000/users/updateProfil`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: userToken, username: signUpUsername, avatar: selectedAvatar })
+            }).then(response => response.json())
+                .then(data => {
+                    console.log("Réponse API :", data); // AFFICHE LA REPONSE DU BACKEND
+                    if (data.result) {
+                        dispatch(addUserToStore({ token: userToken, username: signUpUsername, avatar: selectedAvatar }));// ENVCOI LES INFOS SI TOUT VA BIEN 
+                        console.log("Utilisateur mis à jour :", signUpUsername);
+                        navigation.navigate('Profil');
+                    } else {
+                        console.log('Erreur de connexion API', data.error);
+                        alert("Erreur: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur mise à jour username', error);
+                    alert("Erreur de connexion au serveur");
+                });
+        }
     };
 
     return (
@@ -66,19 +76,20 @@ export default function AvatarScreen({ navigation }) {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.carousel}
-                    renderItem={({ item, index }) => (
-                        <TouchableOpacity onPress={() => setSelectedAvatar(index)}>
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => setSelectedAvatar(item)}>
                             <Image
-                                source={item}
+                                source={{ uri: item }}
                                 style={[
                                     styles.image,
-                                    selectedAvatar === index && styles.selectedImage
+                                    selectedAvatar === item && styles.selectedImage
                                 ]}
                             />
                         </TouchableOpacity>
                     )}
                 />
             </View>
+
 
             {/* Input et bouton */}
             <View style={styles.inputContainer}>

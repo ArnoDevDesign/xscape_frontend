@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.230:3000/users/signup', {
+        fetch('http://192.168.100.14:3000/users/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: signUpPassword.trim() }),
@@ -77,20 +77,21 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.230:3000/users/signin', {
+        fetch('http://192.168.100.14:3000/users/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: logInPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
+                console.log("kakoukakou", data)
                 if (data.result) {
-                    dispatch(addUserToStore({ token: data.token }));
+                    dispatch(addUserToStore({ token: data.token, avatar: data.avatar, username: data.username }));
                     setEmail('');
                     setLogInPassword('');
                     setmodalLogIn(false);
                     console.log("Connexion réussie :", email);
-                    navigation.navigate('Avatar');
+                    navigation.navigate('Profil');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
                 }
