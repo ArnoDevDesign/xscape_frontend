@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
+const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
@@ -21,7 +21,7 @@ export default function ProfileScreen({ navigation }) {
     const [newUsername, setNewUsername] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
 
-    console.log(newUsername);
+
 
     // Images d'avatarts pour test
     const images = [
@@ -50,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
         }
         console.log("ProfitesScren : Token utilisé :", userRedux.token);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
-        fetch(`http://192.168.100.14:3000/users/${userRedux.token}`)
+        fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Données utilisateur récupérées:', data);
@@ -71,44 +71,71 @@ export default function ProfileScreen({ navigation }) {
 
     //Modification du username et token au clic 
     const updateUsername = () => {
-        fetch(`http://192.168.100.14:3000/users/updateProfil`, {
+        if (!newUsername.trim()) {
+            alert("Le pseudo ne peut pas être vide !");
+            return;
+        }
+
+        // Crée un objet à envoyer
+        let updateData = { token: userRedux.token };
+        if (newUsername) updateData.username = newUsername;
+        if (selectedAvatar) updateData.avatar = selectedAvatar; // ✅ Ne pas écraser l'ancien avatar
+
+        fetch(`${URL}/users/updateProfil`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken, username: newUsername, avatar: selectedAvatar })
+            body: JSON.stringify(updateData)
         })
             .then(response => response.json())
             .then(data => {
-                if (data.message === 'Utilisateur mis à jour') {
+                if (data.result) {
                     setUsername(newUsername);
-                    setAvatar(selectedAvatar);
-                    dispatch(addUserToStore({ username: newUsername, avatar: selectedAvatar }))
+                    dispatch(addUserToStore({ username: newUsername, avatar: userRedux.avatar }));
                     setUserModalVisible(false);
-                    setAvatarModalVisible(false);
-                    console.log("Mise à jour réussie !");
-                    alert('Profil mis à jour');
-                    console.log(selectedAvatar);
+                    console.log("✅ Username mis à jour !");
+                    alert('Pseudo mis à jour');
                 } else {
-                    console.log('Erreur mise à jour', data);
-                    alert('Erreur lors de la mise à jour');
+                    console.log('❌ Erreur mise à jour username', data.error);
+                    alert('Erreur mise à jour pseudo');
                 }
             })
-            .catch(error => console.error('erreur mise à jour username', error));
+            .catch(error => {
+                console.error('❌ Erreur de mise à jour username:', error);
+                alert("Erreur de connexion au serveur");
+            });
     };
 
     function changeAvatar(item) {
-        setSelectedAvatar(item)
-        setAvatarModalVisible(false)
+        setSelectedAvatar(item);
+
+        // Met à jour Redux immédiatement
+        dispatch(addUserToStore({ avatar: item }));
+
+        // Envoie la mise à jour à la base de données
+        fetch(`${URL}/users/updateProfil`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: userRedux.token, avatar: item })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    console.log("✅ Avatar mis à jour avec succès !");
+                    setAvatarModalVisible(false);
+                } else {
+                    console.log("❌ Erreur mise à jour avatar", data.error);
+                    alert("Erreur mise à jour avatar");
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erreur de mise à jour avatar:', error);
+                alert("Erreur de connexion au serveur");
+            });
     }
-    useEffect(() => {
-        if (selectedAvatar) {
-            dispatch(addUserToStore({ avatar: selectedAvatar }));
-        }
-    }, [selectedAvatar]);
 
-
-    console.log("Selected Avatar:", selectedAvatar);
-    console.log("Avatar affiché:", userRedux.avatar);
-    console.log("Liste d'images disponibles:", images);
+    // console.log("Selected Avatar:", selectedAvatar);
+    // console.log("Avatar affiché:", userRedux.avatar);
+    // console.log("Liste d'images disponibles:", images);
 
     return (
         <View style={styles.generalContainer}>

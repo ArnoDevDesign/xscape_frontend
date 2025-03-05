@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
 
 const { width } = Dimensions.get("window");
+const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 export default function AvatarScreen({ navigation }) {
     const [signUpUsername, setSignUpUsername] = useState('');
@@ -37,7 +38,7 @@ export default function AvatarScreen({ navigation }) {
             alert("Choisissez un avatar et entrez un pseudo !");
             return;
         } else {
-            fetch(`http://192.168.100.14:3000/users/updateProfil`, {
+            fetch(`${URL}/users/updateProfil`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: userToken, username: signUpUsername, avatar: selectedAvatar })

@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 const { checkBody } = require('../modules/checkBody');
 
 export default function LoginScreen({ navigation }) {
     const dispatch = useDispatch();
+    const [showPasswordConnection, setShowPasswordConnection] = useState(true);
+    const [showPassword, setShowPassword] = useState(true);
+    const [showPassword2, setShowPassword2] = useState(true);
 
     const [modalSignUp, setmodalSignUp] = useState(false);
     const [modalLogIn, setmodalLogIn] = useState(false);
@@ -41,7 +46,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.14:3000/users/signup', {
+        fetch(`${URL}/users/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: signUpPassword.trim() }),
@@ -56,7 +61,7 @@ export default function LoginScreen({ navigation }) {
                     console.log("Inscription réussie :", email);
                     navigation.navigate('Avatar');
                 } else {
-                    console.log(data)
+                    // console.log(data)
                     alert('utilisateur deja present');
                 }
             })
@@ -77,7 +82,7 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        fetch('http://192.168.100.14:3000/users/signin', {
+        fetch(`${URL}/users/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email.trim(), password: logInPassword.trim() }),
@@ -123,19 +128,23 @@ export default function LoginScreen({ navigation }) {
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
-                                placeholder="Email"
-                                onChangeText={mailcheck}
+                                placeholder="email"
+                                onChangeText={setEmail}
                                 value={email}
                             />
-                            {checkEmail && <Text>Email invalide</Text>}
-                            <TextInput
-                                placeholderTextColor={'black'}
-                                style={styles.inp1}
-                                placeholder="Mot de passe"
-                                secureTextEntry
-                                onChangeText={setLogInPassword}
-                                value={logInPassword}
-                            />
+                            <View style={styles.inp2}>
+                                <TextInput
+                                    placeholderTextColor={'black'}
+                                    placeholder="Mot de passe"
+                                    secureTextEntry={showPasswordConnection ? true : false}
+                                    onChangeText={setLogInPassword}
+                                    value={logInPassword}
+                                />
+                                {checkEmail && <Text>Email invalide</Text>}
+                                <TouchableOpacity onPress={() => setShowPasswordConnection(!showPasswordConnection)}>
+                                    <FontAwesome name={showPasswordConnection ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
+                                </TouchableOpacity>
+                            </View>
                             <TouchableOpacity onPress={logIN} activeOpacity={0.8}>
                                 <Text style={styles.textButton}>GO!</Text>
                             </TouchableOpacity>
@@ -145,54 +154,67 @@ export default function LoginScreen({ navigation }) {
                         </View>
                     </View>
                 </Modal>
-            )}
+            )
+            }
 
             {/* Modal Sign up */}
-            {modalSignUp && (
-                <Modal visible={modalSignUp} animationType="fade" transparent>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.textButton}>SIGN UP</Text>
-                            <TextInput
-                                placeholderTextColor={'black'}
-                                style={styles.inp1}
-                                placeholder="Email"
-                                onChangeText={mailcheck}
-                                value={email}
-                            />
-                            {checkEmail && <Text>Email invalide</Text>}
+            {
+                modalSignUp && (
+                    <Modal visible={modalSignUp} animationType="fade" transparent>
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.textButton}>SIGN UP</Text>
+                                <TextInput
+                                    placeholderTextColor={'black'}
+                                    style={styles.inp1}
+                                    placeholder="Email"
+                                    onChangeText={mailcheck}
+                                    value={email}
+                                />
+                                {checkEmail && <Text>Email invalide</Text>}
 
-                            <TextInput
-                                placeholderTextColor={'black'}
-                                style={styles.inp1}
-                                placeholder="Mot de passe"
-                                secureTextEntry
-                                onChangeText={setSignUpPassword}
-                                value={signUpPassword}
-                            />
-                            <TextInput
-                                placeholderTextColor={'black'}
-                                style={styles.inp1}
-                                placeholder="Confirmation du mdp"
-                                secureTextEntry
-                                onChangeText={setConfirmPassword}
-                                value={confirmPassword}
-                            />
-                            <TouchableOpacity onPress={signUP} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>GO!</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>Close</Text>
-                            </TouchableOpacity>
+                                < View style={styles.inp2} >
+                                    <TextInput
+                                        placeholderTextColor={'black'}
+                                        placeholder="Mot de passe"
+                                        secureTextEntry={showPassword ? true : false}
+                                        onChangeText={setSignUpPassword}
+                                        value={signUpPassword}
+                                    />
+         // incorporation de l'icone de visibilité du MDP.
+                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                        <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
+                                    </TouchableOpacity>
+                                </View >
+                                <View style={styles.inp2}>
+                                    <TextInput
+                                        placeholderTextColor={'black'}
+                                        placeholder="Confirmation du mdp"
+                                        secureTextEntry={showPassword2 ? true : false}
+                                        onChangeText={setConfirmPassword}
+                                        value={confirmPassword}
+                                    />
+                                    <TouchableOpacity onPress={() => setShowPassword2(!showPassword2)}>
+                                        <FontAwesome name={showPassword2 ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
+                                    </TouchableOpacity>
+                                </View>
+                                <TouchableOpacity onPress={signUP} activeOpacity={0.8}>
+                                    <Text style={styles.textButton}>GO!</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
+                                    <Text style={styles.textButton}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </Modal>
-            )}
-        </View>
+                    </Modal>
+                )
+            }
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
+
     generalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -229,6 +251,17 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     inp1: {
+        width: '70%',
+        height: 50,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        margin: 10,
+        paddingLeft: 10
+    },
+    inp2: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         width: '70%',
         height: 50,
         backgroundColor: 'white',
