@@ -228,7 +228,7 @@ export default function ProfileScreen({ navigation }) {
                         <Text key={index} style={styles.text}>• {DataScenario}</Text>
                     ))
                 ) : (
-                    <Text style={styles.text}>Aucune aventure terminée</Text>
+                    <Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
                 )}
             </View>
 
