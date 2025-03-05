@@ -17,7 +17,7 @@ export const usersSlice = createSlice({
         addUserToStore: (state, action) => {
             console.log("payload ind redux", action.payload);
 
-            state.value = action.payload;
+            state.value = {...state.value, ...action.payload};
         },
         userLogout: (state) => {
             state.value.token = '';
