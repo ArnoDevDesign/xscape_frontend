@@ -51,7 +51,7 @@ export default function AvatarScreen({ navigation }) {
                         navigation.navigate('Profil');
                     } else {
                         console.log('Erreur de connexion API', data.error);
-                        alert("Erreur: " + data.error);
+                        alert("Erreur $$$$: " + data.error);
                     }
                 })
                 .catch(error => {
@@ -90,7 +90,6 @@ export default function AvatarScreen({ navigation }) {
                     )}
                 />
             </View>
-
 
             {/* Input et bouton */}
             <View style={styles.inputContainer}>
