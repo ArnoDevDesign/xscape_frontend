@@ -2,13 +2,14 @@ import React, { use, useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { userLogout } from '../reducers/users'
+import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
+const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
-    const userToken = useSelector((state) => state.users.value.token)
+    const userRedux = useSelector((state) => state.users.value)
+
     // États pour infos utilisateur
     const [avatar, setAvatar] = useState('');
     const [username, setUsername] = useState('');
@@ -20,47 +21,45 @@ export default function ProfileScreen({ navigation }) {
     const [newUsername, setNewUsername] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
 
-    console.log(newUsername);
+
 
     // Images d'avatarts pour test
     const images = [
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
-        // 'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
-        require('../assets/avatar01.png'),
-        require('../assets/avatar02.png'),
-        require('../assets/avatar03.png'),
-        require('../assets/avatar04.png'),
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar01_zdi0zf.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar02_zrsv6f.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar03_nyapav.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar04_tka0gd.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar05_fui9wm.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar06_jrvz5x.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar07_qr2sxd.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105220/avatar08_cd4udv.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar09_bkdrx9.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
+        // require('../assets/avatar01.png'),
+        // require('../assets/avatar02.png'),
+        // require('../assets/avatar03.png'),
+        // require('../assets/avatar04.png'),
     ];
     // Récupération des données utilisateur au chargement du composant
     useEffect(() => {
-        if (!userToken) {
+        if (!userRedux.token) {
             console.log("ProfitesScren : Aucun token trouvé !");
             return;
         }
-        console.log("ProfitesScren : Token utilisé :", userToken);
+        console.log("ProfitesScren : Token utilisé :", userRedux.token);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
-        fetch(`http://192.168.100.230:3000/users/${userToken}`)
+        fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Données utilisateur récupérées:', data);
-                setAvatar(data.avatar);
-                setUsername(data.username);
                 setEmail(data.email);
                 setScore(data.totalPoints);
                 setScenarios(data.scenarios || []);
             })
             .catch(error => console.error('ProfitesScren : Erreur de récupération des données:', error));
-    }, [userToken]);
+    }, [userRedux.token]);
 
 
     //Fonction de déconnexion 
@@ -72,32 +71,71 @@ export default function ProfileScreen({ navigation }) {
 
     //Modification du username et token au clic 
     const updateUsername = () => {
-        fetch(`http://192.168.100.230:3000/users/updateProfil`, {
+        if (!newUsername.trim()) {
+            alert("Le pseudo ne peut pas être vide !");
+            return;
+        }
+
+        // Crée un objet à envoyer
+        let updateData = { token: userRedux.token };
+        if (newUsername) updateData.username = newUsername;
+        if (selectedAvatar) updateData.avatar = selectedAvatar; // ✅ Ne pas écraser l'ancien avatar
+
+        fetch(`${URL}/users/updateProfil`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: userToken, username: newUsername, avatar: selectedAvatar })
+            body: JSON.stringify(updateData)
         })
             .then(response => response.json())
             .then(data => {
-                if (data.message === 'Utilisateur mis à jour') {
+                if (data.result) {
                     setUsername(newUsername);
-                    setAvatar(selectedAvatar);
+                    dispatch(addUserToStore({ username: newUsername, avatar: userRedux.avatar }));
                     setUserModalVisible(false);
-                    setAvatarModalVisible(false);
-                    console.log("Mise à jour réussie !");
-                    alert('Profil mis à jour');
-                    console.log(selectedAvatar);
+                    console.log("✅ Username mis à jour !");
+                    alert('Pseudo mis à jour');
                 } else {
-                    console.log('Erreur mise à jour', data);
-                    alert('Erreur lors de la mise à jour');
+                    console.log('❌ Erreur mise à jour username', data.error);
+                    alert('Erreur mise à jour pseudo');
                 }
             })
-            .catch(error => console.error('erreur mise à jour username', error));
+            .catch(error => {
+                console.error('❌ Erreur de mise à jour username:', error);
+                alert("Erreur de connexion au serveur");
+            });
     };
 
-    console.log("Selected Avatar:", selectedAvatar);
-    console.log("Avatar affiché:", images[selectedAvatar]);
-    console.log("Liste d'images disponibles:", images);
+    function changeAvatar(item) {
+        setSelectedAvatar(item);
+
+        // Met à jour Redux immédiatement
+        dispatch(addUserToStore({ avatar: item }));
+
+        // Envoie la mise à jour à la base de données
+        fetch(`${URL}/users/updateProfil`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: userRedux.token, avatar: item })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    console.log("✅ Avatar mis à jour avec succès !");
+                    setAvatarModalVisible(false);
+                } else {
+                    console.log("❌ Erreur mise à jour avatar", data.error);
+                    alert("Erreur mise à jour avatar");
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erreur de mise à jour avatar:', error);
+                alert("Erreur de connexion au serveur");
+            });
+    }
+
+    // console.log("Selected Avatar:", selectedAvatar);
+    // console.log("Avatar affiché:", userRedux.avatar);
+    // console.log("Liste d'images disponibles:", images);
 
     return (
         <View style={styles.generalContainer}>
@@ -105,7 +143,7 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Avatar */}
             <View style={styles.avatarContainerMain}>
-            <Image source={selectedAvatar !== null ? images[selectedAvatar] : require('../assets/Avatar_jojo.png')} style={styles.avatar} />
+                <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
 
                 {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
                 <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
@@ -124,14 +162,14 @@ export default function ProfileScreen({ navigation }) {
                                 data={images}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                // keyExtractor={(item, index) => index.toString()} //à vérifier pour les urls
-                                renderItem={({ item, index }) => (
-                                    <TouchableOpacity onPress={() => setSelectedAvatar(item)}>
+                                contentContainerStyle={styles.carousel}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => changeAvatar(item)}>
                                         <Image
-                                            source={item} // `require()` fonctionne ici
+                                            source={{ uri: item }}
                                             style={[
                                                 styles.image,
-                                                selectedAvatar === index && styles.selectedImage
+                                                selectedAvatar === item && styles.selectedImage
                                             ]}
                                         />
                                     </TouchableOpacity>
@@ -147,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos utilisateur */}
             <View style={styles.usernameView}>
-                <Text style={styles.text}>Username : {username}</Text>
+                <Text style={styles.text}>Username : {userRedux.username}</Text>
 
                 <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit} >
                     <FontAwesome name='pencil' size={20} color="black" style={styles.updateUser} />
@@ -298,7 +336,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 
-// MODAL STYLE FABIO : A VERIFIER !!!
+    // MODAL STYLE FABIO : A VERIFIER !!!
     // avatarContainer: {
     //     width: '100%',
     //     height: '60%',
@@ -400,4 +438,8 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 16,
     },
+    selectedImage: {
+        borderWidth: 3,
+        borderColor: "orange",
+    }
 });
