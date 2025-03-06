@@ -86,7 +86,7 @@ export default function HomeScreen({ navigation }) {
                         pinColor="red"
                         style={styles.userPin}
                     >
-                        <Image source={markers.pinUser} style={styles.userPin} />
+                        <Image source={markers.pinUser} style={styles.userPinStyle} />
                     </Marker>
                 )}
             </MapView>
@@ -107,5 +107,9 @@ const styles = StyleSheet.create({
     userPin: {
         width: 100,
         height: 100,
+    },
+    
+    userPinStyle: {
+        
     },
 });
