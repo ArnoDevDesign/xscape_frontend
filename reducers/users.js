@@ -5,6 +5,7 @@ const initialState = {
         token: '',
         avatar: '',
         username: '',
+        scenario: '',
     }
 };
 
