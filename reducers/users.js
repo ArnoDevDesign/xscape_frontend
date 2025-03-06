@@ -8,7 +8,7 @@ const initialState = {
         scenario: '',
     }
 };
-
+///////////////////////////////////////////DISPATCH NOM SCENARIO AU CLICK SUR MODAL SELECTIONNEEE DANS GEOLOC //////////////////////////////////////////////////////////////
 
 export const usersSlice = createSlice({
     name: 'users',
