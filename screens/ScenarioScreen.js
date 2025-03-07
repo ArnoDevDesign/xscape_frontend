@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -16,37 +16,42 @@ export default function ScenarioScreen({ navigation }) {
 
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [difficultee, setdifficultee] = useState('')
+    const [difficulte, setdifficulte] = useState('')
     const [theme, setTheme] = useState('')
     const [duree, setDuree] = useState('')
 
     useEffect(() => {
-        fetch(`${URL}/scenarios/${scenarioUpdated}`)
+        fetch(`${URL}/scenarios/${userRedux.scenario}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setTitle(data.name);
                 setDescription(data.descriptionScenario);
-                setdifficultee(data.difficultee)
+                setdifficulte(data.difficulte)
                 setTheme(data.theme)
                 setDuree(data.duree);
+                // console.log(data.difficulte)
+                // console.log(data)
             })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }, [userRedux])
 
     return (
         <View style={styles.container}>
             {/* <SafeAreaView /> */}
             <View style={styles.name}>
-                <Text style={styles.textTitre}>{scenarioUpdated}</Text>
+                <Text style={styles.textTitre}>{userRedux.scenario}</Text>
             </View>
-            <View style={styles.description}>
-                <Text style={styles.textDescripiton}>Le lorem ipsum (également appelé faux-texte, lipsum, ou bolo bolo1) est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page, le texte définitif venant remplacer le faux-texte dès qu'il est prêt ou que la mise en page est achevée</Text>
-            </View>
+            <ScrollView style={styles.description}>
+                <Text style={styles.textDescripiton}>{description}</Text>
+            </ScrollView>
             <View style={styles.difficultee}>
-                <Text style={styles.textDif}>Difficulté : Moyen</Text>
+                <Text style={styles.textDif}>Difficulté : {difficulte}</Text>
             </View>
             <View style={styles.infos}>
-                <Text style={styles.textInfo}>Infos supplémentaires</Text>
+                <Text style={styles.textInfo}>Theme : {theme} , Duree : {duree}mn </Text>
             </View>
             <View style={styles.button}>
                 <TouchableOpacity
@@ -81,8 +86,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     description: {
-        justifyContent: "center",
-        alignItems: 'center',
+        // justifyContent: "center",
+        // alignItems: 'center',
         width: '100%',
         width: '75%'
     },
@@ -92,6 +97,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     difficultee: {
+        marginTop: 10,
         justifyContent: "center",
         alignItems: 'center',
         width: '100%'

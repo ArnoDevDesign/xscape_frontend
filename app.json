@@ -1,7 +1,18 @@
 {
   "expo": {
-    "name": "xscape_frontend",
-    "slug": "xscape_frontend",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      ["expo-video"]
+    ],
+    "name": "FRONT",
+    "slug": "FRONT",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -13,6 +13,10 @@ import AvatarScreen from './screens/AvatarScreen'
 import ScenarioScreen from './screens/ScenarioScreen'
 import StartGameScreen from './screens/StartGameScreen'
 import EndScreen from './screens/EndScreen'
+import IngameScreen from './screens/IngameScreen'
+import Ingame3Screen from './screens/Ingame3Screen'
+import IngameScreen2 from './screens/IngameScreen2'
+
 // Import Redux
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -48,6 +52,15 @@ const TabNavigator = () => {
           else if (route.name === 'End') {
             iconName = 'user';
           }
+          else if (route.name === 'Ingame') {
+            iconName = 'user';
+          }
+          else if (route.name === 'Ingame2') {
+            iconName = 'user';
+          }
+          else if (route.name === 'Ingame3') {
+            iconName = 'user';
+          }
 
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
@@ -62,6 +75,9 @@ const TabNavigator = () => {
       <Tab.Screen name="Scenario" component={ScenarioScreen} />
       <Tab.Screen name="StartGame" component={StartGameScreen} />
       <Tab.Screen name="End" component={EndScreen} />
+      <Tab.Screen name="Ingame" component={IngameScreen} />
+      <Tab.Screen name="Ingame2" component={IngameScreen2} />
+      <Tab.Screen name="Ingame3" component={Ingame3Screen} />
 
 
       {/* <Tab.Screen name="Game" component={GameScreen} /> */}
@@ -79,8 +95,13 @@ export default function App() {
           <Stack.Screen name="Avatar" component={AvatarScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
           {/* <Stack.Screen name="Scenario" component={SCenarioScreen} />
-          <Stack.Screen name="StartGAme" component={StartGameScreen} />
+          <Stack.Screen name="StartGame" component={StartGameScreen} />
           <Stack.Screen name="End" component={EndScreen} /> */}
+          {/* <Stack.Screen name="InGame" component={IngameScreen} /> */}
+          {/* <Stack.Screen name="InGame2" component={IngameScreen2} /> */}
+
+          {/* <Stack.Screen name="InGame3" component={IngameScreen3} /> */}
+
           <Stack.Screen name="Profil" component={ProfileScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>

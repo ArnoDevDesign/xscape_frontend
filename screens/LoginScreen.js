@@ -49,19 +49,19 @@ export default function LoginScreen({ navigation }) {
         fetch(`${URL}/users/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.trim(), password: signUpPassword.trim() }),
+            body: JSON.stringify({ email: email.trim().toLowerCase(), password: signUpPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
-                    dispatch(addUserToStore({ token: data.token }));
+                    dispatch(addUserToStore({ token: data.token, userID: data._id }));
+                    console.log(data._id)
                     setSignUpPassword('');
                     setEmail('');
                     setmodalSignUp(false);
                     console.log("Inscription réussie :", email);
                     navigation.navigate('Avatar');
                 } else {
-                    // console.log(data)
                     alert('utilisateur deja present');
                 }
             })
@@ -85,18 +85,17 @@ export default function LoginScreen({ navigation }) {
         fetch(`${URL}/users/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.trim(), password: logInPassword.trim() }),
+            body: JSON.stringify({ email: email.trim().toLowerCase(), password: logInPassword.trim() }),
         })
             .then(response => response.json())
             .then(data => {
-                console.log("kakoukakou", data)
                 if (data.result) {
                     dispatch(addUserToStore({ token: data.token, avatar: data.avatar, username: data.username }));
                     setEmail('');
                     setLogInPassword('');
                     setmodalLogIn(false);
-                    console.log("Connexion réussie :", email);
-                    navigation.navigate('Profil');
+                    // console.log("Connexion réussie :", email);
+                    navigation.navigate('TabNavigator');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
                 }

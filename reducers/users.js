@@ -5,7 +5,9 @@ const initialState = {
         token: '',
         avatar: '',
         username: '',
-        scenario: '',
+        scenario: 'La Capsule Perdue',
+        userID: '',
+        scenarioID: ''
     }
 };
 ///////////////////////////////////////////DISPATCH NOM SCENARIO AU CLICK SUR MODAL SELECTIONNEEE DANS GEOLOC //////////////////////////////////////////////////////////////
