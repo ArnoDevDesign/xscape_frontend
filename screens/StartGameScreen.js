@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, ImageBackground, Modal, TextInput, FlatList } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, ImageBackground, Modal, TextInput, FlatList, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
@@ -8,26 +8,41 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 
+
+
 export default function StartGameScreen({ navigation }) {
 
-    const [modalout, setmodalout] = useState(false);
+    const userRedux = useSelector((state) => state.users.value);
+    const [text, setText] = useState('');
 
 
+    // useEffect(() => {
+    fetch(`${URL}/scenarios/descriptionEpreuve/${userRedux.scenarioID}/${userRedux.userID}`)
+        .then(res => res.json())
+        .then(data => {
+            // console.log('scenario id ', userRedux.scenarioID)
+            // console.log('user id ', userRedux.userID)
+            // console.log(data.descriptionEpreuveData)
+            setText(data.descriptionEpreuveData)
+        })
+        .catch(err => console.log(err))
+    // }, [])
+    console.log('textlogg', text)
 
     return (
         <View style={styles.container}>
+            <SafeAreaView />
             <View style={styles.imgcontainer}>
-                <ImageBackground source={require('../assets/modalEcran.png')} resizeMode='stretch' style={styles.imageBackground}>
-                    <View style={styles.textContainer}>
-                        <TouchableOpacity onPress={() => setmodalout(false)} style={styles.button}>
-                            <Text style={styles.textButton}>Je suis pret !</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
+                <Text style={styles.textButton}>{text}</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Map')}>
-                <Text style={styles.text}>sortir</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Map')}>
+                    <Text style={styles.text}>sortir</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Ingame')} style={styles.button}>
+                    <Text style={styles.text}>Go !</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );;
 }
@@ -44,16 +59,16 @@ const styles = StyleSheet.create({
         jusityfyContent: 'space-between',
         alignItems: 'center',
     },
-    imageBackground: {
-        flex: 1,
+    buttonContainer: {
         width: '100%',
-        height: '100%',
-        justifyContent: 'center',
+        height: '40%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     imgcontainer: {
         width: '100%',
-        height: '70%',
+        height: '60%',
     },
     text: {
         color: "white",
@@ -61,12 +76,25 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 10,
     },
-    textContainer: {
-        // borderWidth: 5,
+    textContainer2: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: 250,
-        height: 230,
+        width: 220,
+        height: 200,
+    },
+    textContainer: {
+        // borderWidth: 5,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        width: 220,
+        height: 150,
+
+    },
+    textButton: {
+        color: "green",
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
 
     }
 

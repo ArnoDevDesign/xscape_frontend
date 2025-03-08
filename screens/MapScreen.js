@@ -23,42 +23,41 @@ export default function HomeScreen({ navigation }) {
   const userRedux = useSelector((state) => state.users.value);
 
 
-  {/*console.log(userRedux.avatar);*/}
+  {/*console.log(userRedux.avatar);*/ }
 
   const gameMarker = {
     scenario: require("../assets/pinGame2.png"),
   };
 
-  const newFormatAvatar = userRedux.avatar.replace("/upload/","/upload/w_230,h_230,r_30/");
-  {/*console.log(newFormatAvatar);*/}
+  const newFormatAvatar = userRedux.avatar.replace("/upload/", "/upload/w_230,h_230,r_30/");
+  {/*console.log(newFormatAvatar);*/ }
 
 
-  {/*Référence à la carte*/}
+  {/*Référence à la carte*/ }
   const mapRef = useRef(null);
 
 
-  {/*etat pour de la position de l'utilisateur*/}
+  {/*etat pour de la position de l'utilisateur*/ }
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
 
 
-  {/*etat pour l'affichage de la modale*/}
+  {/*etat pour l'affichage de la modale*/ }
   const [modalInfo, setModalInfo] = useState(false);
   const [modalExpanded, setModalExpanded] = useState(false);
 
-  fetch("http://
 
-  {/*localisation de l'utilisateur*/}
+  {/*localisation de l'utilisateur*/ }
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-      {/*demande de permission pour la Geolocalisation*/}
+      {/*demande de permission pour la Geolocalisation*/ }
       if (status === "granted") {
 
-        {/*si autorisation alors on recupere la position*/}
+        {/*si autorisation alors on recupere la position*/ }
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           console.log("here 3");
           setUserLocation(loc.coords);
@@ -106,7 +105,7 @@ export default function HomeScreen({ navigation }) {
         <Marker
           coordinate={{ latitude: 48.8795, longitude: 2.309 }}
           image={gameMarker.scenario}
-          onPress={() => setModalInfo(true) }
+          onPress={() => setModalInfo(true)}
         />
       </MapView>
       <View style={styles.buttonContainer}>
@@ -133,7 +132,7 @@ export default function HomeScreen({ navigation }) {
                   modalExpanded && styles.expandedModal,
                 ]}
                 onPress={() => {
-                    
+
                   // Agrandir la modale seulement si elle est actuellement dans l'état réduit
                   if (!modalExpanded) {
                     setModalExpanded(true); // Agrandit la modale si elle est réduite

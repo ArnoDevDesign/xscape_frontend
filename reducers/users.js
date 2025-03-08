@@ -6,8 +6,8 @@ const initialState = {
         avatar: '',
         username: '',
         scenario: 'La Capsule Perdue',
-        userID: '',
-        scenarioID: ''
+        userID: '67c5fc2b16905edcd7e37291',
+        scenarioID: '67c89b3211fe5eeab54f1ecb',
     }
 };
 ///////////////////////////////////////////DISPATCH NOM SCENARIO AU CLICK SUR MODAL SELECTIONNEEE DANS GEOLOC //////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@ export const usersSlice = createSlice({
             state.value = { ...state.value, ...action.payload };
         },
         userLogout: (state) => {
-            state.value.token = '';
-        }
+            state.value.token = '';// rappel il faut supprimer le token dans la BDD
+        },
     },
 
 });

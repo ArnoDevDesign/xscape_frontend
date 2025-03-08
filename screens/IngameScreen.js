@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity, ImageBackground } from 'react-native';
 import { CameraView, CameraType, FlashMode } from 'expo-camera';
 import _FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,28 +9,38 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
-const { checkBody } = require('../modules/checkBody');
-
 
 export default function TestScreen() {
 
     const userRedux = useSelector((state) => state.users.value)
-
     const [video1, setVideo1] = useState(true);
     const [video2, setVideo2] = useState(false);
     const [video3, setVideo3] = useState(false);
     const [video4, setVideo4] = useState(false);
     const dispatch = useDispatch();
-
     const [JoVideo, setJoVideo] = useState(false);
     const [frequence1, setFrequence1] = useState('');
     const [frequence2, setFrequence2] = useState('');
     const [frequence3, setFrequence3] = useState('');
     const [game1, setGame1] = useState(false);
-
+    const [indice1, setIndice1] = useState('');
+    const [indice2, setIndice2] = useState('');
+    const [indice3, setIndice3] = useState('');
+    const [goodFrequence1, setGoodFrequence1] = useState('')
+    const [goodFrequence2, setGoodFrequence2] = useState('')
+    const [goodFrequence3, setGoodFrequence3] = useState('')
+    const [SCORE, setSCORE] = useState(500)
+    const [indiceused1, setIndiceused1] = useState(false)
+    const [indiceused2, setIndiceused2] = useState(false)
+    const [indiceused3, setIndiceused3] = useState(false)
+    const [showInputs, setShowInputs] = useState(true);
+    const [modalFinVisible, setModalFinVisible] = useState(false);
     const [modalout, setmodalout] = useState(false);
     const [modal2out, setmodal2out] = useState(false)
-
+    const [indicemodal1, setIndicemodal1] = useState(false)
+    const [indicemodal2, setIndicemodal2] = useState(false)
+    const [indicemodal3, setIndicemodal3] = useState(false)
+    const [showfinalbutton, setShowfinalbutton] = useState(false)
     const videoSource =
         video1 ? require('../assets/Video_1.mp4') :
             video2 ? require('../assets/Video_2.mp4') :
@@ -39,58 +49,69 @@ export default function TestScreen() {
                         null;
 
 
+    ////////////////useVideoPlayer pour la video
     const player = useVideoPlayer(videoSource, (player) => {
         player.play(); // Lance la vidéo automatiquement
         player.loop = true; // Active la boucle
     });
 
-    const [showInputs, setShowInputs] = useState(true);
-    const [modalFinVisible, setModalFinVisible] = useState(false);
 
     const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
-
-
-    //////////// VALIDATION DU JEU 1 /////////////
-    if (game1 === true) (
-        Navigation.navigate('Ingame2Screen')
-    )
-    //////////////////////////////////////////////
-
+    //////////////////////////////////////useEffect pour les 3 frequence permettant de les tester a chaque entre d info dans leurs champs respectifs
     useEffect(() => {
-        if (frequence1.length >= 6) {
-            if (frequence1 !== '98.2') {
-                setmodalout(true)
-
+        if (frequence1.length >= goodFrequence1.length) {
+            if (frequence1 !== goodFrequence1 && !modalout) {
+                setmodalout(true);
+            } else if ((frequence1 === goodFrequence3 || frequence1 === goodFrequence2) && (frequence1 !== '')) {
+                setmodal2out(true);
             }
-        } else if (frequence1 === '100.3' || frequence1 === '94.4') {
-            setmodal2out(true)
-
         }
     }, [frequence1]);
+
     useEffect(() => {
-        if (frequence2.length >= 6 && !alertTriggered2) {
-            if (frequence2 !== '94.4') {
-                setmodalout(true)
+        if (frequence2.length >= goodFrequence2.length) {
+            if (frequence2 !== goodFrequence2 && !modalout) {
+                setmodalout(true);
+            } else if ((frequence2 === goodFrequence3 || frequence2 === goodFrequence1) && (frequence2 !== '')) {
+                setmodal2out(true);
             }
-        } else if (frequence2 === '100.3' || frequence2 === '98.2') {
-            setmodal2out(true)
         }
     }, [frequence2]);
+
     useEffect(() => {
-        if (frequence3.length >= 6 && !alertTriggered3) {
-            if (frequence3 !== '100.3') {
-                setmodalout(true)
+        if (frequence3.length >= goodFrequence3.length) {
+            if (frequence3 !== goodFrequence3 && !modalout) {
+                setmodalout(true);
+            } else if ((frequence3 === goodFrequence1 || frequence3 === goodFrequence2) && (frequence3 !== '')) {
+                setmodal2out(true);
             }
-        } else if (frequence3 === '98.2' || frequence3 === '94.4') {
-            setmodal2out(true)
         }
     }, [frequence3]);
-    // easteregg ////// il se declenche lorsce que l utilisateur a ecrit des mots speciaux au bon endroit /// 
-    // cela affiche une modal qui fait apparaitre l oeuf avec animation et donne un enorme bonus de point ///
-    // dans le profil il est detenteur DE L EASTER EGG JM // creation d nft
+    ////////////////////////////////useEffect permmetant de mettre a jour les bonne frequences et les indices a chaque changement de scenario
+    useEffect(() => {
+        fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log("retour fetch ", data);
+                if (data.goodFrequence1 !== goodFrequence1) setGoodFrequence1(data.goodFrequence1);
+                if (data.goodFrequence2 !== goodFrequence2) setGoodFrequence2(data.goodFrequence2);
+                if (data.goodFrequence3 !== goodFrequence3) setGoodFrequence3(data.goodFrequence3);
+                if (data.indice1 !== indice1) setIndice1(data.indice1);
+                if (data.indice2 !== indice2) setIndice2(data.indice2);
+                if (data.indice3 !== indice3) setIndice3(data.indice3);
+            })
+            .catch((error) => {
+                console.error('Error:', error.message);
+            });
+    }, [userRedux.userID, userRedux.scenarioID]);
+
+
+    //////////////////////////fonction permettant de tester les 3 frequence
     function testInput1(value) {
+
         setFrequence1(value);
-        if (value === '98.2') { // Vérifie la bonne fréquence avant de changer de vidéo
+
+        if (value === goodFrequence1) { // Vérifie la bonne fréquence avant de changer de vidéo
             setVideo1(false);
             setVideo2(true);
         }
@@ -98,7 +119,7 @@ export default function TestScreen() {
 
     function testInput2(value) {
         setFrequence2(value);
-        if (value === '94.4' && video1 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence2 && video1 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
             setVideo2(false);
             setVideo3(true);
         }
@@ -106,54 +127,57 @@ export default function TestScreen() {
 
     function testInput3(value) {
         setFrequence3(value);
-        if (value === '100.3' && video2 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence3 && video2 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
             setVideo3(false);
             setVideo4(true);
         }
     }
-
+    //////////////////// fonction permettant de valider les 3 frequence , de remplacer les inputs par un bouton
     useEffect(() => {
-        if (frequence1 === '98.2' && frequence2 === '94.4' && frequence3 === '100.3') {
-            setShowInputs(false); // Cache les inputs
-            setModalFinVisible(true); // Affiche la modal
+        if (
+            frequence1.length >= 2 &&
+            frequence2.length >= 2 &&
+            frequence3.length >= 2 &&
+            frequence1 === goodFrequence1 &&
+            frequence2 === goodFrequence2 &&
+            frequence3 === goodFrequence3 &&
+            showInputs
+        ) {
+            setShowInputs(false);
+            setJoVideo(false);
+            setShowfinalbutton(true)
         }
-    }, [frequence1, frequence2, frequence3]);
+    }, [frequence3])
+    ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
+    function calculateScore() {
+        if (indiceused1) setSCORE(SCORE -= 100);
+        if (indiceused2) setSCORE(SCORE -= 100);
+        if (indiceused3) setSCORE(SCORE -= 100);
+    }
 
 
 
+    /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
+    function finalButton() {
+        console.log(SCORE)
+        calculateScore();
+        setGame1(true);  // Change l'état avant de naviguer
+        console.log(SCORE)
+        navigation.navigate('Ingame2Screen'); // Navigue seulement après le fetch
 
-
-
-    useEffect(() => {
-        fetch(`${URL}/etapesEpreuves/${userRedux.scenario}/${userRedux.username}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                // console.log(data);
-                // setTitle(data.name);
-                // setDescription(data.descriptionScenario);
-                // setdifficulte(data.difficulte)
-                // setTheme(data.theme)
-                // setDuree(data.duree);
-                // console.log(data.difficulte)
-                // console.log(data)
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }, [userRedux])
-
-
-
-
-
-
-
-
-
-
-
-    // style={{...styles.input1, backgroundColor: Boolean(frequence1) ? 'green' : 'red'}
+        //     try {
+        //         await fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({ score: SCORE, result: game1 }),
+        //         });
+        //     } catch (error) {
+        //         console.error('Erreur lors de la requête:', error);
+        //     }
+        // }
+    }
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -177,21 +201,28 @@ export default function TestScreen() {
                     </View>
                     {showInputs && (
                         <View style={styles.inputContainer}>
-                            <View style={{ ...styles.input1, backgroundColor: frequence1 === '98.2' ? 'green' : '#1b3815' }}>
-                                <Text style={styles.text1}>HEY PAPA</Text>
+                            <View style={{ ...styles.input1, backgroundColor: frequence1 === goodFrequence1 ? 'green' : '#1b3815' }}>
+                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)}>Indice</Button>
+                                <Text style={styles.text1}>Entrez la 1ere Frequence</Text>
                                 <TextInput placeholderTextColor={'#8aec54'} style={styles.inp1} placeholder="Frequence 1 ..." onChangeText={(value) => testInput1(value)} value={frequence1} />
                             </View>
-                            <View style={{ ...styles.input2, backgroundColor: frequence2 === '94.4' ? 'green' : '#1b3815' }}>
-                                <Text style={styles.text1}>HEY PAPI</Text>
+                            <View style={{ ...styles.input2, backgroundColor: frequence2 === goodFrequence2 ? 'green' : '#1b3815' }}>
+                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)}>Indice</Button>
+                                <Text style={styles.text1}>Entrez la Frequence 2.0</Text>
                                 <TextInput placeholderTextColor={'#8aec54'} placeholder="Frequence 2 ..." onChangeText={(value) => testInput2(value)} value={frequence2} />
                             </View>
-                            <View style={{ ...styles.input3, backgroundColor: frequence3 === '100.3' ? 'green' : '#1b3815' }}>
-                                <Text style={styles.text1}>HEY PAPO</Text>
+                            <View style={{ ...styles.input3, backgroundColor: frequence3 === goodFrequence3 ? 'green' : '#1b3815' }}>
+                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)}></Button>
+                                <Text style={styles.text1}>Entrez la 3eme Frequence</Text>
                                 <TextInput placeholderTextColor={'#8aec54'} placeholder="Frequence 3 ..." onChangeText={(value) => testInput3(value)} value={frequence3} />
                             </View>
                         </View>
-                    )}
-
+                    )}{showfinalbutton && (
+                        <View style={styles.inputContainer}>
+                            <TouchableOpacity onPress={() => finalButton} style={styles.buttonfin}>
+                                <Text style={styles.textButton}>Declencher le scanner QRCODIQUE </Text>
+                            </TouchableOpacity>
+                        </View>)}
                     {modalout && (
                         <Modal visible={modalout} animationType="fade" transparent>
                             <View style={styles.centeredView}>
@@ -217,17 +248,37 @@ export default function TestScreen() {
                                 </View>
                             </View>
                         </Modal>
-                    )}
-                    {modalFinVisible && (
-                        <Modal visible={modalFinVisible} animationType="fade" transparent>
+                    )} {indicemodal1 && (
+                        <Modal visible={indicemodal1} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => {
-                                            setModalFinVisible(false);
-                                            setGame1(true);
-                                        }} style={styles.button}>
-                                            <Text style={styles.textButton}>{/*etape 1reussi*/}</Text>
+                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); setIndiceused1(true) }} style={styles.button}>
+                                            <Text style={styles.textButton}>{indice1}</Text>
+                                        </TouchableOpacity>
+                                    </ImageBackground>
+                                </View>
+                            </View>
+                        </Modal>
+                    )}{indicemodal2 && (
+                        <Modal visible={indicemodal2} animationType="fade" transparent>
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); setIndiceused2(true) }} style={styles.button}>
+                                            <Text style={styles.textButton}>{indice2}</Text>
+                                        </TouchableOpacity>
+                                    </ImageBackground>
+                                </View>
+                            </View>
+                        </Modal>
+                    )}{indicemodal3 && (
+                        <Modal visible={indicemodal3} animationType="fade" transparent>
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); setIndiceused3(true) }} style={styles.button}>
+                                            <Text style={styles.textButton}>{indice3}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
                                 </View>
@@ -240,6 +291,7 @@ export default function TestScreen() {
     );
 }
 
+
 const styles = StyleSheet.create({
     //css VIDEO
     contentContainer: {
@@ -249,9 +301,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 50,
     },
+    buttonfin: {
+        width: '70%',
+        height: '70%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'blue'
+    },
     video: {
         width: 350,
         height: 275,
+    },
+    indicebutton: {
+        backgroundColor: 'white',
+        borderRadius: "50%",
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     controlsContainer: {
         padding: 10,
