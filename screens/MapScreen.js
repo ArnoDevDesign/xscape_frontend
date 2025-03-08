@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+// Composants
 import {
   View,
   StyleSheet,
@@ -11,59 +11,80 @@ import {
   Animated,
   ActivityIndicator,
 } from "react-native";
+import { TouchableWithoutFeedback } from "react-native";
+
+// Map
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { TouchableWithoutFeedback } from "react-native";
 
+// Icones
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+
+// Etats & Redux
+import React, { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addUserToStore } from "../reducers/users";
+
+// URL back
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
+
+
 export default function HomeScreen({ navigation }) {
-  const userRedux = useSelector((state) => state.users.value);
-
-  const dispatch = useDispatch();
-
-  // Format de l'avatar
-  const newFormatAvatar = userRedux.avatar.includes("/upload/")
-    ? userRedux.avatar.replace("/upload/", "/upload/w_230,h_230,r_30/")
-    : userRedux.avatar;
-
-  const gameMarker = {
-    scenario: require("../assets/pinGameok.png"),
-  };
-
-  const mapRef = useRef(null);
-
+  
   // État pour la position de l'utilisateur
-  const [userLocation, setUserLocation] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
+  const [userLocation, setUserLocation] = useState({ latitude: 0, longitude: 0 });
 
   // États pour l'affichage de la modale
   const [modalInfo, setModalInfo] = useState(false);
   const [modalExpanded, setModalExpanded] = useState(false);
 
-  // États pour l'affichage des markers et des infos
+  // États pour l'affichage des markers et des infos dans la modale
   const [scenariosData, setScenariosData] = useState([]);
   const [modalGameName, setModalGameName] = useState("");
   const [modalGameDuration, setModalGameDuration] = useState("");
   const [modalGameInfo, setModalGameInfo] = useState("");
   const [modalGameTheme, setModalGameTheme] = useState("");
 
+  // État pour envoyer la bonne aventure
+  const [selectedScenario, setSelectedScenario] = useState(null);
+
   // États pour gérer les transitions et erreurs
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
 
-  // États pour envoyer la bonne aventure
-  const [selectedScenario, setSelectedScenario] = useState(null);
 
+  // Récupération des données de l'utilisateur
+  const userRedux = useSelector((state) => state.users.value);
+
+  // Initialisation du dispatch pour envoyé les données
+  const dispatch = useDispatch();
+  
+  // modification de l'url de l'image de l'avatar pour la mettre au bon format afin de l'utiliser comme marker
+  const newFormatAvatar = userRedux.avatar.includes("/upload/")
+    ? userRedux.avatar.replace("/upload/", "/upload/w_230,h_230,r_30/")
+    : userRedux.avatar;
+
+  // Personnalisation du Marker jeux
+  const gameMarker = {
+    scenario: require("../assets/pinGameok.png"),
+  };
+
+  // Référence pour la carte
+  const mapRef = useRef(null);
+
+
+  // Fonction pour choisir le scénario
   const choosenScenario = (scenario) => {
-    dispatch(selectedScenario(scenario));
-    dispatch(modalGameName(scenario));
+    dispatch(
+      addUserToStore({
+        scenario: scenario.name, // Stocke le nom du scénario
+        scenarioID: scenario.scenarioID, // Stocke l'ID du scénario
+      })
+    );
+    navigation.navigate("Scenario"); // Navigation vers la page de lancement du scenario
   };
 
   // Géolocalisation de l'utilisateur
@@ -94,14 +115,18 @@ export default function HomeScreen({ navigation }) {
 
   // Récupération des données du scénario depuis la BDD
   useEffect(() => {
-    fetch(`${URL}/scenarios`)
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchScenarios = async () => {
+      try {
+        const response = await fetch(`${URL}/scenarios`);
+        const data = await response.json();
         setScenariosData(data); // Stocke les données des scénarios dans l'état "scenariosData"
-      })
-      .catch((error) => {
+        console.log("selectedScenario", selectedScenario);
+      } catch (error) {
         console.error("Erreur : ", error);
-      });
+      }
+    };
+  
+    fetchScenarios();
   }, []);
 
   const recenterMapOnPinUser = () => {
@@ -208,11 +233,7 @@ export default function HomeScreen({ navigation }) {
 
                     <TouchableOpacity
                       style={styles.startGameButton}
-                      onPress={() => {
-                        choosenScenario(selectedScenario);
-                        console.log("selectedScenario", selectedScenario);
-                        navigation.navigate("StartGame");
-                      }}
+                      onPress={() => choosenScenario({ name: modalGameName, scenarioID: selectedScenario })}
                     >
                       <Text style={styles.startGameButtonText}>
                         Commencer l'aventure

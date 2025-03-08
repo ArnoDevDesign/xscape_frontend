@@ -22,12 +22,13 @@ export const usersSlice = createSlice({
 
             state.value = { ...state.value, ...action.payload };
         },
+
         userLogout: (state) => {
             state.value.token = '';
-        }
+        },
     },
 
 });
 
-export const { addUserToStore, userLogout } = usersSlice.actions;
+export const { addUserToStore, userLogout, addScenario } = usersSlice.actions;
 export default usersSlice.reducer;
