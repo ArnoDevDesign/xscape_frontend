@@ -45,10 +45,10 @@ export default function ProfileScreen({ navigation }) {
     // Récupération des données utilisateur au chargement du composant
     useEffect(() => {
         if (!userRedux.token) {
-            console.log("ProfitesScren : Aucun token trouvé !");
+            console.log("ProfilesScren : Aucun token trouvé !");
             return;
         }
-        console.log("ProfitesScren : Token utilisé :", userRedux.token);
+        console.log("ProfilesScren : Token utilisé :", userRedux.token);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
         fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
                 setScore(data.totalPoints);
                 setScenarios(data.scenarios || []);
             })
-            .catch(error => console.error('ProfitesScren : Erreur de récupération des données:', error));
+            .catch(error => console.error('ProfilesScren : Erreur de récupération des données:', error));
     }, [userRedux.token]);
 
 

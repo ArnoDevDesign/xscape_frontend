@@ -178,6 +178,8 @@ export default function TestScreen() {
         //     }
         // }
     }
+
+
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -219,7 +221,7 @@ export default function TestScreen() {
                         </View>
                     )}{showfinalbutton && (
                         <View style={styles.inputContainer}>
-                            <TouchableOpacity onPress={() => finalButton} style={styles.buttonfin}>
+                            <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
                                 <Text style={styles.textButton}>Declencher le scanner QRCODIQUE </Text>
                             </TouchableOpacity>
                         </View>)}
