@@ -21,7 +21,9 @@ export default function ScenarioScreen({ navigation }) {
     const [duree, setDuree] = useState('')
 
     useEffect(() => {
-        fetch(`${URL}/scenarios/${userRedux.scenario}`)
+        console.log("Redux state:", userRedux)
+        console.log("scenario updates avant fetch", scenarioUpdated)
+        fetch(`${URL}/scenarios/${scenarioUpdated}`)
             .then(response => response.json())
             .then(data => {
                 // console.log(data);

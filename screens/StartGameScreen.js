@@ -15,18 +15,20 @@ export default function StartGameScreen({ navigation }) {
     const userRedux = useSelector((state) => state.users.value);
     const [text, setText] = useState('');
 
+    //////////////////////////////////////// a verifier /////////////////////////////////////////
+    useEffect(() => {
+        console.log('scenario id ', userRedux)
+        fetch(`${URL}/scenarios/descriptionEpreuve/${userRedux.scenarioID}/${userRedux.userID}`)/////////// averifier
+            .then(response => response.json())
+            .then(data => {
+                console.log('data', data)
+                setText(data.descriptionEpreuveData)
+            })
+            .catch(err => console.log(err))
+    }, [userRedux, text])
+    //////////////////////////////////////// a verifier /////////////////////////////////////////
 
-    // useEffect(() => {
-    fetch(`${URL}/scenarios/descriptionEpreuve/${userRedux.scenarioID}/${userRedux.userID}`)
-        .then(res => res.json())
-        .then(data => {
-            // console.log('scenario id ', userRedux.scenarioID)
-            // console.log('user id ', userRedux.userID)
-            // console.log(data.descriptionEpreuveData)
-            setText(data.descriptionEpreuveData)
-        })
-        .catch(err => console.log(err))
-    // }, [])
+
     console.log('textlogg', text)
 
     return (

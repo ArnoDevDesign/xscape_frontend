@@ -81,9 +81,11 @@ export default function MapScreen({ navigation }) {
   // Fonction pour choisir le scénario
   const choosenScenario = (data) => {
     dispatch(
-      addUserToStore(
-        { data } // Stocke l'ID du scénario directement)
-      ))
+      addUserToStore({
+        scenario: data.scenario, // Met à jour la clé scenario
+        scenarioID: data.scenarioID, // Met à jour la clé scenarioID
+      })
+    );
     setModalInfo(false); // Ferme la modale
     setPassageaujeu(true); // Passe à la page du jeu
   };
@@ -96,7 +98,7 @@ export default function MapScreen({ navigation }) {
 
 
 
-  navigation.navigate("Scenario"); // Navigation vers la page du scénario
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Géolocalisation de l'utilisateur
   useEffect(() => {
@@ -245,7 +247,8 @@ export default function MapScreen({ navigation }) {
 
                     <TouchableOpacity
                       style={styles.startGameButton}
-                      onPress={() => choosenScenario({ scenario: scenario.name, scenarioID: selectedScenario })}
+                      onPress={() => choosenScenario({ scenario: modalGameName, scenarioID: selectedScenario })}
+
                     >
                       <Text style={styles.startGameButtonText}>
                         Commencer l'aventure
