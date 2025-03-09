@@ -1,75 +1,306 @@
-import React, { useEffect, useState, useRef, } from "react";
-import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity, ImageBackground } from 'react-native';
-import { CameraView, CameraType, FlashMode } from 'expo-camera';
-import _FontAwesome from 'react-native-vector-icons/FontAwesome';
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { useIsFocused } from '@react-navigation/native';
-import Video from 'expo-video';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEvent } from 'expo';
+import {
+    StyleSheet,
+    View,
+    SafeAreaView,
+    Text,
+    Modal,
+    TouchableOpacity,
+    Animated,
+    Vibration
+} from 'react-native';
+import { Camera, CameraType } from 'expo-camera';
+import { useNavigation } from "@react-navigation/native";
+
+const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 
 export default function IngameScreen2() {
-    const isFocused = useIsFocused();
-    const cameraRef = useRef < CameraView | null > (null);
+    const userRedux = useSelector((state) => state.users.value)
+    // Initialisation de la navigation pour permettre la transition vers l’étape 3
+    const navigation = useNavigation();
+
+    // Référence pour l’accès à la caméra
+    const cameraRef = useRef(null);
+
+    // État pour gérer l’autorisation d’accès à la caméra
     const [hasPermission, setHasPermission] = useState(false);
-    const [facing, setFacing] = useState < CameraType > ("back");
-    const [flash, setFlash] = useState < FlashMode > ("off");
-    const [scanned, setScanned] = useState < string | null > (null);
+
+    // États pour savoir si chaque QR Code a été scanné
     const [scanned1, setScanned1] = useState(false);
     const [scanned2, setScanned2] = useState(false);
     const [scanned3, setScanned3] = useState(false);
+    const [SCORE, setSCORE] = useState(500);
+    // État pour afficher le message final une fois tous les scans validés
+    const [modalreveal, setModalreveal] = useState(false);
+    const [indiceModal, setIndicemodal] = useState(false);
+    // Valeurs des QR Codes attendus (doivent être scannés dans cet ordre précis)
 
 
-    function scanQR(data) {
+    const [goodQRcode1, setGoodQRcode1] = useState('https://qr.codes/vUIYq1');
+    const [goodQRcode2, setGoodQRcode2] = useState('https://qr.codes/FBPR2y');
+    const [goodQRcode3, setGoodQRcode3] = useState('https://qr-code.click/i/67bf284e705af');
+    const [indice1, setIndice1] = useState('SCANNE TOUS LES QR CODES POSSIBLES ATTENTION L ORDRE DE SCAN EST PRIMORDIAL');
+    // Animation pour un effet futuriste (flash rouge/vert lorsqu’un QR est scanné)
+    const flashAnim = useRef(new Animated.Value(0)).current;
+
+    // Créer une animation pour simuler la pulsation de la lumière
+    // Référence pour l'animation du halo lumineux
+    const shadowAnim = useRef(new Animated.Value(10)).current;
+
+    useEffect(() => {
+        fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                setGoodQRcode1(data.QRcode1);
+                setGoodQRcode2(data.QRcode2);
+                setGoodQRcode3(data.QRcode3);
+                setIndice1(data.indice4);
+
+            })
+            .catch((error) => {
+                console.error('Error:', error.message);
+            });
+    }, [userRedux.userID, userRedux.scenarioID]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    useEffect(() => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(shadowAnim, { toValue: 30, duration: 1000, useNativeDriver: false }),
+                Animated.timing(shadowAnim, { toValue: 10, duration: 1000, useNativeDriver: false }),
+            ])
+        ).start();
+    }, []);
+
+    const animatedStyle = {
+        shadowRadius: shadowAnim, // Rayon du halo qui varie en boucle
+        shadowOpacity: shadowAnim.interpolate({
+            inputRange: [10, 20],
+            outputRange: [0.5, 1], // Opacité qui fluctue avec l'ombre
+        }),
+    };
+
+    // Demande de permission pour utiliser la caméra au lancement du composant
+    useEffect(() => {
+        (async () => {
+            const result = await CameraView.requestCameraPermissionsAsync();
+            setHasPermission(result.status === 'granted');
+        })();
+    }, []);
+
+    // Fonction qui gère la lecture des QR codes et vérifie s’ils sont scannés dans le bon ordre
+    const scanQR = (data) => {
         console.log("QR Code Data:", data);
-        if (data === 'https://qr.codes/vUIYq1') {
-            setScanned1(true);
-        } else if (data === 'https://qr.codes/FBPR2y') {
-            if (scanned1) {
-                setScanned2(true);
-            } else {
-                setScanned1(false);
-            }
-        } else if (data === 'https://qr-code.click/i/67bf284e705af') {
-            if (scanned1 && scanned2) {
-                setScanned3(true);
-            } else {
-                setScanned1(false);
-                setScanned2(false);
-            }
-        } if (scanned1 && scanned2 && scanned3) { setJoVideo(true) }
+
+        if (!scanned1 && data === goodQRcode1) {
+            setScanned1(true);  // Premier QR Code validé
+            flashScreen("green");
+        } else if (!scanned2 && scanned1 && data === goodQRcode2) {
+            setScanned2(true);  // Deuxième QR Code validé
+            flashScreen("green");
+        } else if (!scanned3 && scanned1 && scanned2 && data === goodQRcode3) {
+            setScanned3(true);  // Troisième QR Code validé
+            flashScreen("green");
+
+            // Une fois tous les QR codes scannés dans le bon ordre, afficher le message final
+            //avec une seconde de latence pour laisser le temps à l’animation de se terminer
+            setTimeout(() => setModalreveal(true), 1000);
+        } else {
+            // QR Code incorrect ou scanné dans le mauvais ordre
+            flashScreen("red");
+            Vibration.vibrate();
+        }
+    };
+
+    // Fonction qui permet de passer à l’étape 3 après la validation
+
+    function INDICE() {
+        setSCORE(prevScore => prevScore - 100)
+        setIndicemodal(false);
     }
+
+
+    const passageau3 = () => {
+        setModalreveal(false);
+        navigation.navigate('Ingame3');
+    };
+
     return (
+        <View style={styles.container}>
+            <SafeAreaView />
 
-        <View>
-            <Text>game 2 </Text>
+            {/* Vue de la caméra pour scanner les QR Codes */}
+            <View style={styles.CameraView}>
+                {hasPermission && (
+                    <CameraView
+                        onBarcodeScanned={({ data }) => scanQR(data)} // Appelle scanQR lorsqu'un QR est scanné
+                        flash={flash}
+                        facing={facing}
+                        style={styles.Camera}
+                        ref={cameraRef}
+                    />
+                )}
+            </View>
+            <View style={styles.lightContainer}>
+                <Animated.View style={[styles.light, scanned1 ? styles.greenLight : styles.redLight, animatedStyle]} />
+                <Animated.View style={[styles.light, scanned2 ? styles.greenLight : styles.redLight, animatedStyle]} />
+                <Animated.View style={[styles.light, scanned3 ? styles.greenLight : styles.redLight, animatedStyle]} />
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => setIndicemodal(true)} style={styles.button}>
+                    <Text style={styles.textButton}>Indice</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* Animation Flash */}
+            <Animated.View style={[styles.flashOverlay, { opacity: flashAnim }]} />
+
+            {/* Modal qui s'affiche après le scan réussi des 3 QR codes */}
+            {indiceModal && (
+                <Modal visible={indiceModal} animationType="fade" transparent>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <TouchableOpacity onPress={INDICE} style={styles.button}>
+                                <Text style={styles.textButton}>{indice1}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+            {modalreveal && (
+                <Modal visible={modalreveal} animationType="fade" transparent>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <TouchableOpacity onPress={passageau3} style={styles.button}>
+                                <Text style={styles.textButton}>✅ Triangulation réussie ! La capsule a été localisée.</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
         </View>
-
-
-
-    )
+    );
 }
 
+
 const styles = StyleSheet.create({
+    light: {
+        width: 80,  // Taille fixe de la lumière
+        height: 80,
+        borderRadius: 40, // Cercle parfait
+        borderWidth: 3,
+        borderColor: 'white',
+        elevation: 10, // Effet 3D sur Android
+    },
+    greenLight: {
+        backgroundColor: 'rgba(0, 255, 0, 0.7)', // Lumière verte semi-transparente
+        shadowColor: 'rgba(0, 255, 0, 1)', // Halo lumineux vert
+    },
+    redLight: {
+        backgroundColor: 'rgba(255, 0, 0, 0.7)', // Lumière rouge semi-transparente
+        shadowColor: 'rgba(255, 0, 0, 1)', // Halo lumineux rouge
+    },
+    container: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black',
+    },
+    CameraView: {
+        width: '100%',
+        height: '50%',
+        borderWidth: 5,
+        borderColor: 'gray',
+    },
+    Camera: {
+        width: '100%',
+        height: '100%',
+    },
+    lightContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginVertical: 20,
+    },
+    light: {
+        width: 100,
+        height: 100,
+        borderRadius: 30, // Cercle lumineux
+        borderWidth: 3,
+        borderColor: 'white',
+    },
+    lightContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginVertical: 20,
+    },
+    light: {
+        width: 80,  // Augmenter la taille pour accentuer l’effet de lumière
+        height: 80,
+        borderRadius: 40, // Cercle parfait
+        borderWidth: 3,
+        borderColor: 'white',
+        shadowColor: 'rgba(255, 255, 255, 0.8)', // Ajout d’un halo lumineux
+        shadowOpacity: 1,
+        shadowRadius: 20, // Rayon du halo lumineux
+        elevation: 10, // Pour donner un effet en 3D sur Android
+    },
+    greenLight: {
+        backgroundColor: 'rgba(0, 255, 0, 0.7)', // Lumière verte semi-transparente
+        shadowColor: 'rgba(0, 255, 0, 1)', // Halo lumineux vert
+    },
+    redLight: {
+        backgroundColor: 'rgba(255, 0, 0, 0.7)', // Lumière rouge semi-transparente
+        shadowColor: 'rgba(255, 0, 0, 1)', // Halo lumineux rouge
+    },
+    flashOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "red", // Change de couleur selon le flash activé
+    },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalView: {
-        // backgroundColor: 'white',
-        borderRadius: 30,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 2,
-            height: 4,
-        },
-        width: 300,
-        height: 300,
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
         elevation: 5,
     },
-})
+    button: {
+        backgroundColor: "#1E90FF",
+        padding: 15,
+        borderRadius: 10,
+        marginTop: 20,
+    },
+    textButton: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+});

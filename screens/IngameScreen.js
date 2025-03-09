@@ -202,23 +202,21 @@ export default function TestScreen() {
                     </View>
                     {showInputs && (
                         <View style={styles.inputContainer}>
-                            <View style={{ ...styles.input1, backgroundColor: frequence1 === goodFrequence1 ? 'green' : '#1b3815' }}>
-                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)}>Indice</Button>
-                                <Text style={styles.text1}>Entrez la 1ere Frequence</Text>
-                                <TextInput placeholderTextColor={'#8aec54'} style={styles.inp1} placeholder="Frequence 1 ..." onChangeText={(value) => testInput1(value)} value={frequence1} />
+                            <View style={[styles.input1, frequence1.length > 0 && styles.inputActive]}>
+                                <TextInput placeholderTextColor={'#8aec54'} style={styles.inp1} placeholder="Entrez la 1ere Frequence " onChangeText={(value) => testInput1(value)} value={frequence1} />
                             </View>
-                            <View style={{ ...styles.input2, backgroundColor: frequence2 === goodFrequence2 ? 'green' : '#1b3815' }}>
-                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)}>Indice</Button>
-                                <Text style={styles.text1}>Entrez la Frequence 2.0</Text>
-                                <TextInput placeholderTextColor={'#8aec54'} placeholder="Frequence 2 ..." onChangeText={(value) => testInput2(value)} value={frequence2} />
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)}>Indice</Button>
+                            <View style={[styles.input2, frequence2.length > 0 && styles.inputActive]}>
+                                <TextInput placeholderTextColor={'#8aec54'} placeholder="Entrez la Frequence 2.0" onChangeText={(value) => testInput2(value)} value={frequence2} />
                             </View>
-                            <View style={{ ...styles.input3, backgroundColor: frequence3 === goodFrequence3 ? 'green' : '#1b3815' }}>
-                                <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)}></Button>
-                                <Text style={styles.text1}>Entrez la 3eme Frequence</Text>
-                                <TextInput placeholderTextColor={'#8aec54'} placeholder="Frequence 3 ..." onChangeText={(value) => testInput3(value)} value={frequence3} />
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)}>Indice</Button>
+                            <View style={[styles.input3, frequence3.length > 0 && styles.inputActive]}>
+                                <TextInput placeholderTextColor={'#8aec54'} placeholder="Entrez la 3eme Frequence" onChangeText={(value) => testInput3(value)} value={frequence3} />
                             </View>
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)}></Button>
                         </View>
-                    )}{showfinalbutton && (
+                    )}
+                    {showfinalbutton && (
                         <View style={styles.inputContainer}>
                             <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
                                 <Text style={styles.textButton}>Declencher le scanner QRCODIQUE </Text>
@@ -294,6 +292,14 @@ export default function TestScreen() {
 
 
 const styles = StyleSheet.create({
+    inputActive: {
+        borderColor: '#ffcc00', // Couleur jaune pour simuler un signal fort
+        borderWidth: 5,
+        shadowColor: '#ffcc00',
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+
+    },
     //css VIDEO
     contentContainer: {
         flex: 1,
@@ -313,6 +319,7 @@ const styles = StyleSheet.create({
         width: 350,
         height: 275,
     },
+
     indicebutton: {
         backgroundColor: 'white',
         borderRadius: "50%",
@@ -374,7 +381,7 @@ const styles = StyleSheet.create({
     },
     input1: {
         width: "80%",
-        height: 100,
+        height: '20%',
         backgroundColor: '#1b3815',
         borderColor: 'black',
         borderWidth: 4,
@@ -403,21 +410,21 @@ const styles = StyleSheet.create({
     },
     input2: {
         width: "80%",
-        height: 100,
+        height: '20%',
         backgroundColor: '#1b3815',
-        justifyContent: 'center',
-        alignItems: 'center',
         borderColor: 'black',
         borderWidth: 4,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     input3: {
         width: "80%",
-        height: 100,
+        height: '20%',
         backgroundColor: '#1b3815',
-        justifyContent: 'center',
-        alignItems: 'center',
         borderColor: 'black',
         borderWidth: 4,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     text1: {
         color: '#8aec54'

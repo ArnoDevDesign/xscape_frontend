@@ -4,8 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Import des screens
-// import GameScreen from './screens/GameScreen';
 import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -17,7 +15,6 @@ import IngameScreen from './screens/IngameScreen'
 import IngameScreen3 from './screens/IngameScreen3'
 import IngameScreen2 from './screens/IngameScreen2'
 
-// Import Redux
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import users from './reducers/users';
@@ -67,8 +64,7 @@ const TabNavigator = () => {
         tabBarActiveTintColor: '#ec6e5b',
         tabBarInactiveTintColor: '#335561',
         headerShown: false,
-      })}
-    >
+      })}>
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
       <Tab.Screen name="Avatar" component={AvatarScreen} />

@@ -80,6 +80,14 @@ export default function MapScreen({ navigation }) {
 
   // Fonction pour choisir le scénario
   const choosenScenario = (data) => {
+    fetch(`${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scenarioId: userRedux.scenarioID, userId: userRedux.userID }),
+    }).then(response => response.json())
+      .then(data => {
+        console.log("log de creation de session", data)
+      })
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario

@@ -28,7 +28,6 @@ export default function StartGameScreen({ navigation }) {
     }, [userRedux, text])
     //////////////////////////////////////// a verifier /////////////////////////////////////////
 
-
     console.log('textlogg', text)
 
     return (
