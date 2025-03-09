@@ -158,26 +158,25 @@ export default function TestScreen() {
 
 
     /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
-    function finalButton() {
+    async function finalButton() {
         console.log(SCORE)
         calculateScore();
         setGame1(true);  // Change l'état avant de naviguer
         console.log(SCORE)
-        navigation.navigate('Ingame2Screen'); // Navigue seulement après le fetch
-
-        //     try {
-        //         await fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify({ score: SCORE, result: game1 }),
-        //         });
-        //     } catch (error) {
-        //         console.error('Erreur lors de la requête:', error);
-        //     }
-        // }
+        navigation.navigate('Ingame2'); // Navigue seulement après le fetch
+        try {
+            await fetch(`${URL}/scenarios/updateScore/${userRedux.scenarioID}/${userRedux.userID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ score: SCORE, result: game1 }),
+            });
+        } catch (error) {
+            console.error('Erreur lors de la requête:', error);
+        }
     }
+
 
 
     return (

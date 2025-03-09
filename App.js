@@ -14,7 +14,7 @@ import ScenarioScreen from './screens/ScenarioScreen'
 import StartGameScreen from './screens/StartGameScreen'
 import EndScreen from './screens/EndScreen'
 import IngameScreen from './screens/IngameScreen'
-import Ingame3Screen from './screens/Ingame3Screen'
+import IngameScreen3 from './screens/IngameScreen3'
 import IngameScreen2 from './screens/IngameScreen2'
 
 // Import Redux
@@ -77,10 +77,7 @@ const TabNavigator = () => {
       <Tab.Screen name="End" component={EndScreen} />
       <Tab.Screen name="Ingame" component={IngameScreen} />
       <Tab.Screen name="Ingame2" component={IngameScreen2} />
-      <Tab.Screen name="Ingame3" component={Ingame3Screen} />
-
-
-      {/* <Tab.Screen name="Game" component={GameScreen} /> */}
+      <Tab.Screen name="Ingame3" component={IngameScreen3} />
     </Tab.Navigator>
   );
 };
@@ -90,18 +87,15 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-
           <Stack.Screen name="Home" component={LoginScreen} />
           <Stack.Screen name="Avatar" component={AvatarScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
-          {/* <Stack.Screen name="Scenario" component={SCenarioScreen} />
+          <Stack.Screen name="Scenario" component={ScenarioScreen} />
           <Stack.Screen name="StartGame" component={StartGameScreen} />
-          <Stack.Screen name="End" component={EndScreen} /> */}
-          {/* <Stack.Screen name="InGame" component={IngameScreen} /> */}
-          {/* <Stack.Screen name="InGame2" component={IngameScreen2} /> */}
-
-          {/* <Stack.Screen name="InGame3" component={IngameScreen3} /> */}
-
+          <Stack.Screen name="End" component={EndScreen} />
+          <Stack.Screen name="Ingame" component={IngameScreen} />
+          <Stack.Screen name="Ingame2" component={IngameScreen2} />
+          <Stack.Screen name="Ingame3" component={IngameScreen3} />
           <Stack.Screen name="Profil" component={ProfileScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>

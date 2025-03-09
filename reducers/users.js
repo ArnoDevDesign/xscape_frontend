@@ -18,7 +18,7 @@ export const usersSlice = createSlice({
     initialState,
     reducers: {
         addUserToStore: (state, action) => {
-            console.log("payload ind redux", action.payload);
+            console.log("payload sent to redux", action.payload);
 
             state.value = { ...state.value, ...action.payload };
         },

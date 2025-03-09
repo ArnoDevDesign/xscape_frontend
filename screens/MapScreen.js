@@ -46,7 +46,7 @@ export default function HomeScreen({ navigation }) {
   const [modalGameDuration, setModalGameDuration] = useState("");
   const [modalGameInfo, setModalGameInfo] = useState("");
   const [modalGameTheme, setModalGameTheme] = useState("");
-
+  const [passageaujeu, setPassageaujeu] = useState(false);
   // État pour envoyer la bonne aventure
   const [selectedScenario, setSelectedScenario] = useState(null);
 
@@ -75,18 +75,29 @@ export default function HomeScreen({ navigation }) {
   // Référence pour la carte
   const mapRef = useRef(null);
 
+  //////////////////////////////////////////////////////A REVOIR ////////////////////////////////////////////
+  // revoir l envoi d§es donnees redux en passant par addusertostore 
 
   // Fonction pour choisir le scénario
-  const choosenScenario = (scenario) => {
+  const choosenScenario = (data) => {
     dispatch(
-      addUserToStore({
-        scenario: scenario.name, // Stocke le nom du scénario
-        scenarioID: scenario.scenarioID, // Stocke l'ID du scénario
-      })
-    );
-    navigation.navigate("Scenario"); // Navigation vers la page de lancement du scenario
+      addUserToStore(
+        { data } // Stocke l'ID du scénario directement)
+      ))
+    setModalInfo(false); // Ferme la modale
+    setPassageaujeu(true); // Passe à la page du jeu
   };
 
+  useEffect(() => {
+    if (passageaujeu) {
+      navigation.navigate("Scenario");
+    }
+  }, [passageaujeu])
+
+
+
+  navigation.navigate("Scenario"); // Navigation vers la page du scénario
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Géolocalisation de l'utilisateur
   useEffect(() => {
     (async () => {
@@ -94,7 +105,7 @@ export default function HomeScreen({ navigation }) {
 
       // Demande de permission pour la géolocalisation
       if (status === "granted") {
-        // Si autorisation alors on récupère la position
+        // Si autorisation alors on récupère la position 
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
           setIsLoading(false); // État de chargement à false
@@ -182,12 +193,13 @@ export default function HomeScreen({ navigation }) {
             }}
             image={gameMarker.scenario}
             onPress={() => {
+              console.log("data", data.name, data._id,);
               setModalGameName(data.name);
               setModalGameTheme(data.theme);
               setModalGameDuration(data.duree);
               setModalGameInfo(data.infoScenario);
               setModalInfo(true);
-              setSelectedScenario(data.scenarioID);
+              setSelectedScenario(data._id);
             }}
           />
         ))}
@@ -233,7 +245,7 @@ export default function HomeScreen({ navigation }) {
 
                     <TouchableOpacity
                       style={styles.startGameButton}
-                      onPress={() => choosenScenario({ name: modalGameName, scenarioID: selectedScenario })}
+                      onPress={() => choosenScenario({ scenario: scenario.name, scenarioID: selectedScenario })}
                     >
                       <Text style={styles.startGameButtonText}>
                         Commencer l'aventure
