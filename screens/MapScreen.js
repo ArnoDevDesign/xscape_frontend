@@ -31,7 +31,7 @@ const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 
 
-export default function HomeScreen({ navigation }) {
+export default function MapScreen({ navigation }) {
 
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({ latitude: 0, longitude: 0 });
