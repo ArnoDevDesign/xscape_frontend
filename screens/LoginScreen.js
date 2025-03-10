@@ -123,7 +123,7 @@ export default function LoginScreen({ navigation }) {
                 <Modal visible={modalLogIn} animationType="fade" transparent>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={{fontSize: 20, padding: 10}}>Connexion</Text>
+                            <Text style={{ fontSize: 20, padding: 10 }}>Connexion</Text>
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
@@ -144,7 +144,7 @@ export default function LoginScreen({ navigation }) {
                                     <FontAwesome name={showPasswordConnection ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={logIN} activeOpacity={0.8}> 
+                            <TouchableOpacity onPress={logIN} activeOpacity={0.8}>
                                 <Text style={styles.textButton}>Se connecter</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setmodalLogIn(false)} activeOpacity={0.8}>
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         margin: 10,
         paddingLeft: 10
     },
-    cta:{
+    cta: {
         backgroundcolor: "black",
         // width: 20,
         fontSize: 20,

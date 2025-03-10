@@ -68,11 +68,11 @@ const TabNavigator = () => {
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
       <Tab.Screen name="Avatar" component={AvatarScreen} />
-      <Tab.Screen name="Scenario" component={ScenarioScreen} />
-      <Tab.Screen name="StartGame" component={StartGameScreen} />
+      {/* <Tab.Screen name="Scenario" component={ScenarioScreen} /> */}
+      {/* <Tab.Screen name="StartGame" component={StartGameScreen} /> */}
       <Tab.Screen name="End" component={EndScreen} />
-      <Tab.Screen name="Ingame" component={IngameScreen} />
-      <Tab.Screen name="Ingame2" component={IngameScreen2} />
+      {/* <Tab.Screen name="Ingame" component={IngameScreen} /> */}
+      {/* <Tab.Screen name="Ingame2" component={IngameScreen2} /> */}
       <Tab.Screen name="Ingame3" component={IngameScreen3} />
     </Tab.Navigator>
   );
