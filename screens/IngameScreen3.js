@@ -2,13 +2,13 @@ import React, { useState, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Modal, Animated } from "react-native";
 
 export default function Ingame3Screen() {
-    const [title, setTitle] = useState("Activez les boutons dans le bon ordre !");
+    const [title, setTitle] = useState("Activez les boutons dans le bon ordre  pour DEMINIATURISER LA CAPSULE!");
     const [pressedOrder, setPressedOrder] = useState([]);
     const [attempts, setAttempts] = useState(3);
     const [gameOver, setGameOver] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [score, setScore] = useState(500);
-
+    const [game3, setGame3] = useState(false);
     // Animation
     const shakeAnim = useRef(new Animated.Value(0)).current;
 
@@ -24,7 +24,8 @@ export default function Ingame3Screen() {
             setPressedOrder(newOrder);
 
             if (newOrder.length === correctSequence.length) {
-                setTitle("✔️ Succès ! Séquence validée.");
+                setTitle("YES !!! Vous avez réussi à déminaturiser la capsule !");
+                setGame3(true);
             }
         } else {
             const newAttempts = attempts - 1;
@@ -34,12 +35,12 @@ export default function Ingame3Screen() {
             triggerShake();
 
             if (newAttempts === 0) {
-                setTitle("❌ Échec ! Vous avez besoin d'un indice.");
+                setTitle("ATTENTION ! plus qu'une chance , on est pret de l apocalypse !");
                 setGameOver(true);
                 setModalVisible(true);
-                setScore(prevScore => Math.max(0, prevScore - 250)); // Décrémente le score
+                setScore(prevScore => prevScore - 250); // Décrémente le score
             } else {
-                setTitle(`⚠️ Mauvaise séquence ! Il reste ${newAttempts} essais.`);
+                setTitle(` WOOOOOW ! tu as entendu ce bruit ??? c ets pas bon ca !!! Il reste ${newAttempts} essais.`);
                 setPressedOrder([]);
             }
         }
@@ -56,7 +57,7 @@ export default function Ingame3Screen() {
 
     function resetGame() {
         setModalVisible(false);
-        setTitle("🔄 Essayez à nouveau !");
+        setTitle("Essayez à nouveau !");
         setAttempts(3);
         setGameOver(false);
         setPressedOrder([]);
@@ -74,22 +75,22 @@ export default function Ingame3Screen() {
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                    <Text style={styles.metalButtonText}>Bouton 1</Text>
+                    <Text style={styles.metalButtonText}>INITIALISATION</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity disabled={gameOver} onPress={() => handlePress(2)} style={styles.metalButton}>
-                    <Text style={styles.metalButtonText}>Bouton 2</Text>
+                    <Text style={styles.metalButtonText}>EMBOUCANISATION</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity disabled={gameOver} onPress={() => handlePress(3)} style={styles.metalButton}>
-                    <Text style={styles.metalButtonText}>Bouton 3</Text>
+                    <Text style={styles.metalButtonText}>DEPRESURISATION</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity disabled={gameOver} onPress={() => handlePress(4)} style={styles.metalButton}>
-                    <Text style={styles.metalButtonText}>Bouton 4</Text>
+                    <Text style={styles.metalButtonText}>DEGORGAGE DE POIREAU</Text>
                 </TouchableOpacity>
             </View>
 
@@ -97,7 +98,7 @@ export default function Ingame3Screen() {
             <Modal visible={modalVisible} animationType="slide" transparent>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>💡 Indice : Essayez une séquence plus logique !</Text>
+                        <Text style={styles.modalText}>LA!, c est LA M... concentre toi s'il te plait </Text>
                         <TouchableOpacity onPress={resetGame} style={styles.modalButton}>
                             <Text style={styles.modalButtonText}>Réessayer</Text>
                         </TouchableOpacity>
@@ -195,5 +196,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "white",
-    }, r
+    },
 });

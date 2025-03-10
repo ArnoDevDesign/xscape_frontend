@@ -43,7 +43,7 @@ export default function TestScreen({ navigation }) {
     const [indicemodal2, setIndicemodal2] = useState(false)
     const [indicemodal3, setIndicemodal3] = useState(false)
     const [showfinalbutton, setShowfinalbutton] = useState(false)
-
+    const { lastvideo, setLastvideo } = useState(false)
     const [SCORE, setSCORE] = useState(500)
 
     const [lightColor, setLightColor] = useState("yellow"); // Lumière par défaut
@@ -60,7 +60,7 @@ export default function TestScreen({ navigation }) {
     ////////////////useVideoPlayer pour la video
     const player = useVideoPlayer(videoSource, (player) => {
         player.play(); // Lance la vidéo automatiquement
-        player.loop = true; // Active la boucle
+        if (game1 === true) { player.loop = false } else { player.loop = true }; // Active la boucle
     });
 
 
@@ -200,7 +200,7 @@ export default function TestScreen({ navigation }) {
         if (game1) {  // Vérifier que le jeu est terminé avant d'envoyer le score
             console.log("Score mis à jour, envoi au backend:", SCORE);
 
-            fetch(`${URL}/scenarios/epreuveValidatedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
+            fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -210,14 +210,14 @@ export default function TestScreen({ navigation }) {
                 .then(response => response.json())
                 .then(data => {
                     console.log("Score mis à jour dans la base de données", data);
-                    navigation.navigate('Ingame2'); // Naviguer après la mise à jour
+                    setJoVideo(false);
+                    navigation.navigate("Ingame2"); // Naviguer après la mise à jour
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
         }
     }, [SCORE, finalButton]); // Se déclenche quand SCORE change
-
 
 
     return (
@@ -252,7 +252,7 @@ export default function TestScreen({ navigation }) {
                                     value={frequence1}
                                 />
                             </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)}></Button>
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)} />
                             <View style={[styles.light, { backgroundColor: frequence2 === goodFrequence2 ? "green" : frequence2 ? "red" : "white" }]} >
                                 <TextInput
                                     placeholderTextColor={'#8aec54'}
@@ -263,7 +263,7 @@ export default function TestScreen({ navigation }) {
                                 />
 
                             </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)}></Button>
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)} />
                             <View style={[styles.light, { backgroundColor: frequence3 === goodFrequence3 ? "green" : frequence3 ? "red" : "white" }]} >
                                 <TextInput
                                     placeholderTextColor={'#8aec54'}
@@ -273,7 +273,7 @@ export default function TestScreen({ navigation }) {
                                     value={frequence3}
                                 />
                             </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)}></Button>
+                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)} />
                         </View>
                     )}
                     {showfinalbutton && (

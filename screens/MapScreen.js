@@ -87,7 +87,9 @@ export default function MapScreen({ navigation }) {
     }).then(response => response.json())
       .then(data => {
         console.log("log de creation de session", data)
-      })
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario
