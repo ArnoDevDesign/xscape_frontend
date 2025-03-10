@@ -29,12 +29,30 @@ import { addUserToStore } from "../reducers/users";
 // URL back
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
+// distances d'entré dans le périmètre d'un jeu
+const PROXIMITY_THRESHOLD = 100;
 
+// calcule de la distance entre l'utilisateur et un jeu
+const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
 
 export default function MapScreen({ navigation }) {
-
   // État pour la position de l'utilisateur
-  const [userLocation, setUserLocation] = useState({ latitude: 0, longitude: 0 });
+  const [userLocation, setUserLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
 
   // États pour l'affichage de la modale
   const [modalInfo, setModalInfo] = useState(false);
@@ -50,17 +68,22 @@ export default function MapScreen({ navigation }) {
   // État pour envoyer la bonne aventure
   const [selectedScenario, setSelectedScenario] = useState(null);
 
+  // État pour l'activation du bouton de démarrage de l'aventure
+  const [isUserNear, setIsUserNear] = useState(false);
+
   // États pour gérer les transitions et erreurs
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
 
   // Initialisation du dispatch pour envoyé les données
   const dispatch = useDispatch();
+
+  // Référence pour la carte
+  const mapRef = useRef(null);
 
   // modification de l'url de l'image de l'avatar pour la mettre au bon format afin de l'utiliser comme marker
   const newFormatAvatar = userRedux.avatar.includes("/upload/")
@@ -72,23 +95,22 @@ export default function MapScreen({ navigation }) {
     scenario: require("../assets/pinGameok.png"),
   };
 
-  // Référence pour la carte
-  const mapRef = useRef(null);
-
-  //////////////////////////////////////////////////////A REVOIR ////////////////////////////////////////////
-  // revoir l envoi d§es donnees redux en passant par addusertostore 
-
   // Fonction pour choisir le scénario
   const choosenScenario = (data) => {
-    fetch(`${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scenarioId: userRedux.scenarioID, userId: userRedux.userID }),
-    }).then(response => response.json())
-      .then(data => {
-        console.log("log de creation de session", data)
-      }).catch((error) => {
-        console.error('Error:', error);
+    fetch(
+      `${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scenarioId: userRedux.scenarioID,
+          userId: userRedux.userID,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("log de creation de session", data);
       });
     dispatch(
       addUserToStore({
@@ -104,12 +126,8 @@ export default function MapScreen({ navigation }) {
     if (passageaujeu) {
       navigation.navigate("Scenario");
     }
-  }, [passageaujeu])
+  }, [passageaujeu]);
 
-
-
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Géolocalisation de l'utilisateur
   useEffect(() => {
     (async () => {
@@ -117,7 +135,7 @@ export default function MapScreen({ navigation }) {
 
       // Demande de permission pour la géolocalisation
       if (status === "granted") {
-        // Si autorisation alors on récupère la position 
+        // Si autorisation alors on récupère la position
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
           setIsLoading(false); // État de chargement à false
@@ -176,49 +194,60 @@ export default function MapScreen({ navigation }) {
     </View>
   ) : (
     <Animated.View style={[styles.mapContainer, { opacity: fadeIn }]}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: userLocation.latitude || 48.866667,
-          longitude: userLocation.longitude || 2.333333,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.008,
-        }}
-      >
-        {/* Marker pour la position de l'utilisateur */}
-        {userLocation && (
-          <Marker
-            coordinate={userLocation}
-            image={{ uri: newFormatAvatar }}
-            onPress={() => navigation.navigate("Profil")}
-          />
-        )}
+      <View style={styles.container}>
+        <View style={styles.mapContainer2}>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
+              latitude: userLocation.latitude || 48.866667,
+              longitude: userLocation.longitude || 2.333333,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.008,
+            }}
+          >
+            {/* Marker pour la position de l'utilisateur */}
+            {userLocation && (
+              <Marker
+                coordinate={userLocation}
+                image={{ uri: newFormatAvatar }}
+                onPress={() => navigation.navigate("Profil")}
+              />
+            )}
 
-        {/* Markers des jeux */}
-        {scenariosData.map((data, i) => (
-          <Marker
-            key={i}
-            coordinate={{
-              latitude: data.geolocalisation?.latitude ?? 48.866667,
-              longitude: data.geolocalisation?.longitude ?? 2.333333,
-            }}
-            image={gameMarker.scenario}
-            onPress={() => {
-              console.log("data", data.name, data._id,);
-              setModalGameName(data.name);
-              setModalGameTheme(data.theme);
-              setModalGameDuration(data.duree);
-              setModalGameInfo(data.infoScenario);
-              setModalInfo(true);
-              setSelectedScenario(data._id);
-            }}
-          />
-        ))}
-      </MapView>
+            {/* Markers des jeux */}
+            {scenariosData.map((data, i) => (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: data.geolocalisation?.latitude ?? 48.866667,
+                  longitude: data.geolocalisation?.longitude ?? 2.333333,
+                }}
+                image={gameMarker.scenario}
+                onPress={() => {
+                  console.log("data", data.name, data._id);
+                  setModalGameName(data.name);
+                  setModalGameTheme(data.theme);
+                  setModalGameDuration(data.duree);
+                  setModalGameInfo(data.infoScenario);
+                  setModalInfo(true);
+                  setSelectedScenario(data._id);
+                  const distance = getDistanceFromLatLonInMeters(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    data.geolocalisation.latitude,
+                    data.geolocalisation.longitude
+                  );
+                  setIsUserNear(distance <= PROXIMITY_THRESHOLD);
+                }}
+              />
+            ))}
+          </MapView>
+        </View>
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={recenterMapOnPinUser}>
-          <FontAwesome name="map-marker" size={42} color="#009EBA" />
+          <FontAwesome name="map-marker" size={42} color="#85CAE4" />
         </TouchableOpacity>
       </View>
 
@@ -227,8 +256,8 @@ export default function MapScreen({ navigation }) {
         <Modal visible={modalInfo} animationType="fade" transparent>
           <TouchableWithoutFeedback
             onPress={() => {
-              setModalInfo(false); // Ferme la modale
-              setModalExpanded(false); // Réinitialise l'état de "expanded" à false
+              setModalInfo(false);
+              setModalExpanded(false);
             }}
           >
             <View style={styles.centeredView}>
@@ -237,33 +266,33 @@ export default function MapScreen({ navigation }) {
                   styles.modalView,
                   modalExpanded && styles.expandedModal,
                 ]}
-                onPress={() => {
-                  if (!modalExpanded) {
-                    setModalExpanded(true); // Agrandit la modale si elle est réduite
-                  }
-                }}
+                onPress={() => !modalExpanded && setModalExpanded(true)}
               >
                 <Text style={styles.modalTitle}>{modalGameName}</Text>
-                <Text style={styles.modalInfo}>
-                  Thème de l'aventure : {modalGameTheme}
-                </Text>
-                <Text style={styles.modalTheme}>
-                  Durée estimée : {modalGameDuration} min.
-                </Text>
-
+                <Text style={styles.modalTheme}>{modalGameTheme}</Text>
+                <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
                 {modalExpanded && (
                   <>
-                    <Text style={styles.additionalInfo}>{modalGameInfo}</Text>
-
-                    <TouchableOpacity
-                      style={styles.startGameButton}
-                      onPress={() => choosenScenario({ scenario: modalGameName, scenarioID: selectedScenario })}
-
-                    >
-                      <Text style={styles.startGameButtonText}>
-                        Commencer l'aventure
+                    <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
+                    {isUserNear ? (
+                      <TouchableOpacity
+                        style={styles.startGameButton}
+                        onPress={() =>
+                          choosenScenario({
+                            scenario: modalGameName,
+                            scenarioID: selectedScenario,
+                          })
+                        }
+                      >
+                        <Text style={styles.startGameButtonText}>
+                          Lancer l'aventure
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text style={styles.textGoAventure}>
+                        Rends-toi sur place pour commencer l'aventure.
                       </Text>
-                    </TouchableOpacity>
+                    )}
                   </>
                 )}
               </Pressable>
@@ -277,13 +306,24 @@ export default function MapScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
-    backgroundColor: "#58BBBF",
+    backgroundColor: "#85CAE4",
+  },
+
+  mapContainer2: {
+    alignSelf: "center",
+    height: "96%",
+    width: "94%",
+    borderRadius: 20,
+    overflow: "hidden",
   },
 
   map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    flex: 1,
+    height: "100%",
+    width: "100%",
   },
 
   buttonContainer: {
@@ -305,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fond assombri derrière la modale
+    // backgroundColor: "rgba(0, 0, 0, 0.5)", // Fond assombri derrière la modale
   },
 
   modalView: {
@@ -315,40 +355,42 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     width: "80%",
-    height: 100,
+    padding: 24,
     elevation: 3,
   },
 
-  expandedModal: {
-    height: 400, // Taille agrandie lorsqu'on clique dessus
-  },
+  expandedModal: {},
 
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#009EBA",
+    textAlign: "center",
+    marginBottom: 16,
   },
 
-  modalInfo: {
+  modalInfoText: {
     fontSize: 14,
     color: "#636773",
+    padding: 10,
+    textAlign: "left",
   },
 
   modalTheme: {
     fontSize: 14,
+    fontWeight: "bold",
     color: "#636773",
     textAlign: "left",
   },
 
   additionalInfo: {
     fontSize: 14,
-    color: "#636773",
+    color: "#003046",
     textAlign: "left",
-    padding: 10,
   },
 
   startGameButton: {
-    width: "80%",
+    width: "90%",
     height: 56,
     alignItems: "center",
     justifyContent: "center",
@@ -361,13 +403,21 @@ const styles = StyleSheet.create({
   startGameButtonText: {
     color: "white",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+
+  textGoAventure: {
+    color: "#FF8527",
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 10,
   },
 
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#58BBBF",
+    backgroundColor: "#85CAE4",
   },
   loaderText: {
     fontSize: 20,
