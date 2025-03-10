@@ -65,10 +65,10 @@ export default function IngameScreen2({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-                setGoodQRcode1(data.QRcode1);
-                setGoodQRcode2(data.QRcode2);
-                setGoodQRcode3(data.QRcode3);
-                setIndice1(data.indice4);
+                setGoodQRcode1(data.goodFrequence1);
+                setGoodQRcode2(data.goodFrequence2);
+                setGoodQRcode3(data.goodFrequence3);
+                setIndice1(data.indice1);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
@@ -108,6 +108,7 @@ export default function IngameScreen2({ navigation }) {
             setTimeout(() => setModalreveal(true), 1000);
         } else {
             flashScreen("red"); // Flash rouge pour un mauvais scan
+            setScanned1(false); setScanned2(false); setScanned3(false);
             Vibration.vibrate();
         }
     };
@@ -120,12 +121,10 @@ export default function IngameScreen2({ navigation }) {
         setIndicemodal(false);
     }
 
-
     const passageau3 = () => {
-        setModalreveal(false); r
+        setModalreveal(false);
         navigation.navigate('Ingame3');
     };
-
 
 
     useEffect(() => {
