@@ -85,16 +85,16 @@ export default function LoginScreen({ navigation }) {
         fetch(`${URL}/users/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.trim().toLowerCase(), password: logInPassword.trim() }),
+            body: JSON.stringify({ email: email.trim().toLowerCase(), password: logInPassword.trim().toLowerCase() }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
-                    dispatch(addUserToStore({ token: data.token, avatar: data.avatar, username: data.username }));
+                    dispatch(addUserToStore({ token: data.token, avatar: data.avatar, username: data.username, userID: data._id }));
                     setEmail('');
                     setLogInPassword('');
                     setmodalLogIn(false);
-                    // console.log("Connexion réussie :", email);
+                    console.log("Connexion réussie :", email);
                     navigation.navigate('TabNavigator');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
