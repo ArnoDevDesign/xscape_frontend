@@ -108,12 +108,12 @@ export default function LoginScreen({ navigation }) {
             <SafeAreaView />
             <View style={styles.signContainer}>
                 <Text>Ravie de te revoir.</Text>
-                <TouchableOpacity style={styles.buttons} onPress={() => setmodalLogIn(true)}>
-                    <Text>Se connecter</Text>
+                <TouchableOpacity style={styles.button} onPress={() => setmodalLogIn(true)}>
+                    <Text style={styles.textButton}>Se connecter</Text>
                 </TouchableOpacity>
                 <Text>Pas encore de compte ?</Text>
-                <TouchableOpacity style={styles.buttons} onPress={() => setmodalSignUp(true)}>
-                    <Text>S'inscrire</Text>
+                <TouchableOpacity style={styles.button} onPress={() => setmodalSignUp(true)}>
+                    <Text style={styles.textButton}>S'inscrire</Text>
                 </TouchableOpacity>
                 <Button title="Go to Home" onPress={() => navigation.navigate('TabNavigator')} />
             </View>
@@ -123,15 +123,15 @@ export default function LoginScreen({ navigation }) {
                 <Modal visible={modalLogIn} animationType="fade" transparent>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={styles.textButton}>Connexion</Text>
+                            <Text style={{fontSize: 20, padding: 10}}>Connexion</Text>
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
-                                placeholder="email"
+                                placeholder="Email"
                                 onChangeText={setEmail}
                                 value={email}
                             />
-                            <View style={styles.inp2}>
+                            <View style={styles.inp1}>
                                 <TextInput
                                     placeholderTextColor={'black'}
                                     placeholder="Mot de passe"
@@ -144,11 +144,11 @@ export default function LoginScreen({ navigation }) {
                                     <FontAwesome name={showPasswordConnection ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={logIN} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>GO!</Text>
+                            <TouchableOpacity onPress={logIN} activeOpacity={0.8}> 
+                                <Text style={styles.textButton}>Se connecter</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setmodalLogIn(false)} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>Close</Text>
+                                <Text style={[styles.textButton, { color: "#85CAE4" }]}>Fermer</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -162,7 +162,7 @@ export default function LoginScreen({ navigation }) {
                     <Modal visible={modalSignUp} animationType="fade" transparent>
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <Text style={styles.textButton}>SIGN UP</Text>
+                                <Text style={styles.cta}>Inscription</Text>
                                 <TextInput
                                     placeholderTextColor={'black'}
                                     style={styles.inp1}
@@ -172,7 +172,7 @@ export default function LoginScreen({ navigation }) {
                                 />
                                 {checkEmail && <Text>Email invalide</Text>}
 
-                                < View style={styles.inp2} >
+                                < View style={styles.inp1} >
                                     <TextInput
                                         placeholderTextColor={'black'}
                                         placeholder="Mot de passe"
@@ -185,10 +185,10 @@ export default function LoginScreen({ navigation }) {
                                         <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
                                     </TouchableOpacity>
                                 </View >
-                                <View style={styles.inp2}>
+                                <View style={styles.inp1}>
                                     <TextInput
                                         placeholderTextColor={'black'}
-                                        placeholder="Confirmation du mdp"
+                                        placeholder="Confirmation du mot de passe"
                                         secureTextEntry={showPassword2 ? true : false}
                                         onChangeText={setConfirmPassword}
                                         value={confirmPassword}
@@ -197,11 +197,11 @@ export default function LoginScreen({ navigation }) {
                                         <FontAwesome name={showPassword2 ? 'eye' : 'eye-slash'} size={25} paddingRight={10} />
                                     </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity onPress={signUP} activeOpacity={0.8}>
-                                    <Text style={styles.textButton}>GO!</Text>
+                                <TouchableOpacity style={styles.button} onPress={signUP} activeOpacity={0.8}>
+                                    <Text style={styles.textButton}>S'inscrire</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
-                                    <Text style={styles.textButton}>Close</Text>
+                                    <Text style={[styles.textButton, { color: "#85CAE4" }]}>Fermer</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -218,23 +218,44 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "grey"
+        backgroundColor: "#009EBA"
     },
     signContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        color: "white",
     },
-    buttons: {
+    button: {
         justifyContent: 'center',
         alignItems: 'center',
+        columnGap: "10",
         width: 300,
         height: 50,
+        color: "white",
         backgroundColor: 'orange',
         margin: 10,
         borderRadius: 10,
         elevation: 5,
+        // fontSize: 20,
+    },
+    textButton: {
+        fontSize: 20,
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,
+        fontFamily: "fustat",
+    },
+    textButtonBlue: {
+        fontSize: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        // color: "white",
+        padding: 10,
+        fontFamily: "fustat",
     },
     centeredView: {
         flex: 1,
@@ -242,33 +263,32 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     modalView: {
-        backgroundColor: 'orange',
+        backgroundColor: '#FFFFFF',
+        // backgroundColor: 'orange',
+
         borderRadius: 30,
         alignItems: 'center',
-        width: 300,
-        height: 300,
+        fontFamily: "fustat",
+        width: 350,
+        height: 600,
         elevation: 5,
     },
     inp1: {
-        width: '70%',
-        height: 50,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        paddingLeft: 10
-    },
-    inp2: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '70%',
         height: 50,
-        backgroundColor: 'white',
+        backgroundColor: '#F0F0F0',
         borderRadius: 10,
         margin: 10,
         paddingLeft: 10
     },
-    textButton: {
-        fontSize: 20
+    cta:{
+        backgroundcolor: "black",
+        // width: 20,
+        fontSize: 20,
+        padding: 10,
+        // background,
     }
 });

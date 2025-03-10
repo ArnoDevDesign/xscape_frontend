@@ -48,7 +48,6 @@ export default function HomeScreen({ navigation }) {
   const [modalInfo, setModalInfo] = useState(false);
   const [modalExpanded, setModalExpanded] = useState(false);
 
-  fetch("http://
 
   {/*localisation de l'utilisateur*/}
   useEffect(() => {
