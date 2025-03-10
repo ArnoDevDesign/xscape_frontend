@@ -16,10 +16,9 @@ import { useNavigation } from "@react-navigation/native";
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 
-export default function IngameScreen2() {
+export default function IngameScreen2({ navigation }) {
     const userRedux = useSelector((state) => state.users.value)
     // Initialisation de la navigation pour permettre la transition vers l’étape 3
-    const navigation = useNavigation();
 
     // Référence pour l’accès à la caméra
     const cameraRef = useRef(null);
@@ -70,7 +69,6 @@ export default function IngameScreen2() {
                 setGoodQRcode2(data.QRcode2);
                 setGoodQRcode3(data.QRcode3);
                 setIndice1(data.indice4);
-
             })
             .catch((error) => {
                 console.error('Error:', error.message);
