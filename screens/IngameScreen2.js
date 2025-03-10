@@ -10,7 +10,7 @@ import {
     Animated,
     Vibration
 } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
+import { Camera, CameraType, CameraView } from 'expo-camera';
 import { useNavigation } from "@react-navigation/native";
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
@@ -37,6 +37,7 @@ export default function IngameScreen2() {
     const [indiceModal, setIndicemodal] = useState(false);
     // Valeurs des QR Codes attendus (doivent être scannés dans cet ordre précis)
 
+    const [flashColor, setFlashColor] = useState("transparent");
 
     const [goodQRcode1, setGoodQRcode1] = useState('https://qr.codes/vUIYq1');
     const [goodQRcode2, setGoodQRcode2] = useState('https://qr.codes/FBPR2y');
@@ -45,9 +46,20 @@ export default function IngameScreen2() {
     // Animation pour un effet futuriste (flash rouge/vert lorsqu’un QR est scanné)
     const flashAnim = useRef(new Animated.Value(0)).current;
 
+    const flashScreen = (color) => {
+        flashAnim.setValue(1);
+        setFlashColor(color); // Met à jour l'état pour définir la couleur
+        Animated.timing(flashAnim, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false
+        }).start();
+    };
+
     // Créer une animation pour simuler la pulsation de la lumière
     // Référence pour l'animation du halo lumineux
     const shadowAnim = useRef(new Animated.Value(10)).current;
+
 
     useEffect(() => {
         fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`)
@@ -64,21 +76,6 @@ export default function IngameScreen2() {
                 console.error('Error:', error.message);
             });
     }, [userRedux.userID, userRedux.scenarioID]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     useEffect(() => {
         Animated.loop(
@@ -97,37 +94,26 @@ export default function IngameScreen2() {
         }),
     };
 
-    // Demande de permission pour utiliser la caméra au lancement du composant
-    useEffect(() => {
-        (async () => {
-            const result = await CameraView.requestCameraPermissionsAsync();
-            setHasPermission(result.status === 'granted');
-        })();
-    }, []);
-
     // Fonction qui gère la lecture des QR codes et vérifie s’ils sont scannés dans le bon ordre
     const scanQR = (data) => {
         console.log("QR Code Data:", data);
 
         if (!scanned1 && data === goodQRcode1) {
-            setScanned1(true);  // Premier QR Code validé
-            flashScreen("green");
+            flashScreen("green");  // Flash vert
+            setScanned1(true);
         } else if (!scanned2 && scanned1 && data === goodQRcode2) {
-            setScanned2(true);  // Deuxième QR Code validé
-            flashScreen("green");
+            flashScreen("green");  // Flash vert
+            setScanned2(true);
         } else if (!scanned3 && scanned1 && scanned2 && data === goodQRcode3) {
-            setScanned3(true);  // Troisième QR Code validé
-            flashScreen("green");
-
-            // Une fois tous les QR codes scannés dans le bon ordre, afficher le message final
-            //avec une seconde de latence pour laisser le temps à l’animation de se terminer
+            flashScreen("green");  // Flash vert
+            setScanned3(true);
             setTimeout(() => setModalreveal(true), 1000);
         } else {
-            // QR Code incorrect ou scanné dans le mauvais ordre
-            flashScreen("red");
+            flashScreen("red"); // Flash rouge pour un mauvais scan
             Vibration.vibrate();
         }
     };
+
 
     // Fonction qui permet de passer à l’étape 3 après la validation
 
@@ -138,11 +124,27 @@ export default function IngameScreen2() {
 
 
     const passageau3 = () => {
-        setModalreveal(false);
+        setModalreveal(false); r
         navigation.navigate('Ingame3');
     };
 
+
+
+    useEffect(() => {
+        (async () => {
+            const result = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(result && result?.status === 'granted');
+        })();
+    }, []);
+
+    if (!hasPermission) {
+        return <View />;
+    }
+
+
     return (
+
+
         <View style={styles.container}>
             <SafeAreaView />
 
@@ -151,8 +153,6 @@ export default function IngameScreen2() {
                 {hasPermission && (
                     <CameraView
                         onBarcodeScanned={({ data }) => scanQR(data)} // Appelle scanQR lorsqu'un QR est scanné
-                        flash={flash}
-                        facing={facing}
                         style={styles.Camera}
                         ref={cameraRef}
                     />
@@ -170,7 +170,10 @@ export default function IngameScreen2() {
             </View>
 
             {/* Animation Flash */}
-            <Animated.View style={[styles.flashOverlay, { opacity: flashAnim }]} />
+            <Animated.View style={[styles.flashOverlay, {
+                opacity: flashAnim,
+                backgroundColor: flashColor
+            }]} />
 
             {/* Modal qui s'affiche après le scan réussi des 3 QR codes */}
             {indiceModal && (
@@ -278,7 +281,7 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "red", // Change de couleur selon le flash activé
+        backgroundColor: "transparent", // Sera remplacé dynamiquement
     },
     centeredView: {
         flex: 1,
