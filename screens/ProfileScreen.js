@@ -37,6 +37,11 @@ export default function ProfileScreen({ navigation }) {
         'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105221/avatar10_nh5quw.png',
         'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar11_llbefo.png',
         'https://res.cloudinary.com/dpyozodnm/image/upload/v1741105222/avatar12_b24cyi.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741475164/avatar14_tkkoyp.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741475165/avatar13_ncoafc.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741475165/avatar16_hjdm7r.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741475164/avatar15_czilrr.png',
+        'https://res.cloudinary.com/dpyozodnm/image/upload/v1741475164/avatar17_ksdjdu.png',
         // require('../assets/avatar01.png'),
         // require('../assets/avatar02.png'),
         // require('../assets/avatar03.png'),
@@ -45,10 +50,10 @@ export default function ProfileScreen({ navigation }) {
     // Récupération des données utilisateur au chargement du composant
     useEffect(() => {
         if (!userRedux.token) {
-            console.log("ProfitesScren : Aucun token trouvé !");
+            console.log("ProfilesScren : Aucun token trouvé !");
             return;
         }
-        console.log("ProfitesScren : Token utilisé :", userRedux.token);
+        console.log("ProfilesScren : Token utilisé :", userRedux.token);
         // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
         fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
@@ -58,7 +63,7 @@ export default function ProfileScreen({ navigation }) {
                 setScore(data.totalPoints);
                 setScenarios(data.scenarios || []);
             })
-            .catch(error => console.error('ProfitesScren : Erreur de récupération des données:', error));
+            .catch(error => console.error('ProfilesScren : Erreur de récupération des données:', error));
     }, [userRedux.token]);
 
 

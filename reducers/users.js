@@ -5,7 +5,7 @@ const initialState = {
         token: '',
         avatar: '',
         username: '',
-        scenario: 'La Capsule Perdue',
+        scenario: '',
         userID: '',
         scenarioID: ''
     }
@@ -18,16 +18,18 @@ export const usersSlice = createSlice({
     initialState,
     reducers: {
         addUserToStore: (state, action) => {
-            console.log("payload ind redux", action.payload);
+            console.log("payload sent to redux", action.payload);
 
             state.value = { ...state.value, ...action.payload };
         },
+
         userLogout: (state) => {
-            state.value.token = '';
-        }
+            state.value.token = '';// rappel il faut supprimer le token dans la BDD
+        },
+
     },
+},
+);
 
-});
-
-export const { addUserToStore, userLogout } = usersSlice.actions;
+export const { addUserToStore, userLogout, addScenario } = usersSlice.actions;
 export default usersSlice.reducer;
