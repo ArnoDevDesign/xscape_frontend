@@ -150,18 +150,18 @@ export default function IngameScreen2({ navigation }) {
         return <View />;
     }
 
-
     const passageau3 = () => {
-        setGame2(true);
-        console.log('game2 status', game2, 'score', SCORE)
+        setGame2(true); // Met à jour game2
 
-        if (game2) {  // Vérifier que le score n'a pas déjà été envoyé
+        setTimeout(() => { // Attend que game2 soit mis à jour
+            console.log("game2 status", game2, "score", SCORE);
+
             fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ score: SCORE, result: game2 }),
+                body: JSON.stringify({ score: SCORE, result: true }),
             })
                 .then(response => response.json())
                 .then(data => {
@@ -171,13 +171,17 @@ export default function IngameScreen2({ navigation }) {
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
-        }
+
+        }, 1000); // Petit délai pour s'assurer que setGame2 a pris effet
+
         setModalreveal(false);
     };
 
 
+    if (!isFocused) return null;
 
     return (
+
         isFocused && (
             <View style={styles.container} >
                 <SafeAreaView />

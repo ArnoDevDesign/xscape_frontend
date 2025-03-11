@@ -32,59 +32,59 @@ const Tab = createBottomTabNavigator();
 
 const store = configureStore({ reducer: { users } });
 
-const TabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName = '';
+// const TabNavigator = () => {
+//   return (
+//     <Tab.Navigator
+//       screenOptions={({ route }) => ({
+//         tabBarIcon: ({ color, size }) => {
+//           let iconName = '';
 
-          if (route.name === 'Map') {
-            iconName = 'location-arrow';
-          }
-          else if (route.name === 'Avatar') {
-            iconName = 'child';
-          }
-          else if (route.name === 'Profil') {
-            iconName = 'user';
-          }
-          else if (route.name === 'Scenario') {
-            iconName = 'user';
-          }
-          else if (route.name === 'StartGame') {
-            iconName = 'user';
-          }
-          else if (route.name === 'End') {
-            iconName = 'user';
-          }
-          else if (route.name === 'Ingame') {
-            iconName = 'user';
-          }
-          else if (route.name === 'Ingame2') {
-            iconName = 'user';
-          }
-          else if (route.name === 'Ingame3') {
-            iconName = 'user';
-          }
+//           if (route.name === 'Map') {
+//             iconName = 'location-arrow';
+//           }
+//           else if (route.name === 'Avatar') {
+//             iconName = 'child';
+//           }
+//           else if (route.name === 'Profil') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'Scenario') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'StartGame') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'End') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'Ingame') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'Ingame2') {
+//             iconName = 'user';
+//           }
+//           else if (route.name === 'Ingame3') {
+//             iconName = 'user';
+//           }
 
-          return <FontAwesome name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#ec6e5b',
-        tabBarInactiveTintColor: '#335561',
-        headerShown: false,
-      })}>
-      <Tab.Screen name="Map" component={MapScreen} />
-      <Tab.Screen name="Profil" component={ProfileScreen} />
-      <Tab.Screen name="Avatar" component={AvatarScreen} />
-      {/* <Tab.Screen name="Scenario" component={ScenarioScreen} /> */}
-      {/* <Tab.Screen name="StartGame" component={StartGameScreen} /> */}
-      <Tab.Screen name="End" component={EndScreen} />
-      {/* <Tab.Screen name="Ingame1" component={ingameScreen1} /> */}
-      {/* <Tab.Screen name="Ingame2" component={IngameScreen2} /> */}
-      <Tab.Screen name="Ingame3" component={IngameScreen3} />
-    </Tab.Navigator>
-  );
-};
+//           return <FontAwesome name={iconName} size={size} color={color} />;
+//         },
+//         tabBarActiveTintColor: '#ec6e5b',
+//         tabBarInactiveTintColor: '#335561',
+//         headerShown: false,
+//       })}>
+//       <Tab.Screen name="Map" component={MapScreen} />
+//       {/* <Tab.Screen name="Profil" component={ProfileScreen} /> */}
+//       {/* <Tab.Screen name="Avatar" component={AvatarScreen} /> */}
+//       {/* <Tab.Screen name="Scenario" component={ScenarioScreen} /> */}
+//       {/* <Tab.Screen name="StartGame" component={StartGameScreen} /> */}
+//       {/* <Tab.Screen name="End" component={EndScreen} /> */}
+//       {/* <Tab.Screen name="Ingame1" component={ingameScreen1} /> */}
+//       {/* <Tab.Screen name="Ingame2" component={IngameScreen2} /> */}
+//       {/* <Tab.Screen name="Ingame3" component={IngameScreen3} /> */}
+//     </Tab.Navigator>
+//   );
+// };
 
 export default function App() {
 
@@ -126,9 +126,9 @@ export default function App() {
           <Stack.Screen name="Ingame2" component={IngameScreen2} />
           <Stack.Screen name="Ingame3" component={IngameScreen3} />
           <Stack.Screen name="Profil" component={ProfileScreen} />
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   );
 }
+{/* <Stack.Screen name="TabNavigator" component={TabNavigator} /> */ }

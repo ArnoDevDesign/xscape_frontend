@@ -6,7 +6,7 @@ import { useIsFocused } from "@react-navigation/native";
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 
-export default function Ingame3Screen() {
+export default function Ingame3Screen({ navigation }) {
     const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
     const [title, setTitle] = useState("Activez les boutons dans le bon ordre  pour DEMINIATURISER LA CAPSULE!");
@@ -112,6 +112,7 @@ export default function Ingame3Screen() {
                     console.log("Score mis à jour dans la base de données", data);
                     dispatch(addUserToStore({ scoreSession: data.totalPointsSession }));
                     navigation.navigate("End");
+                    setGame3(false);
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
@@ -165,7 +166,7 @@ export default function Ingame3Screen() {
             <Modal visible={game3} animationType="slide" transparent>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>{indice1}</Text>
+                        <Text style={styles.modalText}>PAS MAL CAAAAAAA LAAAAAAAAA </Text>
                         <TouchableOpacity onPress={finishGame} style={styles.modalButton}>
                             <Text style={styles.modalButtonText}>FINI !!!!!!!!!!</Text>
                         </TouchableOpacity>

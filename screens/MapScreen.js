@@ -114,7 +114,7 @@ export default function MapScreen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("log de creation de session", data.validatedEpreuves);
-        if (data.validatedEpreuves == 0) {
+        if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
           console.log("zero etape fini")
           navigation.navigate("Scenario");
         } else if (data.validatedEpreuves !== 0) {
