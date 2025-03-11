@@ -13,7 +13,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/LogoXscape400.png",
+          "image": "./assets/LogoXscapeOk.png",
           "resizeMode": "contain",
           "backgroundColor": "#85CAE4"
         }
@@ -23,11 +23,11 @@
     "slug": "FRONT",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LogoXscape400.png",
+    "icon": "./assets/LogoXscapeOk.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/LogoXscape400.png",
+      "image": "./assets/LogoXscapeOk.png",
       "resizeMode": "contain",
       "backgroundColor": "#85CAE4"
     },
