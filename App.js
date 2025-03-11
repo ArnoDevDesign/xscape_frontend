@@ -19,6 +19,14 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import users from './reducers/users';
 
+import { View, Text } from "react-native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
+
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -79,6 +87,31 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+
+  const [loaded, error] = useFonts({
+    "Fustat-Bold.ttf": require("./assets/fonts/Fustat-Bold.ttf"),
+    "Fustat-ExtraBold.ttf": require("./assets/fonts/Fustat-ExtraBold.ttf"),
+    "Fustat-ExtraLight.ttf": require("./assets/fonts/Fustat-ExtraLight.ttf"),
+    "Fustat-Light.ttf": require("./assets/fonts/Fustat-Light.ttf"),
+    "Fustat-Medium.ttf": require("./assets/fonts/Fustat-Medium.ttf"),
+    "Fustat-Regular.ttf": require("./assets/fonts/Fustat-Regular.ttf"),
+    "Fustat-SemiBold.ttf": require("./assets/fonts/Fustat-SemiBold.ttf"),
+    "Homenaje-Regular.ttf": require("./assets/fonts/Homenaje-Regular.ttf"),
+    "PressStart2P-Regular.ttf": require("./assets/fonts/PressStart2P-Regular.ttf"),
+  });
+
+  useEffect(() => {
+    // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  // Retourner null tant que la police n'est pas chargée
+  if (!loaded && !error) {
+    return null;
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>

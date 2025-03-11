@@ -4,10 +4,42 @@ import { useDispatch } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
+
+
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 const { checkBody } = require('../modules/checkBody');
 
 export default function LoginScreen({ navigation }) {
+
+    const [loaded] = useFonts({
+        "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+        "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+        "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+        "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+        "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+        "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+        "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+        "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+      });
+    
+      useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+          SplashScreen.hideAsync();
+        }
+      }, [loaded]);
+    
+      // Retourner null tant que la police n'est pas chargée
+      if (!loaded) {
+        return null;
+      }
+
     const dispatch = useDispatch();
     const [showPasswordConnection, setShowPasswordConnection] = useState(true);
     const [showPassword, setShowPassword] = useState(true);
@@ -124,7 +156,7 @@ export default function LoginScreen({ navigation }) {
                 <Modal visible={modalLogIn} animationType="slide" transparent>
                     <View style={styles.centeredView}>
                         <View style={styles.modalViewLogin}>
-                            <Text style={{ fontSize: 30, color: '#009EBA', paddingBottom: 60 }}>Connexion</Text>
+                            <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, color: '#009EBA', paddingBottom: 60 }}>Connexion</Text>
                             <TextInput
                                 placeholderTextColor={'#636773'}
                                 fontSize={15}
@@ -165,7 +197,7 @@ export default function LoginScreen({ navigation }) {
                     <Modal visible={modalSignUp} animationType="slide" transparent>
                         <View style={styles.centeredView}>
                             <View style={styles.modalViewsignup}>
-                                <Text style={{ fontSize: 30, paddingBottom: 50, color: '#009EBA' }}>Inscription</Text>
+                                <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, paddingBottom: 50, color: '#009EBA' }}>Inscription</Text>
                                 <TextInput
                                     placeholderTextColor={'#636773'}
                                     fontSize={15}
@@ -194,7 +226,7 @@ export default function LoginScreen({ navigation }) {
                                     <TextInput
                                         placeholderTextColor={'#636773'}
                                         style={{ fontSize: 15 }}
-                                        placeholder="Confirmation du mot de passe"
+                                        placeholder="Confirmer le mot de passe"
                                         secureTextEntry={showPassword2 ? true : false}
                                         onChangeText={setConfirmPassword}
                                         value={confirmPassword}
@@ -237,15 +269,14 @@ const styles = StyleSheet.create({
         columnGap: "10",
         width: '80%',
         height: 72,
-        color: "white",
         backgroundColor: 'white',
         margin: 20,
-        borderRadius: 16,
+        borderRadius: 20,
         elevation: 3,
     },
     textButtonHp: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
@@ -254,30 +285,27 @@ const styles = StyleSheet.create({
     },
     closeTextButton: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
         color: "#85CAE4",
-        fontWeight: "400",
         padding: 10,
     },
     loginButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: '80%',
+        width: '90%',
         height: 72,
-        color: "white",
         backgroundColor: '#FF8527',
         margin: 20,
-        marginTop: 70,
-        borderRadius: 15,
+        marginTop: 50,
+        borderRadius: 20,
         elevation: 3,
-        // fontSize: 20,
     },
     textLoginButton: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
@@ -287,18 +315,17 @@ const styles = StyleSheet.create({
     signupButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: '80%',
+        width: '90%',
         height: 72,
-        color: "white",
         backgroundColor: '#FF8527',
         margin: 20,
-        marginTop: 70,
-        borderRadius: 15,
+        marginTop: 50,
+        borderRadius: 20,
         elevation: 3,
     },
     textsignupButton: {
+        fontFamily: "Fustat-ExtraBold.ttf",
         fontSize: 20,
-        fontWeight: 'bold',
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
@@ -320,10 +347,9 @@ const styles = StyleSheet.create({
     },
     modalViewLogin: {
         backgroundColor: '#FFFFFF',
-        width: '80%',
+        width: '90%',
         paddingTop: 30,
-
-        paddingBottom: 80,
+        paddingBottom: 30,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 30,
@@ -331,8 +357,7 @@ const styles = StyleSheet.create({
     },
     modalViewsignup: {
         backgroundColor: '#FFFFFF',
-        // height: '70%',
-        width: '80%',
+        width: '90%',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 30,
@@ -344,20 +369,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '80%',
-        height: 60,
+        width: '90%',
+        height: 70,
         backgroundColor: '#F0F0F0',
-        borderRadius: 10,
-        margin: 10,
-        paddingLeft: 10
+        borderRadius: 12,
+        margin: 12,
+        paddingLeft: 20
     },
     logo: {
-        // height: 150 ,
-        // width: 150 ,
         height: 180,
         width: 180,
-        // height: 190 ,
-        // width: 190 ,
         marginBottom: 150,
         justifyContent: 'center',
         aligItems: 'center',
