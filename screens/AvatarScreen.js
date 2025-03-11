@@ -96,13 +96,13 @@ export default function AvatarScreen({ navigation }) {
                 <Text style={styles.text}>Choisis ton pseudo</Text>
                 <TextInput
                     placeholderTextColor={'black'}
-                    style={styles.inp1}
+                    style={styles.input}
                     placeholder="Pseudo"
                     onChangeText={setSignUpUsername}
                     value={signUpUsername}
                 />
                 <TouchableOpacity onPress={register} style={styles.buttonLogOut}>
-                    <Text style={styles.button}>C'est parti !</Text>
+                    <Text style={styles.textButtonLogOut}>C'est parti !</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         paddingBottom: 40
     },
-    inp1: {
+    input: {
         marginTop: 10,
         backgroundColor: 'grey',
         width: '80%',
@@ -153,12 +153,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    button: {
+    textButtonLogOut: {
         fontSize: 20,
     },
     title: {
         width: '100%',
-        height: '5%',
+        height: '10%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'blue'
