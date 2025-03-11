@@ -15,7 +15,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/LogoXscapeOk.png",
+          "image": "./assets/LogoXscapeOkWhite.png",
           "resizeMode": "contain",
           "backgroundColor": "#85CAE4"
         }
@@ -30,7 +30,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/LogoXscapeOk.png",
+      "image": "./assets/LogoXscapeOkWhite.png",
       "resizeMode": "contain",
       "backgroundColor": "#85CAE4"
     },

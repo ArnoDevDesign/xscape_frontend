@@ -110,7 +110,7 @@ export default function LoginScreen({ navigation }) {
             {/* lorsque la modale apparait, les boutons d'inscription et de connexion disparaissent */}
             {!modalLogIn && !modalSignUp && (
                 <View style={styles.signContainer}>
-                    <Image source={require('../assets/LogoXscape400.png')} style={styles.logo} />
+                    <Image source={require('../assets/LogoXscapeOkWhite.png')} style={styles.logo} />
                     <TouchableOpacity style={styles.buttonHp} onPress={() => setmodalLogIn(true)}>
                         <Text style={styles.textButtonHp}>Se connecter</Text>
                     </TouchableOpacity>
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
         width: 180,
         // height: 190 ,
         // width: 190 ,
-        marginBottom: 200,
+        marginBottom: 150,
         justifyContent: 'center',
         aligItems: 'center',
         resizeMode: 'contain',
