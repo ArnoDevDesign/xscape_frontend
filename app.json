@@ -9,15 +9,13 @@
           "recordAudioAndroid": true
         }
       ],
-      [
-        "expo-video"
-      ],
+      ["expo-video"],
       [
         "expo-splash-screen",
         {
           "image": "./assets/LogoXscapeOkWhite.png",
           "resizeMode": "contain",
-          "backgroundColor": "#85CAE4"
+          "backgroundColor": "black"
         }
       ],
       "expo-font"
