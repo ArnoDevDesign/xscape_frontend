@@ -9,7 +9,9 @@
           "recordAudioAndroid": true
         }
       ],
-      ["expo-video"],
+      [
+        "expo-video"
+      ],
       [
         "expo-splash-screen",
         {
@@ -17,7 +19,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#85CAE4"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "name": "FRONT",
     "slug": "FRONT",
