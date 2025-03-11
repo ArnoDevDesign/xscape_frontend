@@ -69,9 +69,17 @@ export default function ProfileScreen({ navigation }) {
 
     //Fonction de déconnexion 
     const handleLogout = () => {
-        dispatch(userLogout());
-        navigation.navigate('Home');
-        console.log('Déconnexion');
+        fetch(`${URL}/users/deleteToken}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: userRedux.token })
+        }).then(response => response.json())
+            .then(data => {
+                dispatch(userLogout());
+                navigation.navigate('Home');
+                console.log('Déconnexion', data);
+            }
+            ).catch(error => console.error('❌ Erreur de déconnexion:', error));
     }
 
     //Modification du username et token au clic 
