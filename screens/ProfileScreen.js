@@ -21,7 +21,7 @@ export default function ProfileScreen({ navigation }) {
     const [newUsername, setNewUsername] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [finishedScenario, setFinishedScenarios] = useState(0);
-
+    const [modalaventures, setModalaventures] = useState(false);
 
     // Images d'avatarts pour test
     const images = [
@@ -234,7 +234,27 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
-                {finishedScenario ? (<Text style={styles.text}>Aventures terminées : {finishedScenario}</Text>) :
+                {finishedScenario ? (
+                    <View>
+                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonBack}>
+                            <Text style={styles.text}>Aventures terminées : </Text>
+                        </TouchableOpacity>
+                        {modalaventures && (
+                            <Modal visible={modalaventures} animationType="slide" transparent>
+                                <View style={styles.centeredView}>
+                                    <TouchableOpacity onPress={() => setModalaventures(false)} style={styles.button}>
+                                        <View style={styles.modalView}>
+                                            <Text style={styles.textButton}>{finishedScenario}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </Modal>)}
+                    </View>
+
+
+
+
+                ) :
                     (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
                     )}
             </View>
@@ -256,6 +276,7 @@ export default function ProfileScreen({ navigation }) {
 
 // -- CSS STYLE --
 const styles = StyleSheet.create({
+
     generalContainer: {
         flex: 1,
         justifyContent: 'space-around',
@@ -263,7 +284,24 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingVertical: 20,
     },
-
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        width: '80%',
+        height: '50%',
+        borderRadius: 30,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 2,
+            height: 4,
+        },
+    },
     // Icon style
     iconEdit: {
         position: "absolute",

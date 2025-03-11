@@ -46,7 +46,7 @@ export default function IngameScreen1({ navigation }) {
     const { lastvideo, setLastvideo } = useState(false)
     const [SCORE, setSCORE] = useState(500)
 
-    const [lightColor, setLightColor] = useState("yellow"); // Lumière par défaut
+    const [lightColor, setLightColor] = useState("yellow");
 
 
     const videoSource =
@@ -54,24 +54,21 @@ export default function IngameScreen1({ navigation }) {
             video2 ? require('../assets/Video_2.mp4') :
                 video3 ? require('../assets/Video_3.mp4') :
                     video4 ? require('../assets/jojo.mp4') :
-                        null;
+                        null
 
-
-    ////////////////useVideoPlayer pour la video
     const player = useVideoPlayer(videoSource, (player) => {
-        player.play(); // Lance la vidéo automatiquement
-        if (game1 === true) { player.loop = false } else { player.loop = true }; // Active la boucle
+        player.play();
+        if (isFocused) { player.loop = false } else { player.loop = true };
     });
 
 
     const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
-    //////////////////////////////////////useEffect pour les 3 frequence permettant de les tester a chaque entre d info dans leurs champs respectifs
     useEffect(() => {
         if (frequence1.length >= goodFrequence1.length) {
             if (frequence1 === goodFrequence1) {
-                setLightColor("green");  // Lumière verte si la fréquence est correcte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge si la fréquence est incorrecte
+                setLightColor("red")
                 setmodalout(true);
             }
         }
@@ -80,9 +77,9 @@ export default function IngameScreen1({ navigation }) {
     useEffect(() => {
         if (frequence2.length >= goodFrequence2.length) {
             if (frequence2 === goodFrequence2) {
-                setLightColor("green");  // Lumière verte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge
+                setLightColor("red")
                 setmodalout(true);
             }
         }
@@ -91,27 +88,27 @@ export default function IngameScreen1({ navigation }) {
     useEffect(() => {
         if (frequence3.length >= goodFrequence3.length) {
             if (frequence3 === goodFrequence3) {
-                setLightColor("green");  // Lumière verte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge
+                setLightColor("red")
                 setmodalout(true);
             }
         }
     }, [frequence3]);
 
-    ////////////////////////////////useEffect permmetant de mettre a jour les bonne frequences et les indices a chaque changement de scenario
+
     useEffect(() => {
         fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`)
             .then(response => response.json())
             .then(data => {
-                // console.log("retour fetch ", data);
+                console.log("retour fetch ", data);
                 if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
                 if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
                 if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
                 if (data.indice1 !== indice1) setIndice1(data.indice1);
                 if (data.indice2 !== indice2) setIndice2(data.indice2);
                 if (data.indice3 !== indice3) setIndice3(data.indice3);
-                if (data.score !== SCORE) setSCORE(data.score);
+                setSCORE(data.score);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
@@ -119,12 +116,10 @@ export default function IngameScreen1({ navigation }) {
     }, [userRedux.userID, userRedux.scenarioID, isFocused])
 
 
-    //////////////////////////fonction permettant de tester les 3 frequence
+
     function testInput1(value) {
-
         setFrequence1(value);
-
-        if (value === goodFrequence1) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence1) {
             setVideo1(false);
             setVideo2(true);
         }
@@ -132,7 +127,7 @@ export default function IngameScreen1({ navigation }) {
 
     function testInput2(value) {
         setFrequence2(value);
-        if (value === goodFrequence2 && video1 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence2 && video1 === false) {
             setVideo2(false);
             setVideo3(true);
         }
@@ -140,12 +135,11 @@ export default function IngameScreen1({ navigation }) {
 
     function testInput3(value) {
         setFrequence3(value);
-        if (value === goodFrequence3 && video2 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence3 && video2 === false) {
             setVideo3(false);
             setVideo4(true);
         }
     }
-    //////////////////// fonction permettant de valider les 3 frequence , de remplacer les inputs par un bouton
     useEffect(() => {
         if (
             frequence1.length >= 2 &&
@@ -169,16 +163,15 @@ export default function IngameScreen1({ navigation }) {
             return newScore;
         });
 
-        // Attendre un court instant pour que le score soit bien mis à jour
         setTimeout(() => {
             console.log("Score après mise à jour réelle :", SCORE);
         }, 100);
     };
 
 
-    ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
+
     const finalButton = () => {
-        setGame1(true); // Change game1 d'abord
+        setGame1(true);
 
         setTimeout(() => {
             console.log("Score final envoyé au backend :", SCORE);
@@ -199,12 +192,9 @@ export default function IngameScreen1({ navigation }) {
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
-        }, 200); // Attendre un peu pour être sûr que le score est bien mis à jour
+        }, 200);
     };
 
-
-    ///fonction appele au  click du bouton fininal pour passe a l epreuve 2
-    // const [scoreSent, setScoreSent] = useState(false);
 
 
 
@@ -344,27 +334,19 @@ export default function IngameScreen1({ navigation }) {
 
 const styles = StyleSheet.create({
     light: {
-        width: '80%',  // Taille de la lumière
+        width: '80%',
         height: 80,
-        // borderRadius: 40, // Cercle parfait
+
         borderWidth: 3,
         borderColor: 'white',
-        shadowColor: 'rgba(255, 255, 255, 0.8)', // Effet de halo
+        shadowColor: 'rgba(255, 255, 255, 0.8)',
         shadowOpacity: 1,
         shadowRadius: 30,
 
         alignItems: 'center',
         justifyContent: 'center',
     },
-    // inputActive: {
-    //     borderColor: '#ffcc00', // Couleur jaune pour simuler un signal fort
-    //     borderWidth: 5,
-    //     shadowColor: '#ffcc00',
-    //     shadowOpacity: 0.8,
-    //     shadowRadius: 10,
 
-    // },
-    //css VIDEO
     contentContainer: {
         flex: 1,
         padding: 10,
@@ -407,7 +389,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    //modal css
+
     imageBackground: {
         flex: 1,
         width: '100%',
@@ -458,7 +440,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalView: {
-        // backgroundColor: 'white',
         borderRadius: 30,
         alignItems: 'center',
         shadowColor: '#000',
