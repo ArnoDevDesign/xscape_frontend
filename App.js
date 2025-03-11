@@ -88,7 +88,7 @@ const TabNavigator = () => {
 
 export default function App() {
 
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     "Fustat-Bold.ttf": require("./assets/fonts/Fustat-Bold.ttf"),
     "Fustat-ExtraBold.ttf": require("./assets/fonts/Fustat-ExtraBold.ttf"),
     "Fustat-ExtraLight.ttf": require("./assets/fonts/Fustat-ExtraLight.ttf"),
@@ -102,13 +102,13 @@ export default function App() {
 
   useEffect(() => {
     // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
-    if (loaded || error) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [loaded]);
 
   // Retourner null tant que la police n'est pas chargée
-  if (!loaded && !error) {
+  if (!loaded) {
     return null;
   }
 
