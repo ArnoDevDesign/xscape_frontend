@@ -28,6 +28,7 @@ import { addUserToStore } from "../reducers/users";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
@@ -68,7 +69,7 @@ export default function MapScreen({ navigation }) {
     "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
     "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
   });
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
     if (loaded) {
