@@ -5,11 +5,13 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserToStore, userLogout } from "../reducers/users";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -79,22 +81,34 @@ export default function ScenarioScreen({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+        
       <View style={styles.container}>
+      <ImageBackground
+      source={require ("../assets/fonX.png")} // Remplacez par le chemin de votre image
+      style={styles.backgroundImage}>
+
         <View style={styles.name}>
           <Text style={styles.textTitre}>{userRedux.scenario}</Text>
 
-          <View style={styles.fondTextDescripiton}>
-          <Text style={styles.textDescripiton}>{description}</Text>
-          </View>
+          {/* Ajout du dégradé gris → noir */}
+          <LinearGradient
+            colors={["#333", "#000"]} // Gris foncé à Noir
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.fondTextDescripiton}
+          >
+            <Text style={styles.textDescripiton}>{description}</Text>
+          </LinearGradient>
 
           <View style={styles.infos}>
             <Text style={styles.textInfo}>Difficulté : {difficulte}</Text>
-            <Text style={styles.textInfo}>Theme : {theme}</Text>
-            <Text style={styles.textInfo}>Duree : {duree}min</Text>
+            <Text style={styles.textInfo}>Thème : {theme}</Text>
+            <Text style={styles.textInfo}>Durée : {duree}min</Text>
           </View>
         </View>
 
         <View style={styles.button}>
+          <View style={styles.glowEffect} />
           <TouchableOpacity
             style={styles.buttonStyle}
             onPress={() => navigation.navigate("StartGame")}
@@ -102,6 +116,8 @@ export default function ScenarioScreen({ navigation }) {
             <Text style={styles.buttonText}>C'est Parti !</Text>
           </TouchableOpacity>
         </View>
+        
+      </ImageBackground>
       </View>
     </SafeAreaView>
   );
@@ -110,36 +126,33 @@ export default function ScenarioScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#636773",
+    backgroundColor: "#484D5B",
   },
 
-  //   name: {
-  //     marginTop: "20",
-  //     justifyContent: "center",
-  //     width: "100%",
-  //   },
+  backgroundImage: {
+    flex: 1,
+  },
 
   textTitre: {
     fontFamily: "Goldman-Bold.ttf",
     lineHeight: 46,
     fontSize: 50,
-    color: "Black",
+    color: "black",
     marginTop: 40,
     marginRight: 40,
     marginLeft: 40,
     marginBottom: 30,
   },
 
-fondTextDescripiton: {
+  fondTextDescripiton: {
     backgroundColor: "black",
     marginRight: 30,
     marginLeft: 30,
-    borderRadius: 20,
-    borderColor : "#535865",
-    borderWidth : 8,
-    },
+    borderRadius: 30,
+    borderWidth: 8,
+  },
 
-textDescripiton: {
+  textDescripiton: {
     fontFamily: "PressStart2P-Regular.ttf",
     lineHeight: 18,
     fontSize: 10,
@@ -150,22 +163,8 @@ textDescripiton: {
     marginBottom: 20,
   },
 
-  //   difficultee: {
-  //     marginTop: 10,
-  //     justifyContent: "center",
-  //     alignItems: "center",
-  //     width: "100%",
-  //   },
-
-  //   textDif: {
-  //     fontSize: 18,
-  //     color: "#fff",
-  //     marginBottom: 10,
-  //   },
-
   infos: {
-    justifyContent: "center",
-    alignItems: "center",
+    marginLeft: 40,
     width: "100%",
     marginTop: 20,
   },
@@ -182,7 +181,6 @@ textDescripiton: {
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
-    marginBottom: 5,
   },
 
   buttonStyle: {
@@ -192,9 +190,8 @@ textDescripiton: {
     borderRadius: 10,
     width: "80%",
     height: 64,
-    borderColor : "#535865",
-    borderWidth : 5,
-    // elevation: 3,
+    borderColor: "#2F3545",
+    borderWidth: 5,
   },
 
   buttonText: {

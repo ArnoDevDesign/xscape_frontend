@@ -21,6 +21,7 @@
     "expo": "~52.0.37",
     "expo-camera": "^16.0.17",
     "expo-font": "~13.0.4",
+    "expo-linear-gradient": "~14.0.2",
     "expo-location": "~18.0.7",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
