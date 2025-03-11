@@ -104,20 +104,21 @@ export default function LoginScreen({ navigation }) {
     };
 
     return (
+
         <View style={styles.generalContainer}>
             <SafeAreaView />
-            <View style={styles.signContainer}>
-                {/* <Text>Ravie de te revoir.</Text> */}
-                <TouchableOpacity style={styles.button} onPress={() => setmodalLogIn(true)}>
-                    <Text style={styles.textButton}>Se connecter</Text>
-                </TouchableOpacity>
-                {/* <Text>Pas encore de compte ?</Text> */}
-                <TouchableOpacity style={styles.button} onPress={() => setmodalSignUp(true)}>
-                    <Text style={styles.textButton}>S'inscrire</Text>
-                </TouchableOpacity>
-                {/* <Button title="Go to Home" onPress={() => navigation.navigate('TabNavigator')} /> */}
-            </View>
-
+            // lorsque la modale apparait, les boutons inscription et connexion disparaissent -> fin ligne 120
+            {!modalLogIn && !modalSignUp && (
+                <View style={styles.signContainer}>
+                    
+                    <TouchableOpacity style={styles.button} onPress={() => setmodalLogIn(true)}>
+                        <Text style={styles.textButton}>Se connecter</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => setmodalSignUp(true)}>
+                        <Text style={styles.textButton}>S'inscrire</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             {/* Modal Log in */}
             {modalLogIn && (
                 <Modal visible={modalLogIn} animationType="fade" transparent>
@@ -150,7 +151,7 @@ export default function LoginScreen({ navigation }) {
                                 <Text style={[styles.textLoginButton]}>Se connecter</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setmodalLogIn(false)} activeOpacity={0.8}>
-                                <Text style={[styles.textButton, { color: "#85CAE4" }, {fontWeight: "400"}]}>Fermer</Text>
+                                <Text style={[styles.textButton, { color: "#85CAE4" }, { fontWeight: "400" }]}>Fermer</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -164,7 +165,7 @@ export default function LoginScreen({ navigation }) {
                     <Modal visible={modalSignUp} animationType="fade" transparent>
                         <View style={styles.centeredView}>
                             <View style={styles.modalViewsignup}>
-                                <Text style={{ fontSize: 30, paddingBottom: 50, color: '#009EBA'}}>Inscription</Text>
+                                <Text style={{ fontSize: 30, paddingBottom: 50, color: '#009EBA' }}>Inscription</Text>
                                 <TextInput
                                     placeholderTextColor={'#636773'}
                                     fontSize={15}
@@ -206,7 +207,7 @@ export default function LoginScreen({ navigation }) {
                                     <Text style={styles.textsignupButton}>S'inscrire</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
-                                    <Text style={[styles.textButton, { color: "#85CAE4" }, {fontWeight: "400"}]}>Fermer</Text>
+                                    <Text style={[styles.textButton, { color: "#85CAE4" }, { fontWeight: "400" }]}>Fermer</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -339,5 +340,11 @@ const styles = StyleSheet.create({
         margin: 10,
         paddingLeft: 10
     },
-
+    logo: {
+        width: 150,
+        height: 150,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
 });
