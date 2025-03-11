@@ -11,7 +11,7 @@ import AvatarScreen from './screens/AvatarScreen'
 import ScenarioScreen from './screens/ScenarioScreen'
 import StartGameScreen from './screens/StartGameScreen'
 import EndScreen from './screens/EndScreen'
-import IngameScreen from './screens/IngameScreen'
+import IngameScreen1 from './screens/IngameScreen'
 import IngameScreen3 from './screens/IngameScreen3'
 import IngameScreen2 from './screens/IngameScreen2'
 
@@ -71,7 +71,7 @@ const TabNavigator = () => {
       {/* <Tab.Screen name="Scenario" component={ScenarioScreen} /> */}
       {/* <Tab.Screen name="StartGame" component={StartGameScreen} /> */}
       <Tab.Screen name="End" component={EndScreen} />
-      {/* <Tab.Screen name="Ingame" component={IngameScreen} /> */}
+      {/* <Tab.Screen name="Ingame1" component={ingameScreen1} /> */}
       {/* <Tab.Screen name="Ingame2" component={IngameScreen2} /> */}
       <Tab.Screen name="Ingame3" component={IngameScreen3} />
     </Tab.Navigator>
@@ -89,7 +89,7 @@ export default function App() {
           <Stack.Screen name="Scenario" component={ScenarioScreen} />
           <Stack.Screen name="StartGame" component={StartGameScreen} />
           <Stack.Screen name="End" component={EndScreen} />
-          <Stack.Screen name="Ingame" component={IngameScreen} />
+          <Stack.Screen name="Ingame1" component={IngameScreen1} />
           <Stack.Screen name="Ingame2" component={IngameScreen2} />
           <Stack.Screen name="Ingame3" component={IngameScreen3} />
           <Stack.Screen name="Profil" component={ProfileScreen} />

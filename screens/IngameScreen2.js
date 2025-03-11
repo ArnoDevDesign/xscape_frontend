@@ -65,9 +65,9 @@ export default function IngameScreen2({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-                setGoodQRcode1(data.goodFrequence1);
-                setGoodQRcode2(data.goodFrequence2);
-                setGoodQRcode3(data.goodFrequence3);
+                setGoodQRcode1(data.expectedAnswer1);
+                setGoodQRcode2(data.expectedAnswer2);
+                setGoodQRcode3(data.expectedAnswer3);
                 setIndice1(data.indice1);
             })
             .catch((error) => {
@@ -154,33 +154,25 @@ export default function IngameScreen2({ navigation }) {
     const passageau3 = () => {
         setGame2(true);
         console.log('game2 status', game2, 'score', SCORE)
-        useEffect(() => {
-            if (game2) {  // Vérifier que le score n'a pas déjà été envoyé
-                console.log("Score mis à jour, envoi au backend:", SCORE);
 
-                fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ score: SCORE, result: game2 }),
+        if (game2) {  // Vérifier que le score n'a pas déjà été envoyé
+            fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ score: SCORE, result: game2 }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Score mis à jour dans la base de données", data);
+                    navigation.navigate("Ingame3"); // Naviguer après la mise à jour
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("Score mis à jour dans la base de données", data);
-                        navigation.navigate("Ingame3"); // Naviguer après la mise à jour
-
-
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la requête:', error);
-                    });
-            }
-        }, [SCORE])
-
-
+                .catch(error => {
+                    console.error('Erreur lors de la requête:', error);
+                });
+        }
         setModalreveal(false);
-        navigation.navigate('Ingame3');
     };
 
 

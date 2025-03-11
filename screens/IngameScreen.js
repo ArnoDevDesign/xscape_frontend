@@ -12,7 +12,7 @@ import { useEvent } from 'expo';
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
-export default function TestScreen({ navigation }) {
+export default function IngameScreen1({ navigation }) {
 
     const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
@@ -105,9 +105,9 @@ export default function TestScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 // console.log("retour fetch ", data);
-                if (data.goodFrequence1 !== goodFrequence1) setGoodFrequence1(data.goodFrequence1);
-                if (data.goodFrequence2 !== goodFrequence2) setGoodFrequence2(data.goodFrequence2);
-                if (data.goodFrequence3 !== goodFrequence3) setGoodFrequence3(data.goodFrequence3);
+                if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
+                if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
+                if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
                 if (data.indice1 !== indice1) setIndice1(data.indice1);
                 if (data.indice2 !== indice2) setIndice2(data.indice2);
                 if (data.indice3 !== indice3) setIndice3(data.indice3);
@@ -178,7 +178,7 @@ export default function TestScreen({ navigation }) {
     // }
 
     ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
-    const finalButton = useCallback(() => {
+    function finalButton() {
         console.log("Score avant calcul:", SCORE);
 
         setSCORE(prevScore => {
@@ -191,13 +191,13 @@ export default function TestScreen({ navigation }) {
         });
 
         setGame1(true);
-    }, [indiceused1, indiceused2, indiceused3]);
+    }
 
     /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
     const [scoreSent, setScoreSent] = useState(false);
 
     useEffect(() => {
-        if (game1 && !scoreSent) {  // Vérifier que le score n'a pas déjà été envoyé
+        if (game1) {  // Vérifier que le score n'a pas déjà été envoyé
             console.log("Score mis à jour, envoi au backend:", SCORE);
 
             fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
@@ -218,7 +218,7 @@ export default function TestScreen({ navigation }) {
                     console.error('Erreur lors de la requête:', error);
                 });
         }
-    }, [SCORE]); // Ne dépend que de SCORE
+    }, [game1])
 
 
     return (

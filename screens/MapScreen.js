@@ -77,7 +77,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-  const [EtapeFini, setEtapeFini] = useState('');
+
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -113,29 +113,32 @@ export default function MapScreen({ navigation }) {
     )
       .then((response) => response.json())
       .then((data) => {
-        setEtapeFini(data.validatedEpreuves);
-        console.log("log de creation de session", EtapeFini);
-      });
+        console.log("log de creation de session", data.validatedEpreuves);
+        if (data.validatedEpreuves == 0) {
+          console.log("zero etape fini")
+          navigation.navigate("Scenario");
+        } else if (data.validatedEpreuves !== 0) {
+          console.log(" quelques etapes finis")
+          navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
+        } else if (data.validatedEpreuves >= data.numberEpreuves) {
+          console.log("toutes les etapes finis")
+          navigation.navigate("End");
+        }
+      })
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario
         scenarioID: data.scenarioID, // Met à jour la clé scenarioID
       })
-
-    );
-    setModalInfo(false); // Ferme la modale
-    setPassageaujeu(true); // Passe à la page du jeu
+    )
+    setTimeout(() => {
+      setModalInfo(false)
+    }, 500); // Ferme la modale
+    // setPassageaujeu(true); // Passe à la page du jeu
   };
   ////////////////////////////////////////////////////////////// creer conditiion pour afficher la bonne page en fonction de l'etape deja realiser //////////////////////////////
-  useEffect(() => {
-    if (passageaujeu) {
-      if (EtapeFini === 0) {
-        navigation.navigate("Scenario");
-      } else if (EtapeFini !== 0) {
-        navigation.navigate(`Ingame${EtapeFini}`);
-      }
-    }
-  }, [passageaujeu]);
+
+
 
   // Géolocalisation de l'utilisateur
   useEffect(() => {
