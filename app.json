@@ -9,31 +9,30 @@
           "recordAudioAndroid": true
         }
       ],
-      ["expo-video"]
+      ["expo-video"],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/LogoXscape400.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#85CAE4"
+        }
+      ]
     ],
     "name": "FRONT",
     "slug": "FRONT",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LogoXScape.png",
+    "icon": "./assets/LogoXscape400.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/LogoXScape.png",
+      "image": "./assets/LogoXscape400.png",
       "resizeMode": "contain",
       "backgroundColor": "#85CAE4"
     },
     "ios": {
       "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/LogoXScape.png",
-        "backgroundColor": "#85CAE4"
-      }
-    },
-    "web": {
-      "favicon": "./assets/LogoXScape.png"
     }
   }
 }
