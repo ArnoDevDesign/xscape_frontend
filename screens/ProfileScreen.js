@@ -6,6 +6,11 @@ import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useIsFocused } from '@react-navigation/native';
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)

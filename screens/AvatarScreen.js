@@ -1,15 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     StyleSheet, View, SafeAreaView, TextInput, Text, TouchableOpacity,
-    FlatList, Image, Dimensions
+    FlatList, Image, Dimensions, Animated
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
+
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 const { width } = Dimensions.get("window");
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 export default function AvatarScreen({ navigation }) {
+
+    const [loaded] = useFonts({
+        "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+        "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+        "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+        "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+        "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+        "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+        "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+        "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+    });
+
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+    if (!loaded) {
+        return null;
+    }
+
     const [signUpUsername, setSignUpUsername] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const userToken = useSelector((state) => state.users.value.token)
@@ -65,117 +95,149 @@ export default function AvatarScreen({ navigation }) {
         <View style={styles.container}>
             <SafeAreaView />
 
-            {/* Titre */}
-            <View style={styles.title}>
-                <Text style={styles.text}>Choisis ton avatar</Text>
-            </View>
-
-            {/* Carousel d'avatars */}
-            <View style={styles.avatarContainer}>
+           {/* Titre */}
+           <View style={styles.avatarContainer}>
+                <Text style={[styles.text, { paddingBottom: 20 }]}>Personnalise</Text>
+                <Text style={{ fontSize: 32, fontFamily: "Fustat-ExtraBold.ttf", color: "white" , margin: -35}}>ton profil</Text>
                 <FlatList
                     data={images}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.carousel}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => setSelectedAvatar(item)}>
-                            <Image
-                                source={{ uri: item }}
-                                style={[
-                                    styles.image,
-                                    selectedAvatar === item && styles.selectedImage
-                                ]}
-                            />
-                        </TouchableOpacity>
-                    )}
+                    renderItem={({ item }) => <AnimatedAvatar uri={item} selected={selectedAvatar === item} onPress={() => setSelectedAvatar(item)} />}
                 />
             </View>
 
             {/* Input et bouton */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.text}>Choisis ton pseudo</Text>
-                <TextInput
-                    placeholderTextColor={'black'}
-                    style={styles.inp1}
-                    placeholder="Pseudo"
-                    onChangeText={setSignUpUsername}
-                    value={signUpUsername}
-                />
-                <TouchableOpacity onPress={register} style={styles.buttonLogOut}>
-                    <Text style={styles.button}>C'est parti !</Text>
-                </TouchableOpacity>
-            </View>
+            <TextInput
+                placeholderTextColor={'#636773'}
+                style={styles.input}
+                placeholder="Ton pseudo"
+                onChangeText={setSignUpUsername}
+                value={signUpUsername}
+            />
+            <TouchableOpacity onPress={register} style={styles.buttonLogOut}>
+                <Text style={styles.textButtonLogOut}>C'est parti !</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
-// Styles
+// composant animé pour l'image
+const AnimatedAvatar = ({ uri, selected, onPress }) => {
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    const opacityAnim = useRef(new Animated.Value(0)).current;
+
+    // état pour zoomer sur les images
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 100,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
+    return (
+        <TouchableOpacity onPress={onPress}>
+            <Animated.Image
+                source={{ uri }}
+                style={[
+                    styles.image,
+                    selected && styles.selectedImage,
+                    { transform: [{ scale: selected ? 1.2 : scaleAnim }] }
+                ]}
+            />
+        </TouchableOpacity>
+    );
+};
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        backgroundColor: 'grey',
+        height: '100%',
+        backgroundColor: '#85CAE4',
         alignItems: 'center',
     },
     inputContainer: {
-        padding: 20,
+        // padding: 20,
         alignItems: 'center',
         width: '100%',
         height: '30%',
         backgroundColor: 'lightgrey',
         justifyContent: 'space-around',
-        paddingBottom: 40
+        paddingBottom: 10
     },
-    inp1: {
-        marginTop: 10,
-        backgroundColor: 'grey',
+    input: {
+        // flexDirection: 'row',
+        alignItems: 'center',
         width: '80%',
-        height: 60,
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        color: 'white',
+        height: 70,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 12,
+        margin: 12,
+        paddingLeft: 20,
+        fontSize: 15,
     },
     avatarContainer: {
         width: '100%',
-        height: '60%',
+        height: '70%',
         alignItems: 'center',
     },
     text: {
-        fontSize: 20,
-        color: 'yellow',
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        color: '#FFFFFF',
+        paddingTop: 80,
+        // paddingBottom: 30,
+        
     },
     buttonLogOut: {
-        borderRadius: 10,
-        marginTop: 20,
-        backgroundColor: 'yellow',
-        width: '80%',
-        height: 60,
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+        width: '80%',
+        height: 72,
+        backgroundColor: '#FF8527',
+        margin: 20,
+        // marginTop: 50,
+        borderRadius: 20,
+        elevation: 3,
     },
-    button: {
+    textButtonLogOut: {
         fontSize: 20,
-    },
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,    },
+
     title: {
         width: '100%',
-        height: '5%',
+        height: '20%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'blue'
     },
     carousel: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
         alignItems: "center",
     },
     image: {
-        width: width * 0.7, // Taille des avatars ajustée
-        height: width * 0.7,
-        borderRadius: 50, // Correcte au lieu de "50%"
-        marginHorizontal: 10,
+        width: width * 0.5, // Taille des avatars ajustée
+        height: width * 0.5,
+        borderRadius: 100, // Correcte au lieu de "50%"
+        marginHorizontal: 30,
+        elevation: 3
+        // borderColor: 'white',
+        // borderWidth: 5,
     },
     selectedImage: {
         borderWidth: 3,
-        borderColor: "orange",
+        borderColor: "white",
     },
 });
 
