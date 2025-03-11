@@ -88,7 +88,7 @@ const store = configureStore({ reducer: { users } });
 
 export default function App() {
 
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     "Fustat-Bold.ttf": require("./assets/fonts/Fustat-Bold.ttf"),
     "Fustat-ExtraBold.ttf": require("./assets/fonts/Fustat-ExtraBold.ttf"),
     "Fustat-ExtraLight.ttf": require("./assets/fonts/Fustat-ExtraLight.ttf"),
@@ -98,17 +98,21 @@ export default function App() {
     "Fustat-SemiBold.ttf": require("./assets/fonts/Fustat-SemiBold.ttf"),
     "Homenaje-Regular.ttf": require("./assets/fonts/Homenaje-Regular.ttf"),
     "PressStart2P-Regular.ttf": require("./assets/fonts/PressStart2P-Regular.ttf"),
+    "Righteous-Regular.ttf": require("./assets/fonts/Righteous-Regular.ttf"),
+    "Goldman-Regular.ttf": require("./assets/fonts/Goldman-Regular.ttf"),
+    "Goldman-Bold.ttf": require("./assets/fonts/Goldman-Bold.ttf"),
+    "FugazOne-Regular.ttf": require("./assets/fonts/FugazOne-Regular.ttf"),
   });
 
   useEffect(() => {
     // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
-    if (loaded || error) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [loaded]);
 
   // Retourner null tant que la police n'est pas chargée
-  if (!loaded && !error) {
+  if (!loaded) {
     return null;
   }
 
