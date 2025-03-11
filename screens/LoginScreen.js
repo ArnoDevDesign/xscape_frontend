@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Button, TextInput, Text, Modal, TouchableOpacity, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addUserToStore } from '../reducers/users';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -107,21 +107,21 @@ export default function LoginScreen({ navigation }) {
 
         <View style={styles.generalContainer}>
             <SafeAreaView />
-            // lorsque la modale apparait, les boutons inscription et connexion disparaissent -> fin ligne 120
+            {/* lorsque la modale apparait, les boutons d'inscription et de connexion disparaissent */}
             {!modalLogIn && !modalSignUp && (
                 <View style={styles.signContainer}>
-                    
-                    <TouchableOpacity style={styles.button} onPress={() => setmodalLogIn(true)}>
-                        <Text style={styles.textButton}>Se connecter</Text>
+                    <Image source={require('../assets/LogoXscape400.png')} style={styles.logo} />
+                    <TouchableOpacity style={styles.buttonHp} onPress={() => setmodalLogIn(true)}>
+                        <Text style={styles.textButtonHp}>Se connecter</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => setmodalSignUp(true)}>
-                        <Text style={styles.textButton}>S'inscrire</Text>
+                    <TouchableOpacity style={styles.buttonHp} onPress={() => setmodalSignUp(true)}>
+                        <Text style={styles.textButtonHp}>S'inscrire</Text>
                     </TouchableOpacity>
                 </View>
             )}
             {/* Modal Log in */}
             {modalLogIn && (
-                <Modal visible={modalLogIn} animationType="fade" transparent>
+                <Modal visible={modalLogIn} animationType="slide" transparent>
                     <View style={styles.centeredView}>
                         <View style={styles.modalViewLogin}>
                             <Text style={{ fontSize: 30, color: '#009EBA', paddingBottom: 60 }}>Connexion</Text>
@@ -151,7 +151,7 @@ export default function LoginScreen({ navigation }) {
                                 <Text style={[styles.textLoginButton]}>Se connecter</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setmodalLogIn(false)} activeOpacity={0.8}>
-                                <Text style={[styles.textButton, { color: "#85CAE4" }, { fontWeight: "400" }]}>Fermer</Text>
+                                <Text style={styles.closeTextButton}>Fermer</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -162,7 +162,7 @@ export default function LoginScreen({ navigation }) {
             {/* Modal Sign up */}
             {
                 modalSignUp && (
-                    <Modal visible={modalSignUp} animationType="fade" transparent>
+                    <Modal visible={modalSignUp} animationType="slide" transparent>
                         <View style={styles.centeredView}>
                             <View style={styles.modalViewsignup}>
                                 <Text style={{ fontSize: 30, paddingBottom: 50, color: '#009EBA' }}>Inscription</Text>
@@ -179,13 +179,13 @@ export default function LoginScreen({ navigation }) {
                                 < View style={styles.inp1} >
                                     <TextInput
                                         placeholderTextColor={'#636773'}
-                                        fontSize={15}
+                                        style={{ fontSize: 15 }}
                                         placeholder="Mot de passe"
                                         secureTextEntry={showPassword ? true : false}
                                         onChangeText={setSignUpPassword}
                                         value={signUpPassword}
                                     />
-         // incorporation de l'icone de visibilité du MDP.
+         {/* incorporation de l'icone de visibilité du MDP. */}
                                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                         <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} color={'#636773'} size={20} paddingRight={12} />
                                     </TouchableOpacity>
@@ -193,7 +193,7 @@ export default function LoginScreen({ navigation }) {
                                 <View style={styles.inp1}>
                                     <TextInput
                                         placeholderTextColor={'#636773'}
-                                        fontSize={15}
+                                        style={{ fontSize: 15 }}
                                         placeholder="Confirmation du mot de passe"
                                         secureTextEntry={showPassword2 ? true : false}
                                         onChangeText={setConfirmPassword}
@@ -207,7 +207,7 @@ export default function LoginScreen({ navigation }) {
                                     <Text style={styles.textsignupButton}>S'inscrire</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setmodalSignUp(false)} activeOpacity={0.8}>
-                                    <Text style={[styles.textButton, { color: "#85CAE4" }, { fontWeight: "400" }]}>Fermer</Text>
+                                    <Text style={styles.closeTextButton}>Fermer</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -228,10 +228,10 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
         width: '100%',
-        height: '80%',
+        height: '90%',
         color: "white",
     },
-    button: {
+    buttonHp: {
         justifyContent: 'center',
         alignItems: 'center',
         columnGap: "10",
@@ -241,15 +241,25 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         margin: 20,
         borderRadius: 16,
-        elevation: 4,
+        elevation: 3,
     },
-    textButton: {
+    textButtonHp: {
         fontSize: 20,
         fontWeight: 'bold',
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
         color: "#FF8527",
+        padding: 10,
+    },
+    closeTextButton: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#85CAE4",
+        fontWeight: "400",
         padding: 10,
     },
     loginButton: {
@@ -295,13 +305,14 @@ const styles = StyleSheet.create({
         color: "white",
         padding: 10,
     },
-    textButtonBlue: {
-        fontSize: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        // color: "white",
-        padding: 10,
-    },
+    // Bouton pour développement, passer l'étape.
+    // textButtonBlue: {
+    //     fontSize: 20,
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     // color: "white",
+    //     padding: 10,
+    // },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
@@ -311,12 +322,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         width: '80%',
         paddingTop: 30,
-        
+
         paddingBottom: 80,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 30,
-        elevation: 5,
+        elevation: 3,
     },
     modalViewsignup: {
         backgroundColor: '#FFFFFF',
@@ -327,7 +338,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         paddingTop: 30,
         paddingBottom: 30,
-        elevation: 5,
+        elevation: 3,
     },
     inp1: {
         flexDirection: 'row',
@@ -341,10 +352,17 @@ const styles = StyleSheet.create({
         paddingLeft: 10
     },
     logo: {
-        width: 150,
-        height: 150,
+        // height: 150 ,
+        // width: 150 ,
+        height: 180,
+        width: 180,
+        // height: 190 ,
+        // width: 190 ,
+        marginBottom: 200,
+        justifyContent: 'center',
+        aligItems: 'center',
         resizeMode: 'contain',
         alignSelf: 'center',
-        marginBottom: 20,
+        elevation: 3,
     },
 });
