@@ -14,7 +14,7 @@ const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 export default function TestScreen({ navigation }) {
 
-
+    const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
     const [video1, setVideo1] = useState(true);
     const [video2, setVideo2] = useState(false);
@@ -116,7 +116,7 @@ export default function TestScreen({ navigation }) {
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-    }, [userRedux.userID, userRedux.scenarioID, video1])
+    }, [userRedux.userID, userRedux.scenarioID, isFocused])
 
 
     //////////////////////////fonction permettant de tester les 3 frequence
@@ -178,10 +178,9 @@ export default function TestScreen({ navigation }) {
     // }
 
     ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
-    async function finalButton() {
+    const finalButton = useCallback(() => {
         console.log("Score avant calcul:", SCORE);
 
-        // Met à jour le score de manière sûre
         setSCORE(prevScore => {
             let newScore = prevScore;
             if (indiceused1) newScore -= 100;
@@ -191,13 +190,14 @@ export default function TestScreen({ navigation }) {
             return newScore;
         });
 
-        // Met à jour game1 à true
         setGame1(true);
-    }
+    }, [indiceused1, indiceused2, indiceused3]);
 
     /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
+    const [scoreSent, setScoreSent] = useState(false);
+
     useEffect(() => {
-        if (game1) {  // Vérifier que le jeu est terminé avant d'envoyer le score
+        if (game1 && !scoreSent) {  // Vérifier que le score n'a pas déjà été envoyé
             console.log("Score mis à jour, envoi au backend:", SCORE);
 
             fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
@@ -212,12 +212,13 @@ export default function TestScreen({ navigation }) {
                     console.log("Score mis à jour dans la base de données", data);
                     setJoVideo(false);
                     navigation.navigate("Ingame2"); // Naviguer après la mise à jour
+                    setScoreSent(true); // Bloquer le réenvoi du score
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
         }
-    }, [SCORE, finalButton]); // Se déclenche quand SCORE change
+    }, [SCORE]); // Ne dépend que de SCORE
 
 
     return (

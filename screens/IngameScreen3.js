@@ -70,7 +70,7 @@ export default function Ingame3Screen() {
                 outputRange: ["#37474F", "#B71C1C"]
             })]}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.score}>Score: {score}</Text>
+                {/* <Text style={styles.score}>Score: {score}</Text> */}
             </Animated.View>
 
             <View style={styles.buttonContainer}>

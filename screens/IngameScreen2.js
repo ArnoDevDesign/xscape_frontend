@@ -12,14 +12,14 @@ import {
 } from 'react-native';
 import { Camera, CameraType, CameraView } from 'expo-camera';
 import { useNavigation } from "@react-navigation/native";
-
+const useIsFocused = require('@react-navigation/native').useIsFocused;
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 
 export default function IngameScreen2({ navigation }) {
     const userRedux = useSelector((state) => state.users.value)
     // Initialisation de la navigation pour permettre la transition vers l’étape 3
-
+    const isFocused = useIsFocused();
     // Référence pour l’accès à la caméra
     const cameraRef = useRef(null);
 
@@ -35,7 +35,7 @@ export default function IngameScreen2({ navigation }) {
     const [modalreveal, setModalreveal] = useState(false);
     const [indiceModal, setIndicemodal] = useState(false);
     // Valeurs des QR Codes attendus (doivent être scannés dans cet ordre précis)
-
+    const [game2, setGame2] = useState(false);
     const [flashColor, setFlashColor] = useState("transparent");
 
     const [goodQRcode1, setGoodQRcode1] = useState('https://qr.codes/vUIYq1');
@@ -93,23 +93,39 @@ export default function IngameScreen2({ navigation }) {
     };
 
     // Fonction qui gère la lecture des QR codes et vérifie s’ils sont scannés dans le bon ordre
+    const [isScanning, setIsScanning] = useState(true); // Permet de bloquer temporairement le scan
+
     const scanQR = (data) => {
+        if (!isScanning) return;  // Si le scan est bloqué, on ne fait rien
+
         console.log("QR Code Data:", data);
 
         if (!scanned1 && data === goodQRcode1) {
             flashScreen("green");  // Flash vert
             setScanned1(true);
+            setIsScanning(false); // Désactiver temporairement le scan
+            setTimeout(() => setIsScanning(true), 3000); // Réactiver après 2s
         } else if (!scanned2 && scanned1 && data === goodQRcode2) {
             flashScreen("green");  // Flash vert
             setScanned2(true);
+            setIsScanning(false);
+            setTimeout(() => setIsScanning(true), 3000);
         } else if (!scanned3 && scanned1 && scanned2 && data === goodQRcode3) {
             flashScreen("green");  // Flash vert
             setScanned3(true);
-            setTimeout(() => setModalreveal(true), 1000);
+            setIsScanning(false);
+            setTimeout(() => {
+                setModalreveal(true);
+                setIsScanning(true); // Réactiver après affichage du modal
+            }, 1000);
         } else {
             flashScreen("red"); // Flash rouge pour un mauvais scan
-            setScanned1(false); setScanned2(false); setScanned3(false);
+            setScanned1(false);
+            setScanned2(false);
+            setScanned3(false);
             Vibration.vibrate();
+            setIsScanning(false);
+            setTimeout(() => setIsScanning(true), 2000); // Réactiver après 2s
         }
     };
 
@@ -121,10 +137,6 @@ export default function IngameScreen2({ navigation }) {
         setIndicemodal(false);
     }
 
-    const passageau3 = () => {
-        setModalreveal(false);
-        navigation.navigate('Ingame3');
-    };
 
 
     useEffect(() => {
@@ -139,64 +151,101 @@ export default function IngameScreen2({ navigation }) {
     }
 
 
+    const passageau3 = () => {
+        setGame2(true);
+        console.log('game2 status', game2, 'score', SCORE)
+        useEffect(() => {
+            if (game2) {  // Vérifier que le score n'a pas déjà été envoyé
+                console.log("Score mis à jour, envoi au backend:", SCORE);
+
+                fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ score: SCORE, result: game2 }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Score mis à jour dans la base de données", data);
+                        navigation.navigate("Ingame3"); // Naviguer après la mise à jour
+
+
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la requête:', error);
+                    });
+            }
+        }, [SCORE])
+
+
+        setModalreveal(false);
+        navigation.navigate('Ingame3');
+    };
+
+
+
     return (
+        isFocused && (
+            <View style={styles.container} >
+                <SafeAreaView />
+
+                {/* Vue de la caméra pour scanner les QR Codes */}
+                <View style={styles.CameraView} >
+                    {hasPermission && (
+                        <CameraView
+                            onBarcodeScanned={({ data }) => scanQR(data)} // Appelle scanQR lorsqu'un QR est scanné
+                            style={styles.Camera}
+                            ref={cameraRef}
+                        />
+                    )}
+                </View >
+                <View style={styles.lightContainer}>
+                    <Animated.View style={[styles.light, scanned1 ? styles.greenLight : styles.redLight, animatedStyle]} />
+                    <Animated.View style={[styles.light, scanned2 ? styles.greenLight : styles.redLight, animatedStyle]} />
+                    <Animated.View style={[styles.light, scanned3 ? styles.greenLight : styles.redLight, animatedStyle]} />
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={() => setIndicemodal(true)} style={styles.button}>
+                        <Text style={styles.textButton}>Indice</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Animation Flash */}
+                <Animated.View style={[styles.flashOverlay, {
+                    opacity: flashAnim,
+                    backgroundColor: flashColor
+                }]} />
 
 
-        <View style={styles.container}>
-            <SafeAreaView />
-
-            {/* Vue de la caméra pour scanner les QR Codes */}
-            <View style={styles.CameraView}>
-                {hasPermission && (
-                    <CameraView
-                        onBarcodeScanned={({ data }) => scanQR(data)} // Appelle scanQR lorsqu'un QR est scanné
-                        style={styles.Camera}
-                        ref={cameraRef}
-                    />
-                )}
-            </View>
-            <View style={styles.lightContainer}>
-                <Animated.View style={[styles.light, scanned1 ? styles.greenLight : styles.redLight, animatedStyle]} />
-                <Animated.View style={[styles.light, scanned2 ? styles.greenLight : styles.redLight, animatedStyle]} />
-                <Animated.View style={[styles.light, scanned3 ? styles.greenLight : styles.redLight, animatedStyle]} />
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => setIndicemodal(true)} style={styles.button}>
-                    <Text style={styles.textButton}>Indice</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Animation Flash */}
-            <Animated.View style={[styles.flashOverlay, {
-                opacity: flashAnim,
-                backgroundColor: flashColor
-            }]} />
-
-            {/* Modal qui s'affiche après le scan réussi des 3 QR codes */}
-            {indiceModal && (
-                <Modal visible={indiceModal} animationType="fade" transparent>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <TouchableOpacity onPress={INDICE} style={styles.button}>
-                                <Text style={styles.textButton}>{indice1}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-            )}
-            {modalreveal && (
-                <Modal visible={modalreveal} animationType="fade" transparent>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <TouchableOpacity onPress={passageau3} style={styles.button}>
-                                <Text style={styles.textButton}>✅ Triangulation réussie ! La capsule a été localisée.</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-            )}
-        </View>
-    );
+                {/* Modal qui s'affiche après le scan réussi des 3 QR codes */}
+                {
+                    indiceModal && (
+                        <Modal visible={indiceModal} animationType="fade" transparent>
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <TouchableOpacity onPress={INDICE} style={styles.button}>
+                                        <Text style={styles.textButton}>{indice1}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    )
+                }
+                {
+                    modalreveal && (
+                        <Modal visible={modalreveal} animationType="fade" transparent>
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <TouchableOpacity onPress={passageau3} style={styles.button}>
+                                        <Text style={styles.textButton}>✅ Triangulation réussie ! La capsule a été localisée.</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    )
+                }
+            </View >))
 }
 
 

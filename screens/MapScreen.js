@@ -25,6 +25,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserToStore } from "../reducers/users";
+import { useIsFocused } from "@react-navigation/native";
 
 // URL back
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -48,6 +49,7 @@ const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
 };
 
 export default function MapScreen({ navigation }) {
+  const isFocused = useIsFocused();
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -75,6 +77,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
+  const [EtapeFini, setEtapeFini] = useState('');
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -110,21 +113,27 @@ export default function MapScreen({ navigation }) {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("log de creation de session", data);
+        setEtapeFini(data.validatedEpreuves);
+        console.log("log de creation de session", EtapeFini);
       });
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario
         scenarioID: data.scenarioID, // Met à jour la clé scenarioID
       })
+
     );
     setModalInfo(false); // Ferme la modale
     setPassageaujeu(true); // Passe à la page du jeu
   };
-
+  ////////////////////////////////////////////////////////////// creer conditiion pour afficher la bonne page en fonction de l'etape deja realiser //////////////////////////////
   useEffect(() => {
     if (passageaujeu) {
-      navigation.navigate("Scenario");
+      if (EtapeFini === 0) {
+        navigation.navigate("Scenario");
+      } else if (EtapeFini !== 0) {
+        navigation.navigate(`Ingame${EtapeFini}`);
+      }
     }
   }, [passageaujeu]);
 
@@ -134,7 +143,7 @@ export default function MapScreen({ navigation }) {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       // Demande de permission pour la géolocalisation
-      if (status === "granted") {
+      if (status === "granted" && isFocused) {
         // Si autorisation alors on récupère la position
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
@@ -152,7 +161,7 @@ export default function MapScreen({ navigation }) {
         setGeolocationError(true); // Erreur si la géolocalisation est refusée
       }
     })();
-  }, []);
+  }, [isFocused]);
 
   // Récupération des données du scénario depuis la BDD
   useEffect(() => {
@@ -167,8 +176,8 @@ export default function MapScreen({ navigation }) {
       }
     };
 
-    fetchScenarios();
-  }, []);
+    isFocused && fetchScenarios();
+  }, [isFocused]);
 
   const recenterMapOnPinUser = () => {
     const { latitude, longitude } = userLocation;
