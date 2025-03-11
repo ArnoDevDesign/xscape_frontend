@@ -26,19 +26,19 @@ export default function LoginScreen({ navigation }) {
         "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
         "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
         "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
-      });
-    
-      useEffect(() => {
+    });
+
+    useEffect(() => {
         // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
         if (loaded) {
-          SplashScreen.hideAsync();
+            SplashScreen.hideAsync();
         }
-      }, [loaded]);
-    
-      // Retourner null tant que la police n'est pas chargée
-      if (!loaded) {
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+    if (!loaded) {
         return null;
-      }
+    }
 
     const dispatch = useDispatch();
     const [showPasswordConnection, setShowPasswordConnection] = useState(true);
@@ -127,7 +127,7 @@ export default function LoginScreen({ navigation }) {
                     setLogInPassword('');
                     setmodalLogIn(false);
                     console.log("Connexion réussie :", email);
-                    navigation.navigate('TabNavigator');
+                    navigation.navigate('Map');
                 } else {
                     alert('Nom d’utilisateur ou mot de passe incorrect.');
                 }
@@ -217,7 +217,7 @@ export default function LoginScreen({ navigation }) {
                                         onChangeText={setSignUpPassword}
                                         value={signUpPassword}
                                     />
-         {/* incorporation de l'icone de visibilité du MDP. */}
+                                    {/* incorporation de l'icone de visibilité du MDP. */}
                                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                         <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} color={'#636773'} size={20} paddingRight={12} />
                                     </TouchableOpacity>

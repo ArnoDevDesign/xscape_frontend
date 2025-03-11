@@ -12,11 +12,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Map
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 // Icones
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -25,6 +25,15 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserToStore } from "../reducers/users";
+
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useIsFocused } from "@react-navigation/native";
+
+
+
+SplashScreen.preventAutoHideAsync();
+
 
 // URL back
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -48,6 +57,31 @@ const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
 };
 
 export default function MapScreen({ navigation }) {
+
+  const [loaded] = useFonts({
+    "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+    "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+    "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+    "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+    "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+    "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+    "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+    "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+    "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
+  });
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  // Retourner null tant que la police n'est pas chargée
+  if (!loaded) {
+    return null;
+  }
+
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -75,6 +109,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
+
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -110,23 +145,32 @@ export default function MapScreen({ navigation }) {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("log de creation de session", data);
-      });
+        console.log("log de creation de session", data.validatedEpreuves);
+        if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
+          console.log("zero etape fini")
+          navigation.navigate("Scenario");
+        } else if (data.validatedEpreuves !== 0) {
+          console.log(" quelques etapes finis")
+          navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
+        } else if (data.validatedEpreuves >= data.numberEpreuves) {
+          console.log("toutes les etapes finis")
+          navigation.navigate("End");
+        }
+      })
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario
         scenarioID: data.scenarioID, // Met à jour la clé scenarioID
       })
-    );
-    setModalInfo(false); // Ferme la modale
-    setPassageaujeu(true); // Passe à la page du jeu
+    )
+    setTimeout(() => {
+      setModalInfo(false)
+    }, 500); // Ferme la modale
+    // setPassageaujeu(true); // Passe à la page du jeu
   };
+  ////////////////////////////////////////////////////////////// creer conditiion pour afficher la bonne page en fonction de l'etape deja realiser //////////////////////////////
 
-  useEffect(() => {
-    if (passageaujeu) {
-      navigation.navigate("Scenario");
-    }
-  }, [passageaujeu]);
+
 
   // Géolocalisation de l'utilisateur
   useEffect(() => {
@@ -134,7 +178,7 @@ export default function MapScreen({ navigation }) {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       // Demande de permission pour la géolocalisation
-      if (status === "granted") {
+      if (status === "granted" && isFocused) {
         // Si autorisation alors on récupère la position
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
@@ -152,7 +196,7 @@ export default function MapScreen({ navigation }) {
         setGeolocationError(true); // Erreur si la géolocalisation est refusée
       }
     })();
-  }, []);
+  }, [isFocused]);
 
   // Récupération des données du scénario depuis la BDD
   useEffect(() => {
@@ -167,8 +211,8 @@ export default function MapScreen({ navigation }) {
       }
     };
 
-    fetchScenarios();
-  }, []);
+    isFocused && fetchScenarios();
+  }, [isFocused]);
 
   const recenterMapOnPinUser = () => {
     const { latitude, longitude } = userLocation;
@@ -184,123 +228,126 @@ export default function MapScreen({ navigation }) {
   };
 
   return isLoading ? (
-    <View style={styles.loaderContainer}>
-      <ActivityIndicator size="large" color="#009EBA" />
-      <Text style={styles.loaderText}>Chargement...</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#009EBA" />
+        <Text style={styles.loaderText}>Chargement...</Text>
+      </View>
+    </SafeAreaView>
   ) : geolocationError ? (
-    <View style={styles.loaderContainer}>
-      <Text style={styles.errorMessage}>Accès à la géolocalisation refusé</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.loaderContainer}>
+        <Text style={styles.errorMessage}>Accès à la géolocalisation refusé</Text>
+      </View>
+    </SafeAreaView>
   ) : (
-    <Animated.View style={[styles.mapContainer, { opacity: fadeIn }]}>
-      <View style={styles.container}>
-        <View style={styles.mapContainer2}>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={{
-              latitude: userLocation.latitude || 48.866667,
-              longitude: userLocation.longitude || 2.333333,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.008,
-            }}
-          >
-            {/* Marker pour la position de l'utilisateur */}
-            {userLocation && (
-              <Marker
-                coordinate={userLocation}
-                image={{ uri: newFormatAvatar }}
-                onPress={() => navigation.navigate("Profil")}
-              />
-            )}
+    <SafeAreaView style={{ flex: 1 }}>
+      <Animated.View style={[styles.mapContainer, { opacity: fadeIn }]}>
+        <View style={styles.container}>
+          <View style={styles.mapContainer2}>
+            <MapView
+              ref={mapRef}
+              style={styles.map}
+              initialRegion={{
+                latitude: userLocation.latitude || 48.866667,
+                longitude: userLocation.longitude || 2.333333,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.008,
+              }}
+            >
+              {userLocation && (
+                <Marker
+                  coordinate={userLocation}
+                  image={{ uri: newFormatAvatar }}
+                  onPress={() => navigation.navigate("Profil")}
+                />
+              )}
 
-            {/* Markers des jeux */}
-            {scenariosData.map((data, i) => (
-              <Marker
-                key={i}
-                coordinate={{
-                  latitude: data.geolocalisation?.latitude ?? 48.866667,
-                  longitude: data.geolocalisation?.longitude ?? 2.333333,
-                }}
-                image={gameMarker.scenario}
-                onPress={() => {
-                  console.log("data", data.name, data._id);
-                  setModalGameName(data.name);
-                  setModalGameTheme(data.theme);
-                  setModalGameDuration(data.duree);
-                  setModalGameInfo(data.infoScenario);
-                  setModalInfo(true);
-                  setSelectedScenario(data._id);
-                  const distance = getDistanceFromLatLonInMeters(
-                    userLocation.latitude,
-                    userLocation.longitude,
-                    data.geolocalisation.latitude,
-                    data.geolocalisation.longitude
-                  );
-                  setIsUserNear(distance <= PROXIMITY_THRESHOLD);
-                }}
-              />
-            ))}
-          </MapView>
+              {scenariosData.map((data, i) => (
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: data.geolocalisation?.latitude ?? 48.866667,
+                    longitude: data.geolocalisation?.longitude ?? 2.333333,
+                  }}
+                  image={gameMarker.scenario}
+                  onPress={() => {
+                    console.log("data", data.name, data._id);
+                    setModalGameName(data.name);
+                    setModalGameTheme(data.theme);
+                    setModalGameDuration(data.duree);
+                    setModalGameInfo(data.infoScenario);
+                    setModalInfo(true);
+                    setSelectedScenario(data._id);
+                    const distance = getDistanceFromLatLonInMeters(
+                      userLocation.latitude,
+                      userLocation.longitude,
+                      data.geolocalisation.latitude,
+                      data.geolocalisation.longitude
+                    );
+                    setIsUserNear(distance <= PROXIMITY_THRESHOLD);
+                  }}
+                />
+              ))}
+            </MapView>
+          </View>
         </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={recenterMapOnPinUser}>
-          <FontAwesome name="map-marker" size={42} color="#85CAE4" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={recenterMapOnPinUser}>
+            <FontAwesome name="map-marker" size={42} color="#85CAE4" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Modal info */}
-      {modalInfo && (
-        <Modal visible={modalInfo} animationType="fade" transparent>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setModalInfo(false);
-              setModalExpanded(false);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <Pressable
-                style={[
-                  styles.modalView,
-                  modalExpanded && styles.expandedModal,
-                ]}
-                onPress={() => !modalExpanded && setModalExpanded(true)}
-              >
-                <Text style={styles.modalTitle}>{modalGameName}</Text>
-                <Text style={styles.modalTheme}>{modalGameTheme}</Text>
-                <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
-                {modalExpanded && (
-                  <>
-                    <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
-                    {isUserNear ? (
-                      <TouchableOpacity
-                        style={styles.startGameButton}
-                        onPress={() =>
-                          choosenScenario({
-                            scenario: modalGameName,
-                            scenarioID: selectedScenario,
-                          })
-                        }
-                      >
-                        <Text style={styles.startGameButtonText}>
-                          Lancer l'aventure
+        {modalInfo && (
+          <Modal visible={modalInfo} animationType="fade" transparent>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setModalInfo(false);
+                setModalExpanded(false);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <Pressable
+                  style={[
+                    styles.modalView,
+                    modalExpanded && styles.expandedModal,
+                  ]}
+                  onPress={() => !modalExpanded && setModalExpanded(true)}
+                >
+                  <Text style={styles.modalTitle}>{modalGameName}</Text>
+                  <Text style={styles.modalTheme}>{modalGameTheme}</Text>
+                  <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
+                  {modalExpanded && (
+                    <>
+                      <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
+                      {isUserNear ? (
+                        <TouchableOpacity
+                          style={styles.startGameButton}
+                          onPress={() =>
+                            choosenScenario({
+                              scenario: modalGameName,
+                              scenarioID: selectedScenario,
+                            })
+                          }
+                        >
+                          <Text style={styles.startGameButtonText}>
+                            Lancer l'aventure
+                          </Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text style={styles.textGoAventure}>
+                          Rends-toi sur place pour commencer l'aventure.
                         </Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <Text style={styles.textGoAventure}>
-                        Rends-toi sur place pour commencer l'aventure.
-                      </Text>
-                    )}
-                  </>
-                )}
-              </Pressable>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      )}
-    </Animated.View>
+                      )}
+                    </>
+                  )}
+                </Pressable>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        )}
+      </Animated.View>
+    </SafeAreaView>
   );
 }
 
@@ -316,7 +363,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: "96%",
     width: "94%",
-    borderRadius: 20,
+    borderRadius: 30,
     overflow: "hidden",
   },
 
@@ -352,63 +399,75 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
-    borderRadius: 16,
+    borderRadius: 30,
     alignItems: "center",
     width: "80%",
-    padding: 24,
+    padding: 18,
     elevation: 3,
   },
 
   expandedModal: {},
 
   modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "FugazOne-Regular.ttf",
+    fontSize: 40,
+    lineHeight: 46,
     color: "#009EBA",
     textAlign: "center",
-    marginBottom: 16,
+    marginTop: 20,
+    marginBottom: 20,
   },
 
   modalInfoText: {
+    fontFamily: "Fustat-Regular.ttf",
     fontSize: 14,
+    lineHeight: 20,
     color: "#636773",
     padding: 10,
     textAlign: "left",
   },
 
   modalTheme: {
+    fontFamily: "Fustat-ExtraBold.ttf",
     fontSize: 14,
-    fontWeight: "bold",
+    lineHeight: 16,
     color: "#636773",
     textAlign: "left",
   },
 
   additionalInfo: {
+    fontFamily: "Fustat-ExtraBold.ttf",
     fontSize: 14,
-    color: "#003046",
+    lineHeight: 16,
+    color: "#636773",
     textAlign: "left",
+    marginBottom: 20
   },
 
   startGameButton: {
     width: "90%",
-    height: 56,
+    height: 62,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#FF8527",
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 16,
     marginTop: 20,
+    marginBottom: 20,
+    elevation: 3,
   },
 
   startGameButtonText: {
+    fontFamily: "Fustat-ExtraBold.ttf",
     color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
   },
 
   textGoAventure: {
     color: "#FF8527",
-    fontWeight: "bold",
+    fontFamily: "Fustat-ExtraBold.ttf",
+    fontSize: 18,
+    lineHeight: 20,
     textAlign: "center",
     padding: 10,
   },

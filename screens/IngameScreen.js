@@ -12,9 +12,9 @@ import { useEvent } from 'expo';
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
-export default function TestScreen({ navigation }) {
+export default function IngameScreen1({ navigation }) {
 
-
+    const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
     const [video1, setVideo1] = useState(true);
     const [video2, setVideo2] = useState(false);
@@ -105,9 +105,9 @@ export default function TestScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 // console.log("retour fetch ", data);
-                if (data.goodFrequence1 !== goodFrequence1) setGoodFrequence1(data.goodFrequence1);
-                if (data.goodFrequence2 !== goodFrequence2) setGoodFrequence2(data.goodFrequence2);
-                if (data.goodFrequence3 !== goodFrequence3) setGoodFrequence3(data.goodFrequence3);
+                if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
+                if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
+                if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
                 if (data.indice1 !== indice1) setIndice1(data.indice1);
                 if (data.indice2 !== indice2) setIndice2(data.indice2);
                 if (data.indice3 !== indice3) setIndice3(data.indice3);
@@ -116,7 +116,7 @@ export default function TestScreen({ navigation }) {
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-    }, [userRedux.userID, userRedux.scenarioID, video1])
+    }, [userRedux.userID, userRedux.scenarioID, isFocused])
 
 
     //////////////////////////fonction permettant de tester les 3 frequence
@@ -162,62 +162,52 @@ export default function TestScreen({ navigation }) {
         }
     }, [frequence3])
 
-
-    // function handleFrequencyInput(value, setter, goodFrequence, setModal, setModal2) {
-    //     setter(value); // Met à jour la fréquence en temps réel
-
-    //     if (value.length >= goodFrequence.length) {
-    //         if (value === goodFrequence) {
-    //             return; // Ne fait rien si la fréquence est correcte
-    //         } else if (value === goodFrequence1 || value === goodFrequence2 || value === goodFrequence3) {
-    //             setModal2(true); // Affiche le modal "bon code, mauvais endroit"
-    //         } else {
-    //             setModal(true); // Affiche le modal d'erreur
-    //         }
-    //     }
-    // }
-
-    ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
-    async function finalButton() {
-        console.log("Score avant calcul:", SCORE);
-
-        // Met à jour le score de manière sûre
+    const penaliserScore = () => {
         setSCORE(prevScore => {
-            let newScore = prevScore;
-            if (indiceused1) newScore -= 100;
-            if (indiceused2) newScore -= 100;
-            if (indiceused3) newScore -= 100;
-            console.log("Score après calcul:", newScore);
+            const newScore = prevScore - 100;
+            console.log("Pénalité appliquée, nouveau score :", newScore);
             return newScore;
         });
 
-        // Met à jour game1 à true
-        setGame1(true);
-    }
+        // Attendre un court instant pour que le score soit bien mis à jour
+        setTimeout(() => {
+            console.log("Score après mise à jour réelle :", SCORE);
+        }, 100);
+    };
 
-    /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
-    useEffect(() => {
-        if (game1) {  // Vérifier que le jeu est terminé avant d'envoyer le score
-            console.log("Score mis à jour, envoi au backend:", SCORE);
+
+    ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
+    const finalButton = () => {
+        setGame1(true); // Change game1 d'abord
+
+        setTimeout(() => {
+            console.log("Score final envoyé au backend :", SCORE);
 
             fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ score: SCORE, result: game1 }),
+                body: JSON.stringify({ score: SCORE, result: true }),
             })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Score mis à jour dans la base de données", data);
                     setJoVideo(false);
-                    navigation.navigate("Ingame2"); // Naviguer après la mise à jour
+                    navigation.navigate("Ingame2");
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
-        }
-    }, [SCORE, finalButton]); // Se déclenche quand SCORE change
+        }, 200); // Attendre un peu pour être sûr que le score est bien mis à jour
+    };
+
+
+    ///fonction appele au  click du bouton fininal pour passe a l epreuve 2
+    // const [scoreSent, setScoreSent] = useState(false);
+
+
+
 
 
     return (
@@ -312,7 +302,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); setIndiceused1(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice1}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
@@ -324,7 +314,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); setIndiceused2(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice2}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
@@ -336,7 +326,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); setIndiceused3(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice3}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>

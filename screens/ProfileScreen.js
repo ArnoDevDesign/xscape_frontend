@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import { useIsFocused } from '@react-navigation/native';
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -14,18 +14,18 @@ SplashScreen.preventAutoHideAsync();
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
-
+    const isFocused = useIsFocused();
     // États pour infos utilisateur
     const [avatar, setAvatar] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [score, setScore] = useState('');
-    const [scenarios, setScenarios] = useState([]);
+
     const [modalUserVisible, setUserModalVisible] = useState(false);
     const [modalAvatarVisible, setAvatarModalVisible] = useState(false);
     const [newUsername, setNewUsername] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
-
+    const [finishedScenario, setFinishedScenarios] = useState(0);
 
 
     // Images d'avatarts pour test
@@ -59,17 +59,16 @@ export default function ProfileScreen({ navigation }) {
             return;
         }
         console.log("ProfilesScren : Token utilisé :", userRedux.token);
-        // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
         fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Données utilisateur récupérées:', data);
+                console.log('Données utilisateur récupérées sur paage de profil :', data);
                 setEmail(data.email);
                 setScore(data.totalPoints);
-                setScenarios(data.scenarios || []);
+                setFinishedScenarios(data.scenarios);
             })
             .catch(error => console.error('ProfilesScren : Erreur de récupération des données:', error));
-    }, [userRedux.token]);
+    }, [userRedux.token, isFocused]);
 
 
     //Fonction de déconnexion 
@@ -240,14 +239,9 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
-                <Text style={styles.text}>Aventures terminées :</Text>
-                {scenarios.length > 0 ? (
-                    scenarios.map((DataScenario, index) => (
-                        <Text key={index} style={styles.text}>• {DataScenario}</Text>
-                    ))
-                ) : (
-                    <Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
-                )}
+                {finishedScenario ? (<Text style={styles.text}>Aventures terminées : {finishedScenario}</Text>) :
+                    (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
+                    )}
             </View>
 
             {/* Boutons */}

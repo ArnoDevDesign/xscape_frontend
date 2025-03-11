@@ -25,7 +25,7 @@ export default function EndScreen({ navigation }) {
                 console.log(data);
                 setConclusionScenario(data.conclusionScenario)
                 setconclucionscenariofailed(data.conclusionScenarioFailed) //// il faut creer texte de conclusion en cas d'echec
-                setScore(data.score)//////////////// il me faut score dans le backend
+                setScore(data.totalPoints)//////////////// il me faut score dans le backend
                 setValidated(data.sessions)
                     .catch((error) => {
                         console.error('Error:', error);

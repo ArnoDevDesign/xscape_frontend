@@ -40,7 +40,7 @@ export default function StartGameScreen({ navigation }) {
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Map')}>
                     <Text style={styles.text}>sortir</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Ingame')} style={styles.button}>
+                <TouchableOpacity onPress={() => navigation.navigate('Ingame1')} style={styles.button}>
                     <Text style={styles.text}>Go !</Text>
                 </TouchableOpacity>
             </View>
