@@ -98,6 +98,10 @@ export default function App() {
     "Fustat-SemiBold.ttf": require("./assets/fonts/Fustat-SemiBold.ttf"),
     "Homenaje-Regular.ttf": require("./assets/fonts/Homenaje-Regular.ttf"),
     "PressStart2P-Regular.ttf": require("./assets/fonts/PressStart2P-Regular.ttf"),
+    "Righteous-Regular.ttf": require("./assets/fonts/Righteous-Regular.ttf"),
+    "Goldman-Regular.ttf": require("./assets/fonts/Goldman-Regular.ttf"),
+    "Goldman-Bold.ttf": require("./assets/fonts/Goldman-Bold.ttf"),
+    "FugazOne-Regular.ttf": require("./assets/fonts/FugazOne-Regular.ttf"),
   });
 
   useEffect(() => {

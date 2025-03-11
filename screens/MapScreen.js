@@ -66,7 +66,7 @@ export default function MapScreen({ navigation }) {
           "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
           "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
           "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
-          "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+          "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
         });
       
         useEffect(() => {
@@ -398,8 +398,8 @@ const styles = StyleSheet.create({
   expandedModal: {},
 
   modalTitle: {
-    fontFamily: "Homenaje-Regular.ttf",
-    fontSize: 46,
+    fontFamily: "FugazOne-Regular.ttf",
+    fontSize: 40,
     lineHeight: 46,
     color: "#009EBA",
     textAlign: "center",
