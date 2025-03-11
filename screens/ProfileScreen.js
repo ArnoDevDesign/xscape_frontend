@@ -4,24 +4,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import { useIsFocused } from '@react-navigation/native';
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
-
+    const isFocused = useIsFocused();
     // États pour infos utilisateur
     const [avatar, setAvatar] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [score, setScore] = useState('');
-    const [scenarios, setScenarios] = useState([]);
+
     const [modalUserVisible, setUserModalVisible] = useState(false);
     const [modalAvatarVisible, setAvatarModalVisible] = useState(false);
     const [newUsername, setNewUsername] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
-
-
+    const [finishedScenario, setFinishedScenarios] = useState(0);
+    const [modalaventures, setModalaventures] = useState(false);
 
     // Images d'avatarts pour test
     const images = [
@@ -54,17 +59,16 @@ export default function ProfileScreen({ navigation }) {
             return;
         }
         console.log("ProfilesScren : Token utilisé :", userRedux.token);
-        // const testToken = "sfutwCuwD0EFPZlyUyfzmNbob6Q49M6M"
         fetch(`${URL}/users/${userRedux.token}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Données utilisateur récupérées:', data);
+                console.log('Données utilisateur récupérées sur paage de profil :', data);
                 setEmail(data.email);
                 setScore(data.totalPoints);
-                setScenarios(data.scenarios || []);
+                setFinishedScenarios(data.scenarios);
             })
             .catch(error => console.error('ProfilesScren : Erreur de récupération des données:', error));
-    }, [userRedux.token]);
+    }, [userRedux.token, isFocused]);
 
 
     //Fonction de déconnexion 
@@ -235,14 +239,29 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
-                <Text style={styles.text}>Aventures terminées :</Text>
-                {scenarios.length > 0 ? (
-                    scenarios.map((DataScenario, index) => (
-                        <Text key={index} style={styles.text}>• {DataScenario}</Text>
-                    ))
-                ) : (
-                    <Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
-                )}
+                {finishedScenario ? (
+                    <View>
+                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonBack}>
+                            <Text style={styles.text}>Aventures terminées : </Text>
+                        </TouchableOpacity>
+                        {modalaventures && (
+                            <Modal visible={modalaventures} animationType="slide" transparent>
+                                <View style={styles.centeredView}>
+                                    <TouchableOpacity onPress={() => setModalaventures(false)} style={styles.button}>
+                                        <View style={styles.modalView}>
+                                            <Text style={styles.textButton}>{finishedScenario}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </Modal>)}
+                    </View>
+
+
+
+
+                ) :
+                    (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
+                    )}
             </View>
 
             {/* Boutons */}
@@ -262,6 +281,7 @@ export default function ProfileScreen({ navigation }) {
 
 // -- CSS STYLE --
 const styles = StyleSheet.create({
+
     generalContainer: {
         flex: 1,
         justifyContent: 'space-around',
@@ -269,7 +289,24 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingVertical: 20,
     },
-
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        width: '80%',
+        height: '50%',
+        borderRadius: 30,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 2,
+            height: 4,
+        },
+    },
     // Icon style
     iconEdit: {
         position: "absolute",

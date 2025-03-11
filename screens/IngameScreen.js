@@ -12,9 +12,9 @@ import { useEvent } from 'expo';
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
-export default function TestScreen({ navigation }) {
+export default function IngameScreen1({ navigation }) {
 
-
+    const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
     const [video1, setVideo1] = useState(true);
     const [video2, setVideo2] = useState(false);
@@ -46,7 +46,7 @@ export default function TestScreen({ navigation }) {
     const { lastvideo, setLastvideo } = useState(false)
     const [SCORE, setSCORE] = useState(500)
 
-    const [lightColor, setLightColor] = useState("yellow"); // Lumière par défaut
+    const [lightColor, setLightColor] = useState("yellow");
 
 
     const videoSource =
@@ -54,24 +54,21 @@ export default function TestScreen({ navigation }) {
             video2 ? require('../assets/Video_2.mp4') :
                 video3 ? require('../assets/Video_3.mp4') :
                     video4 ? require('../assets/jojo.mp4') :
-                        null;
+                        null
 
-
-    ////////////////useVideoPlayer pour la video
     const player = useVideoPlayer(videoSource, (player) => {
-        player.play(); // Lance la vidéo automatiquement
-        if (game1 === true) { player.loop = false } else { player.loop = true }; // Active la boucle
+        player.play();
+        if (isFocused) { player.loop = false } else { player.loop = true };
     });
 
 
     const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
-    //////////////////////////////////////useEffect pour les 3 frequence permettant de les tester a chaque entre d info dans leurs champs respectifs
     useEffect(() => {
         if (frequence1.length >= goodFrequence1.length) {
             if (frequence1 === goodFrequence1) {
-                setLightColor("green");  // Lumière verte si la fréquence est correcte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge si la fréquence est incorrecte
+                setLightColor("red")
                 setmodalout(true);
             }
         }
@@ -80,9 +77,9 @@ export default function TestScreen({ navigation }) {
     useEffect(() => {
         if (frequence2.length >= goodFrequence2.length) {
             if (frequence2 === goodFrequence2) {
-                setLightColor("green");  // Lumière verte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge
+                setLightColor("red")
                 setmodalout(true);
             }
         }
@@ -91,40 +88,38 @@ export default function TestScreen({ navigation }) {
     useEffect(() => {
         if (frequence3.length >= goodFrequence3.length) {
             if (frequence3 === goodFrequence3) {
-                setLightColor("green");  // Lumière verte
+                setLightColor("green")
             } else {
-                setLightColor("red");  // Lumière rouge
+                setLightColor("red")
                 setmodalout(true);
             }
         }
     }, [frequence3]);
 
-    ////////////////////////////////useEffect permmetant de mettre a jour les bonne frequences et les indices a chaque changement de scenario
+
     useEffect(() => {
         fetch(`${URL}/scenarios/etapes/${userRedux.scenarioID}/${userRedux.userID}`)
             .then(response => response.json())
             .then(data => {
-                // console.log("retour fetch ", data);
-                if (data.goodFrequence1 !== goodFrequence1) setGoodFrequence1(data.goodFrequence1);
-                if (data.goodFrequence2 !== goodFrequence2) setGoodFrequence2(data.goodFrequence2);
-                if (data.goodFrequence3 !== goodFrequence3) setGoodFrequence3(data.goodFrequence3);
+                console.log("retour fetch ", data);
+                if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
+                if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
+                if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
                 if (data.indice1 !== indice1) setIndice1(data.indice1);
                 if (data.indice2 !== indice2) setIndice2(data.indice2);
                 if (data.indice3 !== indice3) setIndice3(data.indice3);
-                if (data.score !== SCORE) setSCORE(data.score);
+                setSCORE(data.score);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-    }, [userRedux.userID, userRedux.scenarioID, video1])
+    }, [userRedux.userID, userRedux.scenarioID, isFocused])
 
 
-    //////////////////////////fonction permettant de tester les 3 frequence
+
     function testInput1(value) {
-
         setFrequence1(value);
-
-        if (value === goodFrequence1) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence1) {
             setVideo1(false);
             setVideo2(true);
         }
@@ -132,7 +127,7 @@ export default function TestScreen({ navigation }) {
 
     function testInput2(value) {
         setFrequence2(value);
-        if (value === goodFrequence2 && video1 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence2 && video1 === false) {
             setVideo2(false);
             setVideo3(true);
         }
@@ -140,12 +135,11 @@ export default function TestScreen({ navigation }) {
 
     function testInput3(value) {
         setFrequence3(value);
-        if (value === goodFrequence3 && video2 === false) { // Vérifie la bonne fréquence avant de changer de vidéo
+        if (value === goodFrequence3 && video2 === false) {
             setVideo3(false);
             setVideo4(true);
         }
     }
-    //////////////////// fonction permettant de valider les 3 frequence , de remplacer les inputs par un bouton
     useEffect(() => {
         if (
             frequence1.length >= 2 &&
@@ -162,62 +156,48 @@ export default function TestScreen({ navigation }) {
         }
     }, [frequence3])
 
-
-    // function handleFrequencyInput(value, setter, goodFrequence, setModal, setModal2) {
-    //     setter(value); // Met à jour la fréquence en temps réel
-
-    //     if (value.length >= goodFrequence.length) {
-    //         if (value === goodFrequence) {
-    //             return; // Ne fait rien si la fréquence est correcte
-    //         } else if (value === goodFrequence1 || value === goodFrequence2 || value === goodFrequence3) {
-    //             setModal2(true); // Affiche le modal "bon code, mauvais endroit"
-    //         } else {
-    //             setModal(true); // Affiche le modal d'erreur
-    //         }
-    //     }
-    // }
-
-    ///////////////// fonction caulcul score appele dans le bouton final pour envoye le score au back
-    async function finalButton() {
-        console.log("Score avant calcul:", SCORE);
-
-        // Met à jour le score de manière sûre
+    const penaliserScore = () => {
         setSCORE(prevScore => {
-            let newScore = prevScore;
-            if (indiceused1) newScore -= 100;
-            if (indiceused2) newScore -= 100;
-            if (indiceused3) newScore -= 100;
-            console.log("Score après calcul:", newScore);
+            const newScore = prevScore - 100;
+            console.log("Pénalité appliquée, nouveau score :", newScore);
             return newScore;
         });
 
-        // Met à jour game1 à true
-        setGame1(true);
-    }
+        setTimeout(() => {
+            console.log("Score après mise à jour réelle :", SCORE);
+        }, 100);
+    };
 
-    /////////////////////////fonction appele au  click du bouton fininal pour passe a l epreuve 2
-    useEffect(() => {
-        if (game1) {  // Vérifier que le jeu est terminé avant d'envoyer le score
-            console.log("Score mis à jour, envoi au backend:", SCORE);
+
+
+    const finalButton = () => {
+        setGame1(true);
+
+        setTimeout(() => {
+            console.log("Score final envoyé au backend :", SCORE);
 
             fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ score: SCORE, result: game1 }),
+                body: JSON.stringify({ score: SCORE, result: true }),
             })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Score mis à jour dans la base de données", data);
                     setJoVideo(false);
-                    navigation.navigate("Ingame2"); // Naviguer après la mise à jour
+                    navigation.navigate("Ingame2");
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);
                 });
-        }
-    }, [SCORE, finalButton]); // Se déclenche quand SCORE change
+        }, 200);
+    };
+
+
+
+
 
 
     return (
@@ -312,7 +292,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); setIndiceused1(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice1}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
@@ -324,7 +304,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); setIndiceused2(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice2}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
@@ -336,7 +316,7 @@ export default function TestScreen({ navigation }) {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); setIndiceused3(true) }} style={styles.button}>
+                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice3}</Text>
                                         </TouchableOpacity>
                                     </ImageBackground>
@@ -354,27 +334,19 @@ export default function TestScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     light: {
-        width: '80%',  // Taille de la lumière
+        width: '80%',
         height: 80,
-        // borderRadius: 40, // Cercle parfait
+
         borderWidth: 3,
         borderColor: 'white',
-        shadowColor: 'rgba(255, 255, 255, 0.8)', // Effet de halo
+        shadowColor: 'rgba(255, 255, 255, 0.8)',
         shadowOpacity: 1,
         shadowRadius: 30,
 
         alignItems: 'center',
         justifyContent: 'center',
     },
-    // inputActive: {
-    //     borderColor: '#ffcc00', // Couleur jaune pour simuler un signal fort
-    //     borderWidth: 5,
-    //     shadowColor: '#ffcc00',
-    //     shadowOpacity: 0.8,
-    //     shadowRadius: 10,
 
-    // },
-    //css VIDEO
     contentContainer: {
         flex: 1,
         padding: 10,
@@ -417,7 +389,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    //modal css
+
     imageBackground: {
         flex: 1,
         width: '100%',
@@ -468,7 +440,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalView: {
-        // backgroundColor: 'white',
         borderRadius: 30,
         alignItems: 'center',
         shadowColor: '#000',

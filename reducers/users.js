@@ -7,7 +7,8 @@ const initialState = {
         username: '',
         scenario: '',
         userID: '',
-        scenarioID: ''
+        scenarioID: '',
+        scoreSession: ''
     }
 };
 ///////////////////////////////////////////DISPATCH NOM SCENARIO AU CLICK SUR MODAL SELECTIONNEEE DANS GEOLOC //////////////////////////////////////////////////////////////

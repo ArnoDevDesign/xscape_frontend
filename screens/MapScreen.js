@@ -28,6 +28,7 @@ import { addUserToStore } from "../reducers/users";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
@@ -58,28 +59,28 @@ const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
 export default function MapScreen({ navigation }) {
 
   const [loaded] = useFonts({
-          "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
-          "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
-          "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
-          "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
-          "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
-          "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
-          "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
-          "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
-          "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
-        });
-      
-        useEffect(() => {
-          // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
-          if (loaded) {
-            SplashScreen.hideAsync();
-          }
-        }, [loaded]);
-      
-        // Retourner null tant que la police n'est pas chargée
-        if (!loaded) {
-          return null;
-        }
+    "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+    "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+    "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+    "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+    "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+    "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+    "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+    "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+    "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
+  });
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  // Retourner null tant que la police n'est pas chargée
+  if (!loaded) {
+    return null;
+  }
 
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
@@ -108,6 +109,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
+
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -143,23 +145,32 @@ export default function MapScreen({ navigation }) {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("log de creation de session", data);
-      });
+        console.log("log de creation de session", data.validatedEpreuves);
+        if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
+          console.log("zero etape fini")
+          navigation.navigate("Scenario");
+        } else if (data.validatedEpreuves !== 0) {
+          console.log(" quelques etapes finis")
+          navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
+        } else if (data.validatedEpreuves >= data.numberEpreuves) {
+          console.log("toutes les etapes finis")
+          navigation.navigate("End");
+        }
+      })
     dispatch(
       addUserToStore({
         scenario: data.scenario, // Met à jour la clé scenario
         scenarioID: data.scenarioID, // Met à jour la clé scenarioID
       })
-    );
-    setModalInfo(false); // Ferme la modale
-    setPassageaujeu(true); // Passe à la page du jeu
+    )
+    setTimeout(() => {
+      setModalInfo(false)
+    }, 500); // Ferme la modale
+    // setPassageaujeu(true); // Passe à la page du jeu
   };
+  ////////////////////////////////////////////////////////////// creer conditiion pour afficher la bonne page en fonction de l'etape deja realiser //////////////////////////////
 
-  useEffect(() => {
-    if (passageaujeu) {
-      navigation.navigate("Scenario");
-    }
-  }, [passageaujeu]);
+
 
   // Géolocalisation de l'utilisateur
   useEffect(() => {
@@ -167,7 +178,7 @@ export default function MapScreen({ navigation }) {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       // Demande de permission pour la géolocalisation
-      if (status === "granted") {
+      if (status === "granted" && isFocused) {
         // Si autorisation alors on récupère la position
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
@@ -185,7 +196,7 @@ export default function MapScreen({ navigation }) {
         setGeolocationError(true); // Erreur si la géolocalisation est refusée
       }
     })();
-  }, []);
+  }, [isFocused]);
 
   // Récupération des données du scénario depuis la BDD
   useEffect(() => {
@@ -200,8 +211,8 @@ export default function MapScreen({ navigation }) {
       }
     };
 
-    fetchScenarios();
-  }, []);
+    isFocused && fetchScenarios();
+  }, [isFocused]);
 
   const recenterMapOnPinUser = () => {
     const { latitude, longitude } = userLocation;
@@ -231,7 +242,7 @@ export default function MapScreen({ navigation }) {
     </SafeAreaView>
   ) : (
     <SafeAreaView style={{ flex: 1 }}>
-      <Animated.View style={[styles.mapContainer, { opacity: fadeIn }]}>  
+      <Animated.View style={[styles.mapContainer, { opacity: fadeIn }]}>
         <View style={styles.container}>
           <View style={styles.mapContainer2}>
             <MapView
@@ -251,7 +262,7 @@ export default function MapScreen({ navigation }) {
                   onPress={() => navigation.navigate("Profil")}
                 />
               )}
-  
+
               {scenariosData.map((data, i) => (
                 <Marker
                   key={i}
@@ -286,7 +297,7 @@ export default function MapScreen({ navigation }) {
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
           </TouchableOpacity>
         </View>
-  
+
         {modalInfo && (
           <Modal visible={modalInfo} animationType="fade" transparent>
             <TouchableWithoutFeedback
