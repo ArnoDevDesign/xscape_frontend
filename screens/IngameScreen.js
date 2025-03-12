@@ -202,149 +202,254 @@ export default function IngameScreen1({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
+            <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} resizeMode='stretch' style={styles.imageBackground}>
 
-            {game1 === false && (
-                <View style={styles.container}>
-                    <View style={styles.videoContainer}>
-                        <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
-                        <View style={styles.controlsContainer}>
-                            <Button
-                                title={isPlaying ? 'Pause' : 'Play'}
-                                onPress={() => {
-                                    if (isPlaying) {
-                                        player.pause();
-                                    } else {
-                                        player.play();
-                                    }
-                                }}
-                            />
+                <SafeAreaView />
+
+                {game1 === false && (
+                    <View style={styles.container}>
+                        <View style={styles.videoContainer}>
+                            <ImageBackground source={require('../assets/imgsAventure/modaleVideoX.png')} resizeMode='stretch' style={styles.videobackground}>
+
+                                <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
+                                <View style={styles.controlsContainer}>
+                                    {/* <Button
+                                    title={isPlaying ? 'Pause' : 'Play'}
+                                    onPress={() => {
+                                        if (isPlaying) {
+                                            player.pause();
+                                        } else {
+                                            player.play();
+                                        }
+                                    }}
+                                /> */}
+                                </View>
+                            </ImageBackground>
                         </View>
+                        {showInputs && (
+                            <View style={styles.inputContainer}>
+
+
+
+
+
+
+
+
+                                <View style={styles.inputandindice}>
+                                    <View style={styles.light}>
+                                        <ImageBackground
+                                            source={frequence1 === goodFrequence1
+                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                : frequence1
+                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
+                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                            }
+                                            resizeMode='stretch'
+                                            style={styles.btnimgbckgrnd}
+                                        >
+                                            <TextInput
+                                                placeholderTextColor={'black'}
+                                                style={styles.inp1}
+                                                placeholder="Entrez la 1ere Fréquence"
+                                                onChangeText={(value) => testInput1(value)}
+                                                value={frequence1}
+                                            />
+                                        </ImageBackground>
+                                    </View>
+                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                        <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
+                                        </ImageBackground>
+                                    </TouchableOpacity>
+                                </View>
+
+
+
+
+
+
+
+
+
+                                <View style={styles.inputandindice}>
+                                    <View style={styles.light}>
+                                        <ImageBackground
+                                            source={frequence2 === goodFrequence2
+                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                : frequence2
+                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
+                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                            }
+                                            resizeMode='stretch'
+                                            style={styles.btnimgbckgrnd}
+                                        >
+                                            <TextInput
+                                                placeholderTextColor={'black'}
+                                                style={styles.inp1}
+                                                placeholder="Entrez la Fréquence 2.0"
+                                                onChangeText={(value) => testInput2(value)}
+                                                value={frequence2}
+                                            />
+                                        </ImageBackground>
+                                    </View>
+                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                        <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
+                                        </ImageBackground>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)} /> */}
+
+                                <View style={styles.inputandindice}>
+                                    <View style={styles.light}>
+                                        <ImageBackground
+                                            source={frequence3 === goodFrequence3
+                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                : frequence3
+                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
+                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                            }
+                                            resizeMode='stretch'
+                                            style={styles.btnimgbckgrnd}
+                                        >
+                                            <TextInput
+                                                placeholderTextColor={'black'}
+                                                style={styles.inp1}
+                                                placeholder="Entrez la 3eme Fréquence"
+                                                onChangeText={(value) => testInput3(value)}
+                                                value={frequence3}
+                                            />
+                                        </ImageBackground>
+                                    </View>
+                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                        <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
+                                        </ImageBackground>
+                                    </TouchableOpacity>
+                                </View>
+
+
+                                {/* <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)} /> */}
+                            </View>
+                        )}
+                        {showfinalbutton && (
+                            <View style={styles.inputContainer}>
+                                <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
+                                    <Text style={styles.textButton}>Declencher le scanner QRCODIQUE</Text>
+                                </TouchableOpacity>
+                            </View>)}
+                        {modalout && (
+                            <Modal visible={modalout} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                            <TouchableOpacity onPress={() => setmodalout(false)} style={styles.button}>
+                                                <Text style={styles.textButton}>Mauvaise fréquence</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )}
+                        {modal2out && (
+                            <Modal visible={modal2out} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                            <TouchableOpacity onPress={() => setmodal2out(false)} style={styles.button}>
+                                                <Text style={styles.textButton}>Bon code, mauvais endroit...</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )} {indicemodal1 && (
+                            <Modal visible={indicemodal1} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                            <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
+                                                <Text style={styles.textButton}>{indice1}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )}{indicemodal2 && (
+                            <Modal visible={indicemodal2} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                            <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
+                                                <Text style={styles.textButton}>{indice2}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )}{indicemodal3 && (
+                            <Modal visible={indicemodal3} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                            <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
+                                                <Text style={styles.textButton}>{indice3}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )}
                     </View>
-                    {showInputs && (
-                        <View style={styles.inputContainer}>
-                            <View style={[styles.light, { backgroundColor: frequence1 === goodFrequence1 ? "green" : frequence1 ? "red" : "white" }]} >
-                                <TextInput
-                                    placeholderTextColor={'#8aec54'}
-                                    style={styles.inp1}
-                                    placeholder="Entrez la 1ère Fréquence"
-                                    onChangeText={(value) => testInput1(value)}
-                                    value={frequence1}
-                                />
-                            </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal1(true)} />
-                            <View style={[styles.light, { backgroundColor: frequence2 === goodFrequence2 ? "green" : frequence2 ? "red" : "white" }]} >
-                                <TextInput
-                                    placeholderTextColor={'#8aec54'}
-                                    style={styles.inp1}
-                                    placeholder="Entrez la Fréquence 2.0"
-                                    onChangeText={(value) => testInput2(value)}
-                                    value={frequence2}
-                                />
-
-                            </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)} />
-                            <View style={[styles.light, { backgroundColor: frequence3 === goodFrequence3 ? "green" : frequence3 ? "red" : "white" }]} >
-                                <TextInput
-                                    placeholderTextColor={'#8aec54'}
-                                    style={styles.inp1}
-                                    placeholder="Entrez la 3emeFréquence"
-                                    onChangeText={(value) => testInput3(value)}
-                                    value={frequence3}
-                                />
-                            </View>
-                            <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)} />
-                        </View>
-                    )}
-                    {showfinalbutton && (
-                        <View style={styles.inputContainer}>
-                            <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
-                                <Text style={styles.textButton}>Declencher le scanner QRCODIQUE</Text>
-                            </TouchableOpacity>
-                        </View>)}
-                    {modalout && (
-                        <Modal visible={modalout} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => setmodalout(false)} style={styles.button}>
-                                            <Text style={styles.textButton}>Mauvaise fréquence</Text>
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
-                    {modal2out && (
-                        <Modal visible={modal2out} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => setmodal2out(false)} style={styles.button}>
-                                            <Text style={styles.textButton}>Bon code, mauvais endroit...</Text>
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                </View>
-                            </View>
-                        </Modal>
-                    )} {indicemodal1 && (
-                        <Modal visible={indicemodal1} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
-                                            <Text style={styles.textButton}>{indice1}</Text>
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}{indicemodal2 && (
-                        <Modal visible={indicemodal2} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
-                                            <Text style={styles.textButton}>{indice2}</Text>
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}{indicemodal3 && (
-                        <Modal visible={indicemodal3} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
-                                        <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
-                                            <Text style={styles.textButton}>{indice3}</Text>
-                                        </TouchableOpacity>
-                                    </ImageBackground>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
-                </View>
-            )
-            }
-        </View>
+                )
+                }
+            </ImageBackground >
+        </View >
     );
 }
 
 
 const styles = StyleSheet.create({
+    indiceX: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    indicebutton: {
+        borderRadius: "50%",
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    inputandindice: {
+        width: '100%',
+        height: '33%',
+        flexDirection: 'row',
+        // backgroundColor: 'blue',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+    },
+    btnimgbckgrnd: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    // videobackground: {
+    //     width: '90%',
+    //     height: '100%',
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    // },
     light: {
         width: '80%',
         height: 80,
-
-        borderWidth: 3,
-        borderColor: 'white',
-        shadowColor: 'rgba(255, 255, 255, 0.8)',
-        shadowOpacity: 1,
-        shadowRadius: 30,
-
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+
+        // 
     },
 
     contentContainer: {
@@ -359,15 +464,15 @@ const styles = StyleSheet.create({
         height: '70%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'blue'
+        // backgroundColor: 'blue'
     },
     video: {
-        width: 350,
-        height: 275,
+        width: 300,
+        height: 300,
     },
 
     indicebutton: {
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         borderRadius: "50%",
         width: 50,
         height: 50,
@@ -393,7 +498,7 @@ const styles = StyleSheet.create({
     imageBackground: {
         flex: 1,
         width: '100%',
-        resizeMode: 'cover',
+        resizeMode: 'stretch',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -409,27 +514,30 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'green'
+        // backgroundColor: 'green'
     },
     videoContainer: {
         flex: 2,
-        backgroundColor: 'grey'
+        // backgroundColor: 'red',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputContainer: {
-        flex: 2,
+        height: '50%',
         width: '100%',
-        backgroundColor: 'grey',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
+        // backgroundColor: 'grey',
+        justifyContent: 'center',
+        // flexDirection: 'column',
         alignItems: 'center',
-        padding: 20,
+        paddingBottom: 30,
 
     },
     input1: {
         width: "80%",
         height: '20%',
         backgroundColor: '#1b3815',
-        borderColor: 'black',
+        // borderColor: 'black',
         borderWidth: 4,
         justifyContent: 'center',
         alignItems: 'center'
@@ -447,8 +555,8 @@ const styles = StyleSheet.create({
             width: 2,
             height: 4,
         },
-        width: 300,
-        height: 300,
+        width: 350,
+        height: 500,
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
@@ -456,8 +564,8 @@ const styles = StyleSheet.create({
     input2: {
         width: "80%",
         height: '20%',
-        backgroundColor: '#1b3815',
-        borderColor: 'black',
+        // backgroundColor: '#1b3815',
+        // borderColor: 'black',
         borderWidth: 4,
         justifyContent: 'center',
         alignItems: 'center'
@@ -465,7 +573,7 @@ const styles = StyleSheet.create({
     input3: {
         width: "80%",
         height: '20%',
-        backgroundColor: '#1b3815',
+        // backgroundColor: '#1b3815',
         borderColor: 'black',
         borderWidth: 4,
         justifyContent: 'center',
@@ -475,7 +583,8 @@ const styles = StyleSheet.create({
         color: '#8aec54'
     },
     inp1: {
-        color: '#8aec54',
+        // color: '#8aec54',
+        color: 'black',
         fontSize: 15
     }
 })
