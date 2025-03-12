@@ -78,7 +78,7 @@ export default function AvatarScreen({ navigation }) {
                     if (data.result) {
                         dispatch(addUserToStore({ token: userToken, username: signUpUsername, avatar: selectedAvatar }));// ENVCOI LES INFOS SI TOUT VA BIEN 
                         console.log("Utilisateur mis à jour :", signUpUsername);
-                        navigation.navigate('Profil');
+                        navigation.navigate('Map');
                     } else {
                         console.log('Erreur de connexion API', data.error);
                         alert("Erreur $$$$: " + data.error);
@@ -95,10 +95,10 @@ export default function AvatarScreen({ navigation }) {
         <View style={styles.container}>
             <SafeAreaView />
 
-           {/* Titre */}
-           <View style={styles.avatarContainer}>
+            {/* Titre */}
+            <View style={styles.avatarContainer}>
                 <Text style={[styles.text, { paddingBottom: 20 }]}>Personnalise</Text>
-                <Text style={{ fontSize: 32, fontFamily: "Fustat-ExtraBold.ttf", color: "white" , margin: -35}}>ton profil</Text>
+                <Text style={{ fontSize: 32, fontFamily: "Fustat-ExtraBold.ttf", color: "white", margin: -35 }}>ton profil</Text>
                 <FlatList
                     data={images}
                     horizontal
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         paddingTop: 80,
         // paddingBottom: 30,
-        
+
     },
     buttonLogOut: {
         justifyContent: 'center',
@@ -213,7 +213,8 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         justifyContent: 'center',
         color: "white",
-        padding: 10,    },
+        padding: 10,
+    },
 
     title: {
         width: '100%',

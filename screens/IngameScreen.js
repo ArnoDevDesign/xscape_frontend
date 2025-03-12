@@ -187,7 +187,7 @@ export default function IngameScreen1({ navigation }) {
                 .then(data => {
                     console.log("Score mis à jour dans la base de données", data);
                     setJoVideo(false);
-                    navigation.navigate("Ingame2");
+                    navigation.replace("Ingame2");
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);

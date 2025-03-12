@@ -12,7 +12,7 @@ import { addUserToStore, userLogout } from "../reducers/users";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-
+import dayjs from "dayjs";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -36,6 +36,10 @@ export default function ScenarioScreen({ navigation }) {
         "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
         "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
     });
+
+    const duration = require("dayjs/plugin/duration");
+    const dayjs = require("dayjs");
+    dayjs.extend(duration);
 
     useEffect(() => {
         // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
@@ -61,34 +65,33 @@ export default function ScenarioScreen({ navigation }) {
     const [duree, setDuree] = useState('')
     const [counter, setcounter] = useState('')
 
-    dayjs.extend(duration);
 
 
 
 
     /////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
-    const CountdownTimer = ({ onComplete }) => {
-        const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes en secondes
+    // const CountdownTimer = ({ onComplete }) => {
+    //     const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes en secondes
 
-        useEffect(() => {
-            if (timeLeft <= 0) {
-                if (onComplete) onComplete(); // mettre une action en place
-                return;
-            }
-            const timer = setInterval(() => {
-                setTimeLeft((prevTime) => prevTime - 1);
-            }, 1000);
-            return () => clearInterval(timer); // Nettoyage du timer
-        }, [timeLeft]);
+    //     useEffect(() => {
+    //         if (timeLeft <= 0) {
+    //             if (onComplete) onComplete(); // mettre une action en place
+    //             return;
+    //         }
+    //         const timer = setInterval(() => {
+    //             setTimeLeft((prevTime) => prevTime - 1);
+    //         }, 1000);
+    //         return () => clearInterval(timer); // Nettoyage du timer
+    //     }, [timeLeft]);
 
 
-        const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
-        setcounter(formattedTime)
+    //     const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
+    //     setcounter(formattedTime)
 
-        setTimeout(() => {
-            dispatch(addUserToStore({ timer: counter }));
-        }, 200);
-    };
+    //     setTimeout(() => {
+    //         dispatch(addUserToStore({ timer: counter }));
+    //     }, 200);
+    // };
 
     //////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
 
@@ -123,7 +126,6 @@ export default function ScenarioScreen({ navigation }) {
                 <ImageBackground
                     source={require("../assets/fonX.png")} // Remplacez par le chemin de votre image
                     style={styles.backgroundImage}>
-
                     <View style={styles.name}>
                         <Text style={styles.textTitre}>{userRedux.scenario}</Text>
 
@@ -148,7 +150,7 @@ export default function ScenarioScreen({ navigation }) {
                         <View style={styles.glowEffect} />
                         <TouchableOpacity
                             style={styles.buttonStyle}
-                            onPress={() => navigation.navigate("StartGame")}
+                            onPress={() => navigation.replace("StartGame")}
                         >
                             <Text style={styles.buttonText}>C'est Parti !</Text>
                         </TouchableOpacity>
@@ -187,6 +189,13 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         borderRadius: 30,
         borderWidth: 8,
+    },
+    time: {
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "black",
+        color: "white",
     },
 
     textDescripiton: {

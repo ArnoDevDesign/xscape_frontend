@@ -109,7 +109,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-  const [response, setResponse] = useState(false);
+  const [response, setResponse] = useState('');
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -163,20 +163,24 @@ export default function MapScreen({ navigation }) {
           navigation.navigate("Scenario");
         } else if (data.validatedEpreuves !== 0) {
           setModalChoice(true);
-          console.log(" quelques etapes finis")
-          if (response) {
+          console.log(" quelques etapes finis modal affichee ")
+          if (response === true) {
+            console.log("reponse true envoi au scenario")
+            setResponse('')
+            navigation.navigate('Scenario')
+          } else if (response === false) {
+            console.log("reponse false envoi au ingame screens")
+            setResponse('')
             navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
-          } else {
-            navigation.navigate('Scenario');
           }
         }
       })
+
     setTimeout(() => {
       setModalInfo(false)
     }, 500);
   }, [userRedux, response])
   //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
-
 
 
   // Géolocalisation de l'utilisateur

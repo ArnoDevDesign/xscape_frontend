@@ -37,10 +37,10 @@ export default function StartGameScreen({ navigation }) {
                 <Text style={styles.textButton}>{text}</Text>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Map')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Map')}>
                     <Text style={styles.text}>sortir</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Ingame1')} style={styles.button}>
+                <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
                     <Text style={styles.text}>Go !</Text>
                 </TouchableOpacity>
             </View>
