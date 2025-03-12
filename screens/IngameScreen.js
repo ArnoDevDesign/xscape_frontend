@@ -266,7 +266,7 @@ export default function IngameScreen1({ navigation }) {
                         <Modal visible={modalout} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
                                         <TouchableOpacity onPress={() => setmodalout(false)} style={styles.button}>
                                             <Text style={styles.textButton}>Mauvaise fréquence</Text>
                                         </TouchableOpacity>
@@ -279,7 +279,7 @@ export default function IngameScreen1({ navigation }) {
                         <Modal visible={modal2out} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
                                         <TouchableOpacity onPress={() => setmodal2out(false)} style={styles.button}>
                                             <Text style={styles.textButton}>Bon code, mauvais endroit...</Text>
                                         </TouchableOpacity>
@@ -291,7 +291,7 @@ export default function IngameScreen1({ navigation }) {
                         <Modal visible={indicemodal1} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
                                         <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice1}</Text>
                                         </TouchableOpacity>
@@ -303,7 +303,7 @@ export default function IngameScreen1({ navigation }) {
                         <Modal visible={indicemodal2} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
                                         <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice2}</Text>
                                         </TouchableOpacity>
@@ -315,7 +315,7 @@ export default function IngameScreen1({ navigation }) {
                         <Modal visible={indicemodal3} animationType="fade" transparent>
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
-                                    <ImageBackground source={require('../assets/modalEcran.png')} style={styles.imageBackground}>
+                                    <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
                                         <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
                                             <Text style={styles.textButton}>{indice3}</Text>
                                         </TouchableOpacity>
