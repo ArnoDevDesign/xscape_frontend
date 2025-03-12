@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
@@ -10,6 +10,9 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
+
+const { width } = Dimensions.get("window");
+
 
 export default function ProfileScreen({ navigation }) {
     const dispatch = useDispatch();
@@ -27,6 +30,7 @@ export default function ProfileScreen({ navigation }) {
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [finishedScenario, setFinishedScenarios] = useState(0);
     const [modalaventures, setModalaventures] = useState(false);
+
 
     // Images d'avatarts pour test
     const images = [
@@ -157,14 +161,20 @@ export default function ProfileScreen({ navigation }) {
     return (
         <View style={styles.generalContainer}>
             <SafeAreaView />
+            {/* bouton déconnexion */}
+            <View style={styles.buttonLogOut}>
+                <TouchableOpacity>
+                    <FontAwesome name='sign-out' size={30} color='#85CAE4' borderRadius='100' />
+                </TouchableOpacity>
+            </View>
 
             {/* Avatar */}
             <View style={styles.avatarContainerMain}>
                 <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
 
                 {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
-                <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
-                    <FontAwesome name='pencil' size={20} color='black' style={styles.updateUser} />
+                <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit1} >
+                    <FontAwesome name='pencil' size={24} color='black' paddingTop={38} />
                 </TouchableOpacity>
             </View>
 
@@ -173,7 +183,7 @@ export default function ProfileScreen({ navigation }) {
                 <Modal visible={modalAvatarVisible} transparent animationType="slide">
                     <View style={styles.centeredViewAvatar}>
                         <View style={styles.modalViewAvatar}>
-                            <Text style={styles.text}>Choisis ton avatar</Text>
+                            <Text style={styles.textChangeUsernameView}>Choisis ton avatar</Text>
                             {/* Carousel d'avatars */}
                             <FlatList
                                 data={images}
@@ -192,8 +202,8 @@ export default function ProfileScreen({ navigation }) {
                                     </TouchableOpacity>
                                 )}
                             />
-                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.buttonBack}>
-                                <Text style={styles.text}>Fermer</Text>
+                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.usernameView}>
+                                <Text style={styles.closeModalTextButton}>Fermer</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -202,12 +212,12 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos utilisateur */}
             <View style={styles.usernameView}>
-                <Text style={styles.text}>Username : {userRedux.username}</Text>
+                <Text style={styles.textUsernameView}>Username : {userRedux.username}</Text>
 
-                <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit} >
+                <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit2} >
                     <FontAwesome name='pencil' size={20} color="black" style={styles.updateUser} />
                 </TouchableOpacity>
-                <Text style={styles.text}>Email : {email}</Text>
+                <Text style={styles.textUsernameView}>Email : {email}</Text>
             </View>
 
             {/* Modal Modification de l'username */}
@@ -215,40 +225,43 @@ export default function ProfileScreen({ navigation }) {
                 <Modal visible={modalUserVisible} animationType="fade" transparent>
                     <View style={styles.centeredViewUser}>
                         <View style={styles.modalViewUser}>
-                            <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
+                            <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, color: '#009EBA' }}>Choisissez un</Text>
+                            <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, color: '#009EBA', paddingBottom: 40 }}>nouveau pseudo</Text>
+
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
-                                placeholder="Nouveau Pseudo"
+                                placeholder="Nouveau pseudo"
                                 onChangeText={setNewUsername}
                                 value={newUsername}
                             />
-                            <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>GO!</Text>
+                            <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8} style={styles.changeUsernameButton}>
+                                <Text style={styles.textChangeUsernameButton}>Changer</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setUserModalVisible(false)} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>Annuler</Text>
+                                <Text style={styles.closeTextButton}>Annuler</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </Modal>
             )}
 
-            {/* Infos Scrore */}
+            {/* Infos Score */}
             <Text style={[styles.text, styles.score]}>Score : {score}</Text>
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
                     <View>
-                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonBack}>
-                            <Text style={styles.text}>Aventures terminées : </Text>
+                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonFinishedAdventure}>
+                            <Text style={styles.textButtonFinishedAdventure}>Aventures terminées : </Text>
                         </TouchableOpacity>
                         {modalaventures && (
                             <Modal visible={modalaventures} animationType="slide" transparent>
                                 <View style={styles.centeredView}>
-                                    <TouchableOpacity onPress={() => setModalaventures(false)} style={styles.button}>
-                                        <View style={styles.modalView}>
+                                    <TouchableOpacity onPress={() => setModalaventures(false)}>
+                                        <View style={styles.modalViewUser}>
+                                            <Text style={styles.textButton}>{finishedScenario}</Text>
                                             <Text style={styles.textButton}>{finishedScenario}</Text>
                                         </View>
                                     </TouchableOpacity>
@@ -265,15 +278,11 @@ export default function ProfileScreen({ navigation }) {
             </View>
 
             {/* Boutons */}
-            <TouchableOpacity style={styles.buttonLogOut}>
-                <Text onPress={() => handleLogout()} style={styles.text}>Déconnexion</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity onPress={() => navigation.navigate('Map')} style={styles.buttonBack}>
                 <Text style={styles.text}>Retour MAP</Text>
             </TouchableOpacity>
 
-            <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+            {/* <Button title="Go to Home" onPress={() => navigation.navigate('Home')} /> */}
 
         </View>
     );
@@ -288,6 +297,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         paddingVertical: 20,
+        backgroundColor: '#85CAE4'
     },
     centeredView: {
         flex: 1,
@@ -308,7 +318,7 @@ const styles = StyleSheet.create({
         },
     },
     // Icon style
-    iconEdit: {
+    iconEdit1: {
         position: "absolute",
         top: 5,
         right: 5,
@@ -316,29 +326,36 @@ const styles = StyleSheet.create({
         opacity: 0.8,
         boderRadius: 10,
         padding: 5,
-        // elevation: 1, //effet d'ombre Android
-        // shadowColor: '#000', //effet d'ombre IOS
-        // shadowOffset: {width: 0, height: 2},
-        // shadowOpacity: 0.2,
-        // shadowRadius: 2,
     },
-
+    iconEdit2: {
+        position: "absolute",
+        bottom: 100,
+        right: -24,
+        // backgroundColor: 'white',
+        opacity: 0.8,
+        boderRadius: 10,
+        padding: 5,
+    },
     // Avatar style
     avatarContainerMain: {
-        width: '45%',
+        width: '50%',
         height: '25%',
-        borderRadius: 50,
+        borderRadius: 100,
         overflow: 'hidden',
         borderWidth: 2,
         borderColor: 'gray',
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 1,
+
     },
 
     avatar: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
+        width: width * 0.5, // Taille des avatars ajustée
+        height: width * 0.5,
+        borderRadius: 100, // Correcte au lieu de "50%"
+        marginHorizontal: 30,
+        elevation: 3
     },
     //Modal Avatar Style
 
@@ -346,33 +363,39 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+        backgroundColor: '#85CAE4', // Semi-transparent background
     },
     modalViewAvatar: {
-        backgroundColor: 'transparent',
+        backgroundColor: '#003046',
         borderRadius: 20,
         padding: 20,
+        paddingHorizontal: -20,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        height: '60%',
+        width: '80%',
+
+    },
+    modalViewUser: {
+        backgroundColor: '#FFFFFF',
+        width: '90%',
+        paddingTop: 30,
+        paddingBottom: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        elevation: 3,
     },
     image: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        margin: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+        width: width * 0.5, // Taille des avatars ajustée
+        height: width * 0.5,
+        borderRadius: 100, // Correcte au lieu de "50%"
+        marginHorizontal: 30,
+        elevation: 3
     },
 
     selectedImage: {
         borderWidth: 2,
-        borderColor: 'blue',
+        borderColor: 'white',
     },
 
     buttonBack: {
@@ -386,38 +409,46 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 
-    // MODAL STYLE FABIO : A VERIFIER !!!
-    // avatarContainer: {
-    //     width: '100%',
-    //     height: '60%',
-    //     alignItems: 'center',
-    //     backgroundColor: 'grey',
-    //     opacity: 0.5,
-    // },
-
-    // carousel: {
-    //     paddingHorizontal: 10,
-    //     alignItems: "center",
-    //     backgroundColor: 'green',
-    //     opacity: 0.5,
-    // },
-    // image: {
-    //     width: 'width' * 0.25, // 25% de la largeur de l'écran
-    //     height: 'width' * 0.25, // Garde une forme carrée
-    //     borderRadius: 9999, // Assure un cercle parfait
-    //     marginHorizontal: 10,
-    //     backgroundColor: 'transparent', // Supprime le bleu
-    // },
-
-
     // Username style
     usernameView: {
-        backgroundColor: 'blue',
-        opacity: 0.5,
-        padding: 10,
-        width: '80%',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        borderRadius: 10,
+        columnGap: "10",
+        width: '80%',
+        height: 72,
+        backgroundColor: '#85CAE4',
+        margin: 20,
+        borderRadius: 20,
+        // elevation: 3,
+    },
+    textUsernameView: {
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#003046",
+
+        // padding: 5,
+    },
+    closeModalTextButton: {
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#003046",
+        padding: 5,
+    },
+
+    textChangeUsernameView: {
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#85CAE4",
+        paddingBottom: 50,
     },
 
     //Modal Username Style
@@ -426,64 +457,115 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    modalViewUser: {
-        backgroundColor: 'orange',
-        borderRadius: 30,
-        alignItems: 'center',
-        width: 300,
-        height: 200,
-        elevation: 5,
-    },
+
     inp1: {
-        width: '70%',
-        height: 50,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        paddingLeft: 10
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '90%',
+        height: 70,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 12,
+        margin: 12,
+        paddingLeft: 20
     },
     textButton: {
-        fontSize: 20
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#FF8527",
+        padding: 10,
     },
-
+    changeUsernameButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '90%',
+        height: 72,
+        backgroundColor: '#FF8527',
+        margin: 20,
+        marginTop: 50,
+        borderRadius: 20,
+        elevation: 3,
+    },
+    textChangeUsernameButton: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,
+    },
+    closeTextButton: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#85CAE4",
+        padding: 10,
+    },
     // Score Style
     score: {
-        backgroundColor: 'yellow',
-        opacity: 0.5,
-        padding: 10,
-        width: '80%',
-        textAlign: 'center',
-        borderRadius: 10,
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        color: "#FFFFFF",
     },
     //Scenario Style
     aventureView: {
-        backgroundColor: 'green',
-        opacity: 0.5,
+        backgroundColor: 'white',
+        // opacity: 0.5,
         padding: 10,
         width: '80%',
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: 20,
     },
 
     //Bouton Style
     buttonLogOut: {
-        padding: 15,
-        backgroundColor: 'orange',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '15%',
+        height: 60,
+        backgroundColor: '#636773',
+        // margin: 20,
         opacity: 0.5,
+        borderRadius: 100,
+        elevation: 3,
+        left: 330,
+        paddingLeft: 5,
+        bottom: 740,
+        zIndex: 10,
+    },
+    textButtonLogOut: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,
+    },
+
+    buttonFinishedAdventure: {
+        padding: 15,
+        // backgroundColor: 'red',
+        // opacity: 0.5,
         borderRadius: 10,
-        width: '40%',
+        width: '100%',
         alignItems: 'center',
     },
 
-    buttonBack: {
-        padding: 15,
-        backgroundColor: 'red',
-        opacity: 0.5,
-        borderRadius: 10,
-        width: '40%',
+    textButtonFinishedAdventure: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
+        color: "#FF8527",
     },
-
     text: {
         color: 'black',
         fontSize: 16,

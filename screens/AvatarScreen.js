@@ -213,7 +213,8 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         justifyContent: 'center',
         color: "white",
-        padding: 10,    },
+        padding: 10,
+    },
 
     title: {
         width: '100%',
@@ -232,8 +233,6 @@ const styles = StyleSheet.create({
         borderRadius: 100, // Correcte au lieu de "50%"
         marginHorizontal: 30,
         elevation: 3
-        // borderColor: 'white',
-        // borderWidth: 5,
     },
     selectedImage: {
         borderWidth: 3,
