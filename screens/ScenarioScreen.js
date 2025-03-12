@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration';
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 export default function ScenarioScreen({ navigation }) {
@@ -19,6 +20,42 @@ export default function ScenarioScreen({ navigation }) {
     const [difficulte, setdifficulte] = useState('')
     const [theme, setTheme] = useState('')
     const [duree, setDuree] = useState('')
+    const [counter, setcounter] = useState('')
+
+    dayjs.extend(duration);
+
+
+
+
+    /////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
+    const CountdownTimer = ({ onComplete }) => {
+        const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes en secondes
+
+        useEffect(() => {
+            if (timeLeft <= 0) {
+                if (onComplete) onComplete(); // mettre une action en place
+                return;
+            }
+            const timer = setInterval(() => {
+                setTimeLeft((prevTime) => prevTime - 1);
+            }, 1000);
+            return () => clearInterval(timer); // Nettoyage du timer
+        }, [timeLeft]);
+
+
+        const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
+        setcounter(formattedTime)
+
+        setTimeout(() => {
+            dispatch(addUserToStore({ timer: counter }));
+        }, 200);
+    };
+
+    //////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
+
+
+
+
 
     useEffect(() => {
         console.log("Redux state:", userRedux)
@@ -58,7 +95,7 @@ export default function ScenarioScreen({ navigation }) {
             <View style={styles.button}>
                 <TouchableOpacity
                     style={styles.buttonStyle}
-                    onPress={() => navigation.navigate('StartGame')}>
+                    onPress={() => { navigation.navigate('StartGame'), CountdownTimer() }}>
                     <Text style={styles.buttonText}>C'est Parti !</Text>
                 </TouchableOpacity>
             </View>
@@ -137,5 +174,16 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "#fff",
         fontWeight: "bold",
-    }
+    },
+    clockContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    timer: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'blue',
+    },
+
 });

@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     //css
-    textButton: {//commentaire
+    textButton: {
         fontSize: 20,
         fontWeight: 300,
 

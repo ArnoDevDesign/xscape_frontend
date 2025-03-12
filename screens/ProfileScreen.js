@@ -73,15 +73,15 @@ export default function ProfileScreen({ navigation }) {
 
     //Fonction de déconnexion 
     const handleLogout = () => {
-        fetch(`${URL}/users/deleteToken}`, {
+        fetch(`${URL}/users/deleteToken`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: userRedux.token })
         }).then(response => response.json())
             .then(data => {
+                console.log(data)
                 dispatch(userLogout());
                 navigation.navigate('Home');
-                console.log('Déconnexion', data);
             }
             ).catch(error => console.error('❌ Erreur de déconnexion:', error));
     }
@@ -255,10 +255,6 @@ export default function ProfileScreen({ navigation }) {
                                 </View>
                             </Modal>)}
                     </View>
-
-
-
-
                 ) :
                     (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
                     )}

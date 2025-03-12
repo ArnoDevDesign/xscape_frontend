@@ -98,28 +98,34 @@ export default function Ingame3Screen({ navigation }) {
         setPressedOrder([]);
     }
 
-    function finishGame() {
-        if (game3) {  // Vérifier que le score n'a pas déjà été envoyé
-            fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
+    async function finishGame() {
+        if (!game3) return; // Évite d'exécuter la fonction plusieurs fois si le jeu est déjà terminé
+
+        try {
+            const response = await fetch(`${URL}/scenarios/ValidedAndScore/${userRedux.scenarioID}/${userRedux.userID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ score: score, result: game3 }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Score mis à jour dans la base de données", data);
-                    dispatch(addUserToStore({ scoreSession: data.totalPointsSession }));
-                    navigation.navigate("End");
-                    setGame3(false);
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la requête:', error);
-                });
+            });
+
+            const data = await response.json();
+            console.log("Score mis à jour dans la base de données", data);
+
+            // Met à jour Redux avec les points totalisés
+            dispatch(addUserToStore({ scoreSession: data.totalPointsSession }));
+
+            // Attends un petit délai pour assurer la mise à jour avant la navigation
+            setTimeout(() => {
+                navigation.navigate("End");
+            }, 500);
+
+        } catch (error) {
+            console.error('Erreur lors de la requête:', error);
         }
-        // setModalreveal(false);
     }
+
 
     return (
         <View style={styles.container}>
@@ -163,7 +169,7 @@ export default function Ingame3Screen({ navigation }) {
                     </View>
                 </View>
             </Modal>
-            <Modal visible={game3} animationType="slide" transparent>
+            {game3 && (<Modal visible={game3} animationType="slide" transparent>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalText}>PAS MAL CAAAAAAA LAAAAAAAAA </Text>
@@ -172,8 +178,7 @@ export default function Ingame3Screen({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </Modal>
-
+            </Modal>)}
         </View>
     );
 }
