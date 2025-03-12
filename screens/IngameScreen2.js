@@ -164,7 +164,7 @@ export default function IngameScreen2({ navigation }) {
                 .then(response => response.json())
                 .then(data => {
                     console.log("Score mis à jour dans la base de données", data);
-                    navigation.navigate("Ingame3");
+                    navigation.replace("Ingame3");
                 })
                 .catch(error => {
                     console.error('Erreur lors de la requête:', error);

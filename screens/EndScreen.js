@@ -30,10 +30,6 @@ export default function EndScreen({ navigation }) {
             });
     }, [])
 
-
-
-
-
     return (
         <View style={styles.container}>
             <SafeAreaView />

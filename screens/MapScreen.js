@@ -101,7 +101,7 @@ export default function MapScreen({ navigation }) {
   const [passageaujeu, setPassageaujeu] = useState(false);
   // État pour envoyer la bonne aventure
   const [selectedScenario, setSelectedScenario] = useState(null);
-
+  const [modalChoice, setModalChoice] = useState(false);
   // État pour l'activation du bouton de démarrage de l'aventure
   const [isUserNear, setIsUserNear] = useState(false);
 
@@ -109,7 +109,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-
+  const [response, setResponse] = useState('');
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -132,6 +132,17 @@ export default function MapScreen({ navigation }) {
 
   // Fonction pour choisir le scénario
   const choosenScenario = (data) => {
+    console.log("data", data);
+    dispatch(
+      addUserToStore({
+        scenario: data.scenario, // Met à jour la clé scenario
+        scenarioID: data.scenarioID, // Met à jour la clé scenarioID
+      })
+    )
+  }
+
+  //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
+  useEffect(() => {
     fetch(
       `${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`,
       {
@@ -140,6 +151,7 @@ export default function MapScreen({ navigation }) {
         body: JSON.stringify({
           scenarioId: userRedux.scenarioID,
           userId: userRedux.userID,
+          restart: response,
         }),
       }
     )
@@ -150,26 +162,25 @@ export default function MapScreen({ navigation }) {
           console.log("zero etape fini")
           navigation.navigate("Scenario");
         } else if (data.validatedEpreuves !== 0) {
-          console.log(" quelques etapes finis")
-          navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
-        } else if (data.validatedEpreuves >= data.numberEpreuves) {
-          console.log("toutes les etapes finis")
-          navigation.navigate("End");
+          setModalChoice(true);
+          console.log(" quelques etapes finis modal affichee ")
+          if (response === true) {
+            console.log("reponse true envoi au scenario")
+            setResponse('')
+            navigation.navigate('Scenario')
+          } else if (response === false) {
+            console.log("reponse false envoi au ingame screens")
+            setResponse('')
+            navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
+          }
         }
       })
-    dispatch(
-      addUserToStore({
-        scenario: data.scenario, // Met à jour la clé scenario
-        scenarioID: data.scenarioID, // Met à jour la clé scenarioID
-      })
-    )
+
     setTimeout(() => {
       setModalInfo(false)
-    }, 500); // Ferme la modale
-    // setPassageaujeu(true); // Passe à la page du jeu
-  };
-  ////////////////////////////////////////////////////////////// creer conditiion pour afficher la bonne page en fonction de l'etape deja realiser //////////////////////////////
-
+    }, 500);
+  }, [userRedux, response])
+  //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
 
 
   // Géolocalisation de l'utilisateur
@@ -297,7 +308,22 @@ export default function MapScreen({ navigation }) {
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
           </TouchableOpacity>
         </View>
-
+        {modalChoice && (<Modal visible={modalChoice} animationType="slide" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalButtonContainer}>
+                {/* <Text style={styles.modalText}> reprendre a la dernniere sauvegarde ?</Text> */}
+                <TouchableOpacity onPress={() => { setResponse(false), setModalChoice(false) }} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>reprendre a la derniere sauvegarde</Text>
+                </TouchableOpacity>
+                {/* <Text style={styles.modalText}> reprendre depuis de debut ? (sauvegarde supprimee)</Text> */}
+                <TouchableOpacity onPress={() => { setResponse(true), setModalChoice(false) }} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>reprendre depuis le debut</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>)}
         {modalInfo && (
           <Modal visible={modalInfo} animationType="fade" transparent>
             <TouchableWithoutFeedback
@@ -372,7 +398,36 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalContent: {
+    width: "80%",
+    height: "40%",
+    backgroundColor: "#37474F",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
 
+  }, modalButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#FF8527",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  modal: {
+    direction: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    // alignItems: "center",
+  },
   buttonContainer: {
     position: "absolute",
     bottom: 60,
@@ -385,8 +440,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
+    elevation: 3,
   },
+
 
   centeredView: {
     flex: 1,
