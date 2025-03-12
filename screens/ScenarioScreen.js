@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
-    View,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    ImageBackground,
+  View,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  ScrollView,
+  ImageBackground,
+  Image,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserToStore, userLogout } from "../reducers/users";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import dayjs from "dayjs";
+
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -21,228 +22,207 @@ SplashScreen.preventAutoHideAsync();
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 export default function ScenarioScreen({ navigation }) {
-    const [loaded] = useFonts({
-        "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
-        "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
-        "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
-        "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
-        "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
-        "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
-        "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
-        "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
-        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
-        "Righteous-Regular.ttf": require("../assets/fonts/Righteous-Regular.ttf"),
-        "Goldman-Regular.ttf": require("../assets/fonts/Goldman-Regular.ttf"),
-        "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
-        "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
-    });
+  const [loaded] = useFonts({
+    "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+    "Goldman-Regular.ttf": require("../assets/fonts/Goldman-Regular.ttf"),
+    "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
+  });
 
-    const duration = require("dayjs/plugin/duration");
-    const dayjs = require("dayjs");
-    dayjs.extend(duration);
-
-    useEffect(() => {
-        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
-        if (loaded) {
-            SplashScreen.hideAsync();
-        }
-    }, [loaded]);
-
-    // Retourner null tant que la police n'est pas chargée
-    if (!loaded) {
-        return null;
+  useEffect(() => {
+    // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+    if (loaded) {
+      SplashScreen.hideAsync();
     }
+  }, [loaded]);
 
-    const dispatch = useDispatch();
-    const userRedux = useSelector((state) => state.users.value);
-    const scenarioUpdated = encodeURIComponent(userRedux.scenario); /// fonction remplacant tous les caracteres speciaux pour les rendre comprehensibles par le fetch
+  // Retourner null tant que la police n'est pas chargée
+  if (!loaded) {
+    return null;
+  }
 
+  const dispatch = useDispatch();
+  const userRedux = useSelector((state) => state.users.value);
+  const scenarioUpdated = encodeURIComponent(userRedux.scenario); /// fonction remplacant tous les caracteres speciaux pour les rendre comprehensibles par le fetch
 
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [difficulte, setdifficulte] = useState('')
-    const [theme, setTheme] = useState('')
-    const [duree, setDuree] = useState('')
-    const [counter, setcounter] = useState('')
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficulte, setdifficulte] = useState("");
+  const [theme, setTheme] = useState("");
+  const [duree, setDuree] = useState("");
+  const [buttonImage, setButtonImage] = useState(
+    require("../assets/imgsAventure/btnOffX.png")
+  );
 
+  useEffect(() => {
+    console.log("Redux state:", userRedux);
+    console.log("scenario updates avant fetch", scenarioUpdated);
+    fetch(`${URL}/scenarios/${scenarioUpdated}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data);
+        setTitle(data.name);
+        setDescription(data.descriptionScenario);
+        setdifficulte(data.difficulte);
+        setTheme(data.theme);
+        setDuree(data.duree);
+        // console.log(data.difficulte)
+        // console.log(data)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, [userRedux]);
 
+  const handleButtonPress = () => {
+    setButtonImage(require("../assets/imgsAventure/btnOnX.png"));
+    setTimeout(() => {
+      setButtonImage(require("../assets/imgsAventure/btnOffX.png"));
+      navigation.navigate("StartGame");
+    }, 100); // Réinitialiser l'image après 100ms
+  };
 
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("../assets/imgsAventure/FondAventure01X.png")}
+          style={styles.backgroundImage}
+        >
+          <View style={styles.modaleContainer}>
+            <ImageBackground
+              source={require("../assets/imgsAventure/GmodaleX.png")}
+              style={styles.modaleImg}
+              resizeMode={"stretch"}
+            >
+              <View style={styles.textContainer}>
+                <Text style={styles.textTitre}>{userRedux.scenario}</Text>
 
+                <Text style={styles.textInfo}>
+                  [{theme}] [{duree}min] [{difficulte}]
+                </Text>
 
-    /////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
-    // const CountdownTimer = ({ onComplete }) => {
-    //     const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes en secondes
+                <ScrollView style={styles.ScrollView}>
+                  <Text style={styles.textDescripiton}>{description}</Text>
+                </ScrollView>
+              </View>
+            </ImageBackground>
+          </View>
 
-    //     useEffect(() => {
-    //         if (timeLeft <= 0) {
-    //             if (onComplete) onComplete(); // mettre une action en place
-    //             return;
-    //         }
-    //         const timer = setInterval(() => {
-    //             setTimeLeft((prevTime) => prevTime - 1);
-    //         }, 1000);
-    //         return () => clearInterval(timer); // Nettoyage du timer
-    //     }, [timeLeft]);
-
-
-    //     const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
-    //     setcounter(formattedTime)
-
-    //     setTimeout(() => {
-    //         dispatch(addUserToStore({ timer: counter }));
-    //     }, 200);
-    // };
-
-    //////////////////////////////////////legere petite foonction pour timer ///////////////////////////////////
-
-
-
-
-
-    useEffect(() => {
-        console.log("Redux state:", userRedux);
-        console.log("scenario updates avant fetch", scenarioUpdated);
-        fetch(`${URL}/scenarios/${scenarioUpdated}`)
-            .then((response) => response.json())
-            .then((data) => {
-                // console.log(data);
-                setTitle(data.name);
-                setDescription(data.descriptionScenario);
-                setdifficulte(data.difficulte);
-                setTheme(data.theme);
-                setDuree(data.duree);
-                // console.log(data.difficulte)
-                // console.log(data)
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-    }, [userRedux]);
-
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-
-            <View style={styles.container}>
+          <View style={styles.buttonContainer}>
+            <TouchableWithoutFeedback onPress={handleButtonPress}>
+              <View style={styles.buttonStyle}>
                 <ImageBackground
-                    source={require("../assets/fonX.png")} // Remplacez par le chemin de votre image
-                    style={styles.backgroundImage}>
-                    <View style={styles.name}>
-                        <Text style={styles.textTitre}>{userRedux.scenario}</Text>
-
-                        {/* Ajout du dégradé gris → noir */}
-                        <LinearGradient
-                            colors={["#333", "#000"]} // Gris foncé à Noir
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.fondTextDescripiton}
-                        >
-                            <Text style={styles.textDescripiton}>{description}</Text>
-                        </LinearGradient>
-
-                        <View style={styles.infos}>
-                            <Text style={styles.textInfo}>Difficulté : {difficulte}</Text>
-                            <Text style={styles.textInfo}>Thème : {theme}</Text>
-                            <Text style={styles.textInfo}>Durée : {duree}min</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.button}>
-                        <View style={styles.glowEffect} />
-                        <TouchableOpacity
-                            style={styles.buttonStyle}
-                            onPress={() => navigation.replace("StartGame")}
-                        >
-                            <Text style={styles.buttonText}>C'est Parti !</Text>
-                        </TouchableOpacity>
-                    </View>
-
+                  source={buttonImage}
+                  style={styles.buttonImg}
+                  resizeMode={"stretch"}
+                >
+                  <Text style={styles.buttonText}>LANCER LA MISSION</Text>
                 </ImageBackground>
-            </View>
-        </SafeAreaView>
-    );
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </ImageBackground>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#484D5B",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#484D5B",
+  },
 
-    backgroundImage: {
-        flex: 1,
-    },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-    textTitre: {
-        fontFamily: "Goldman-Bold.ttf",
-        lineHeight: 46,
-        fontSize: 50,
-        color: "black",
-        marginTop: 40,
-        marginRight: 40,
-        marginLeft: 40,
-        marginBottom: 30,
-    },
+  modaleContainer: {
+    height: "80%",
+    width: "86%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+    // backgroundColor: "red",
+  },
 
-    fondTextDescripiton: {
-        backgroundColor: "black",
-        marginRight: 30,
-        marginLeft: 30,
-        borderRadius: 30,
-        borderWidth: 8,
-    },
-    time: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-        color: "white",
-    },
+  modaleImg: {
+    height: "100%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-    textDescripiton: {
-        fontFamily: "PressStart2P-Regular.ttf",
-        lineHeight: 18,
-        fontSize: 10,
-        color: "#72BF11",
-        marginTop: 20,
-        marginRight: 20,
-        marginLeft: 20,
-        marginBottom: 20,
-    },
+  textTitre: {
+    fontFamily: "Goldman-Bold.ttf",
+    lineHeight: 40,
+    fontSize: 36,
+    color: "white",
+    marginTop: 50,
+    marginLeft: 40,
+    marginRight: 40,
+  },
 
-    infos: {
-        marginLeft: 40,
-        width: "100%",
-        marginTop: 20,
-    },
+  textInfo: {
+    color: "white",
+    fontFamily: "Goldman-Regular.ttf",
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 10,
+    marginLeft: 40,
+    marginRight: 40,
+  },
 
-    textInfo: {
-        fontFamily: "Goldman-Regular.ttf",
-        fontSize: 18,
-        lineHeight: 20,
-        color: "Black",
-    },
+  ScrollView: {
+    height: 100,
+    marginTop: 20,
+    marginBottom: 90,
+    // backgroundColor: "blue",
+  },
 
-    button: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 20,
-    },
+  textDescripiton: {
+    fontFamily: "PressStart2P-Regular.ttf",
+    lineHeight: 20,
+    fontSize: 13,
+    color: "#72BF11",
+    marginTop: 0,
+    marginLeft: 40,
+    marginRight: 40,
+  },
 
-    buttonStyle: {
-        backgroundColor: "#72BF11",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 10,
-        width: "80%",
-        height: 64,
-        borderColor: "#2F3545",
-        borderWidth: 5,
-    },
+  // CTA
 
-    buttonText: {
-        fontFamily: "Goldman-Bold.ttf",
-        color: "black",
-        fontSize: 20,
-    },
+  buttonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "20%",
+    width: "100%",
+    paddingBottom: 20,
+    // backgroundColor: "black",
+  },
+
+  buttonStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "50%",
+    width: "85%",
+  },
+
+  buttonImg: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    width: "100%",
+    // backgroundColor: "red",
+  },
+
+  buttonText: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Goldman-Bold.ttf",
+    color: "white",
+    fontSize: 20,
+  },
 });
