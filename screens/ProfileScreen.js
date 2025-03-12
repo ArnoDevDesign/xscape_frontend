@@ -160,21 +160,22 @@ export default function ProfileScreen({ navigation }) {
 
     return (
         <View style={styles.generalContainer}>
-            <SafeAreaView />
             {/* bouton déconnexion */}
-            <View style={styles.buttonLogOut}>
-                <TouchableOpacity>
+
+            <View style={styles.containerButtonLogOut}>
+                <TouchableOpacity style={styles.buttonLogOut}>
                     <FontAwesome name='sign-out' size={30} color='#85CAE4' borderRadius='100' />
                 </TouchableOpacity>
             </View>
+            <View backgroundColor='#85CAE4' height='200' width='100%' />
 
             {/* Avatar */}
             <View style={styles.avatarContainerMain}>
-                <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
+                <TouchableOpacity onPress={() => setAvatarModalVisible(true)}  >
+                    <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
 
-                {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
-                <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit1} >
-                    <FontAwesome name='pencil' size={24} color='black' paddingTop={38} />
+                    {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
+                    {/* <FontAwesome name='pencil' size={24} color='#85CAE4' /> */}
                 </TouchableOpacity>
             </View>
 
@@ -212,12 +213,11 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos utilisateur */}
             <View style={styles.usernameView}>
-                <Text style={styles.textUsernameView}>Username : {userRedux.username}</Text>
-
+                <Text style={styles.textUsernameView}>{userRedux.username}</Text>
                 <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit2} >
-                    <FontAwesome name='pencil' size={20} color="black" style={styles.updateUser} />
+                    <FontAwesome name='pencil' size={24} color="#85CAE4" />
                 </TouchableOpacity>
-                <Text style={styles.textUsernameView}>Email : {email}</Text>
+                <Text style={styles.textEmailUsernameView}>{email}</Text>
             </View>
 
             {/* Modal Modification de l'username */}
@@ -225,8 +225,8 @@ export default function ProfileScreen({ navigation }) {
                 <Modal visible={modalUserVisible} animationType="fade" transparent>
                     <View style={styles.centeredViewUser}>
                         <View style={styles.modalViewUser}>
-                            <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, color: '#009EBA' }}>Choisissez un</Text>
-                            <Text style={{ fontFamily: "Fustat-SemiBold.ttf", fontSize: 30, color: '#009EBA', paddingBottom: 40 }}>nouveau pseudo</Text>
+                            <Text style={{ fontFamily: "Fustat-Bold.ttf", fontSize: 30, color: '#009EBA' }}>Choisissez un</Text>
+                            <Text style={{ fontFamily: "Fustat-Bold.ttf", fontSize: 30, color: '#009EBA', paddingBottom: 40 }}>nouveau pseudo</Text>
 
                             <TextInput
                                 placeholderTextColor={'black'}
@@ -245,16 +245,20 @@ export default function ProfileScreen({ navigation }) {
                     </View>
                 </Modal>
             )}
-
             {/* Infos Score */}
-            <Text style={[styles.text, styles.score]}>Score : {score}</Text>
-
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <View style={styles.scoreView}>
+                    <Text style={styles.score}>Score :</Text>
+                    <Text style={[styles.score, { fontSize: 60 }]}>{score} </Text>
+                    <Text style={[styles.score, { fontSize: 30 }]}>points</Text>
+                </View>
+            </View>
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
                     <View>
                         <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonFinishedAdventure}>
-                            <Text style={styles.textButtonFinishedAdventure}>Aventures terminées : </Text>
+                            <Text style={styles.textButtonFinishedAdventure}>Aventures terminées</Text>
                         </TouchableOpacity>
                         {modalaventures && (
                             <Modal visible={modalaventures} animationType="slide" transparent>
@@ -262,23 +266,22 @@ export default function ProfileScreen({ navigation }) {
                                     <TouchableOpacity onPress={() => setModalaventures(false)}>
                                         <View style={styles.modalViewUser}>
                                             <Text style={styles.textButton}>{finishedScenario}</Text>
-                                            <Text style={styles.textButton}>{finishedScenario}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
                             </Modal>)}
                     </View>
                 ) :
-                    (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
+                    (<Text>Aucune aventure terminée...pour le moment ! </Text>
                     )}
             </View>
 
             {/* Boutons */}
-            <TouchableOpacity onPress={() => navigation.navigate('Map')} style={styles.buttonBack}>
-                <Text style={styles.text}>Retour MAP</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+                <FontAwesome name='map-o' size={32} color="#85CAE4" justifyContent='center' alignItems='center' />
             </TouchableOpacity>
 
-            <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} />
+            {/* <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} /> */}
 
         </View>
     );
@@ -292,8 +295,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         width: '100%',
-        paddingVertical: 20,
-        backgroundColor: '#85CAE4'
+        paddingBottom: 20,
+        backgroundColor: 'white',
+        position: 'relative',
     },
     centeredView: {
         flex: 1,
@@ -316,34 +320,23 @@ const styles = StyleSheet.create({
     // Icon style
     iconEdit1: {
         position: "absolute",
-        top: 5,
+        top: 170,
         right: 5,
-        // backgroundColor: 'white',
         opacity: 0.8,
         boderRadius: 10,
         padding: 5,
     },
     iconEdit2: {
         position: "absolute",
-        bottom: 100,
-        right: -24,
+        bottom: 75,
+        right: 30,
         // backgroundColor: 'white',
         opacity: 0.8,
         boderRadius: 10,
         padding: 5,
     },
-    // Avatar style
     avatarContainerMain: {
-        width: '50%',
-        height: '25%',
-        borderRadius: 100,
-        overflow: 'hidden',
-        borderWidth: 2,
-        borderColor: 'gray',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1,
-
+        marginTop: -200,
     },
 
     avatar: {
@@ -409,23 +402,31 @@ const styles = StyleSheet.create({
     usernameView: {
         justifyContent: 'flex-end',
         alignItems: 'center',
-        columnGap: "10",
         width: '80%',
-        height: 72,
-        backgroundColor: '#85CAE4',
-        margin: 20,
+        height: 80,
+        backgroundColor: 'transparent',
         borderRadius: 20,
-        // elevation: 3,
+        bottom: 40
     },
     textUsernameView: {
-        fontSize: 32,
+        fontSize: 28,
         fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-start',
+        justifyContent: 'center',
+        color: "#003046",
+        // bottom: 32,
+    },
+    textEmailUsernameView: {
+        fontSize: 20,
+        fontFamily: "Fustat-Regular.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
-        color: "#003046",
+        color: "#FF8527",
+        // bottom: 45,
 
-        // padding: 5,
+
     },
     closeModalTextButton: {
         fontSize: 32,
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
-        color: "#003046",
+        color: "#85CAE4",
         padding: 5,
     },
 
@@ -489,10 +490,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
-        alignContent: 'flex-end',
         justifyContent: 'center',
         color: "white",
         padding: 10,
+    },
+    scoreView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 50,
     },
     closeTextButton: {
         fontSize: 20,
@@ -507,8 +512,10 @@ const styles = StyleSheet.create({
     score: {
         fontSize: 32,
         fontFamily: "Fustat-ExtraBold.ttf",
+        justifyContent: 'center',
         alignItems: 'center',
-        color: "#FFFFFF",
+        color: "#FF8527",
+
     },
     //Scenario Style
     aventureView: {
@@ -521,21 +528,26 @@ const styles = StyleSheet.create({
     },
 
     //Bouton Style
-    buttonLogOut: {
+    containerButtonLogOut: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        width: '100%',
+        paddingHorizontal: '20',
         position: 'absolute',
+        top: 55,
+        right: 5,
+        zIndex: 3,
+    },
+    buttonLogOut: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: '15%',
+        width: 60,
         height: 60,
-        backgroundColor: '#636773',
-        // margin: 20,
-        opacity: 0.5,
+        backgroundColor: 'white',
         borderRadius: 100,
         elevation: 3,
-        left: 330,
         paddingLeft: 5,
-        bottom: 740,
-        zIndex: 10,
     },
     textButtonLogOut: {
         fontSize: 20,
@@ -548,11 +560,10 @@ const styles = StyleSheet.create({
     },
 
     buttonFinishedAdventure: {
+        width: 300,
         padding: 15,
-        // backgroundColor: 'red',
-        // opacity: 0.5,
-        borderRadius: 10,
-        width: '100%',
+        backgroundColor: '#FF8527',
+        borderRadius: 80,
         alignItems: 'center',
     },
 
@@ -560,11 +571,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
-        color: "#FF8527",
-    },
-    text: {
-        color: 'black',
-        fontSize: 16,
+        color: "#FFFFFF",
     },
     selectedImage: {
         borderWidth: 3,
