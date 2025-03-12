@@ -325,8 +325,8 @@ const styles = StyleSheet.create({
     },
     iconEdit2: {
         position: "absolute",
-        bottom: 90,
-        right: 30,
+        bottom: 45,
+        right: 35,
         // backgroundColor: 'white',
         opacity: 0.8,
         boderRadius: 10,
@@ -517,7 +517,6 @@ const styles = StyleSheet.create({
     //Scenario Style
     aventureView: {
         backgroundColor: 'white',
-        // opacity: 0.5,
         padding: 10,
         width: '80%',
         alignItems: 'center',
