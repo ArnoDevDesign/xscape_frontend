@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
+    elevation: 3,
   },
 
 
