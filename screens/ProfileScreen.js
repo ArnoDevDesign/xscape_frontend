@@ -173,9 +173,6 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.avatarContainerMain}>
                 <TouchableOpacity onPress={() => setAvatarModalVisible(true)}  >
                     <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
-
-                    {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
-                    {/* <FontAwesome name='pencil' size={24} color='#85CAE4' /> */}
                 </TouchableOpacity>
             </View>
 
@@ -328,7 +325,7 @@ const styles = StyleSheet.create({
     },
     iconEdit2: {
         position: "absolute",
-        bottom: 75,
+        bottom: 90,
         right: 30,
         // backgroundColor: 'white',
         opacity: 0.8,
