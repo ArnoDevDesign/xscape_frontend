@@ -9,10 +9,28 @@ import Video from 'expo-video';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
+SplashScreen.preventAutoHideAsync();
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 
 export default function IngameScreen1({ navigation }) {
+    const [loaded] = useFonts({
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+        "Goldman-Regular.ttf": require("../assets/fonts/Goldman-Regular.ttf"),
+        "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
+    });
+
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+
 
     const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
@@ -58,7 +76,7 @@ export default function IngameScreen1({ navigation }) {
 
     const player = useVideoPlayer(videoSource, (player) => {
         player.play();
-        if (isFocused) { player.loop = false } else { player.loop = true };
+        player.loop = true
     });
 
 
@@ -198,6 +216,9 @@ export default function IngameScreen1({ navigation }) {
 
 
 
+    if (!loaded) {
+        return null;
+    }
 
 
     return (
@@ -208,22 +229,16 @@ export default function IngameScreen1({ navigation }) {
 
                 {game1 === false && (
                     <View style={styles.container}>
+
+
+
+
                         <View style={styles.contentContainer}>
                             <View style={styles.videoContainer}>
                                 <ImageBackground source={require('../assets/imgsAventure/modaleVideoX.png')} resizeMode='stretch' style={styles.videobackground}>
 
                                     <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
                                     <View style={styles.controlsContainer}>
-                                        {/* <Button
-                                    title={isPlaying ? 'Pause' : 'Play'}
-                                    onPress={() => {
-                                        if (isPlaying) {
-                                            player.pause();
-                                        } else {
-                                            player.play();
-                                        }
-                                    }}
-                                /> */}
                                     </View>
                                 </ImageBackground>
                             </View>
@@ -243,10 +258,10 @@ export default function IngameScreen1({ navigation }) {
                                     <View style={styles.light}>
                                         <ImageBackground
                                             source={frequence1 === goodFrequence1
-                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                ? require('../assets/imgsAventure/InputVX.png')
                                                 : frequence1
-                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
-                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                                    ? require('../assets/imgsAventure/InputRX.png')
+                                                    : require('../assets/imgsAventure/InputOffX.png')
                                             }
                                             resizeMode='stretch'
                                             style={styles.btnimgbckgrnd}
@@ -278,10 +293,10 @@ export default function IngameScreen1({ navigation }) {
                                     <View style={styles.light}>
                                         <ImageBackground
                                             source={frequence2 === goodFrequence2
-                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                ? require('../assets/imgsAventure/InputVX.png')
                                                 : frequence2
-                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
-                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                                    ? require('../assets/imgsAventure/InputRX.png')
+                                                    : require('../assets/imgsAventure/InputOffX.png')
                                             }
                                             resizeMode='stretch'
                                             style={styles.btnimgbckgrnd}
@@ -301,16 +316,15 @@ export default function IngameScreen1({ navigation }) {
                                     </TouchableOpacity>
                                 </View>
 
-                                {/* <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal2(true)} /> */}
 
                                 <View style={styles.inputandindice}>
                                     <View style={styles.light}>
                                         <ImageBackground
                                             source={frequence3 === goodFrequence3
-                                                ? require('../assets/imgsAventure/InputVX.png')  // Image si correcte
+                                                ? require('../assets/imgsAventure/InputVX.png')
                                                 : frequence3
-                                                    ? require('../assets/imgsAventure/InputRX.png')  // Image si incorrecte
-                                                    : require('../assets/imgsAventure/InputOffX.png') // Image par défaut
+                                                    ? require('../assets/imgsAventure/InputRX.png')
+                                                    : require('../assets/imgsAventure/InputOffX.png')
                                             }
                                             resizeMode='stretch'
                                             style={styles.btnimgbckgrnd}
@@ -330,21 +344,23 @@ export default function IngameScreen1({ navigation }) {
                                     </TouchableOpacity>
                                 </View>
 
-
-                                {/* <Button title={'Indice'} style={styles.indicebutton} onPress={() => setIndicemodal3(true)} /> */}
                             </View>
                         )}
                         {showfinalbutton && (
                             <View style={styles.inputContainer}>
-                                <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
-                                    <Text style={styles.textButton}>Declencher le scanner QRCODIQUE</Text>
-                                </TouchableOpacity>
+                                <View style={styles.finalbuttonbox}>
+                                    <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.finalbuttonBackground}>
+                                        <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
+                                            <Text style={styles.textButton}>Declenche le scanner QRCODIQUE</Text>
+                                        </TouchableOpacity>
+                                    </ImageBackground>
+                                </View>
                             </View>)}
                         {modalout && (
                             <Modal visible={modalout} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.modaleBackground}>
                                             <TouchableOpacity onPress={() => setmodalout(false)} style={styles.button}>
                                                 <Text style={styles.textButton}>Mauvaise fréquence</Text>
                                             </TouchableOpacity>
@@ -357,7 +373,7 @@ export default function IngameScreen1({ navigation }) {
                             <Modal visible={modal2out} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                        <ImageBackground source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.modaleBackground}>
                                             <TouchableOpacity onPress={() => setmodal2out(false)} style={styles.button}>
                                                 <Text style={styles.textButton}>Bon code, mauvais endroit...</Text>
                                             </TouchableOpacity>
@@ -369,7 +385,7 @@ export default function IngameScreen1({ navigation }) {
                             <Modal visible={indicemodal1} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.modaleBackground}>
                                             <TouchableOpacity onPress={() => { setIndicemodal1(false); penaliserScore() }} style={styles.button}>
                                                 <Text style={styles.textButton}>{indice1}</Text>
                                             </TouchableOpacity>
@@ -381,7 +397,7 @@ export default function IngameScreen1({ navigation }) {
                             <Modal visible={indicemodal2} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.modaleBackground}>
                                             <TouchableOpacity onPress={() => { setIndicemodal2(false); penaliserScore() }} style={styles.button}>
                                                 <Text style={styles.textButton}>{indice2}</Text>
                                             </TouchableOpacity>
@@ -393,7 +409,7 @@ export default function IngameScreen1({ navigation }) {
                             <Modal visible={indicemodal3} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/PmodaleX.png')} style={styles.imageBackground}>
+                                        <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.modaleBackground}>
                                             <TouchableOpacity onPress={() => { setIndicemodal3(false); penaliserScore() }} style={styles.button}>
                                                 <Text style={styles.textButton}>{indice3}</Text>
                                             </TouchableOpacity>
@@ -412,15 +428,26 @@ export default function IngameScreen1({ navigation }) {
 
 
 const styles = StyleSheet.create({
-    contentContainer: {
-        backgroundColor: 'blue',
-        alignItems: 'center',
+    finalbuttonbox: {
+        width: '80%',
+        height: '80%',
         justifyContent: 'center',
-
+        alignItems: 'center',
     },
-    containerup: {
-        // backgroundColor: 'red',
+    finalbuttonBackground: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modaleBackground: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 
+    containerup: {
     },
     indiceX: {
         width: '100%',
@@ -439,7 +466,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '33%',
         flexDirection: 'row',
-        // backgroundColor: 'blue',
+
         justifyContent: 'space-around',
         alignItems: 'center',
         paddingHorizontal: 20,
@@ -450,11 +477,35 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    contentContainer: {
+
+        width: '100%',
+        height: '50%',
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    },
+
+    videoContainer: {
+
+        width: 350,
+        height: 350,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     videobackground: {
-        width: '90%',
+        width: '100%',
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    video: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '89%',
+        height: "90%",
+        borderRadius: 70
+
     },
     light: {
         width: '80%',
@@ -462,30 +513,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
 
-        // 
     },
 
-    contentContainer: {
-        flex: 1,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 50,
-    },
+
     buttonfin: {
         width: '70%',
         height: '70%',
         justifyContent: 'center',
         alignItems: 'center',
-        // backgroundColor: 'blue'
-    },
-    video: {
-        width: 300,
-        height: 300,
+
     },
 
+
     indicebutton: {
-        // backgroundColor: 'white',
+
         borderRadius: "50%",
         width: 50,
         height: 50,
@@ -493,12 +534,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     controlsContainer: {
-        padding: 10,
     },
     //css
     textButton: {
-        fontSize: 20,
-        fontWeight: 300,
+        color: "white",
+        fontSize: 25,
+        fontFamily: "PressStart2P-Regular.ttf",
+        lineHeight: 40,
+        textAlign: 'center',
 
     },
     button: {
@@ -525,32 +568,25 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        // backgroundColor: 'green'
-    },
-    videoContainer: {
-        flex: 2,
-        // backgroundColor: 'red',
-        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+
     },
+
     inputContainer: {
         height: '50%',
         width: '100%',
-        // backgroundColor: 'grey',
         justifyContent: 'center',
-        // flexDirection: 'column',
         alignItems: 'center',
         paddingBottom: 30,
+        // backgroundColor: 'red'
 
     },
     input1: {
         width: "80%",
         height: '20%',
         backgroundColor: '#1b3815',
-        // borderColor: 'black',
+
         borderWidth: 4,
         justifyContent: 'center',
         alignItems: 'center'
@@ -569,7 +605,7 @@ const styles = StyleSheet.create({
             height: 4,
         },
         width: 350,
-        height: 500,
+        height: 350,
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
@@ -577,8 +613,7 @@ const styles = StyleSheet.create({
     input2: {
         width: "80%",
         height: '20%',
-        // backgroundColor: '#1b3815',
-        // borderColor: 'black',
+
         borderWidth: 4,
         justifyContent: 'center',
         alignItems: 'center'
@@ -586,7 +621,7 @@ const styles = StyleSheet.create({
     input3: {
         width: "80%",
         height: '20%',
-        // backgroundColor: '#1b3815',
+
         borderColor: 'black',
         borderWidth: 4,
         justifyContent: 'center',
@@ -596,8 +631,10 @@ const styles = StyleSheet.create({
         color: '#8aec54'
     },
     inp1: {
-        // color: '#8aec54',
-        color: 'black',
-        fontSize: 15
+        color: "white",
+        fontSize: 11,
+        fontFamily: "PressStart2P-Regular.ttf",
+        // lineHeight: 40,
+        textAlign: 'center',
     }
 })

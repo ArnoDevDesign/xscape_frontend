@@ -15,9 +15,29 @@ import { Camera, CameraType, CameraView } from 'expo-camera';
 import { useNavigation } from "@react-navigation/native";
 const useIsFocused = require('@react-navigation/native').useIsFocused;
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 
 export default function IngameScreen2({ navigation }) {
+    const [loaded] = useFonts({
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+        "Goldman-Regular.ttf": require("../assets/fonts/Goldman-Regular.ttf"),
+        "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
+    });
+
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+
+
     const userRedux = useSelector((state) => state.users.value)
 
     const isFocused = useIsFocused();
@@ -183,6 +203,9 @@ export default function IngameScreen2({ navigation }) {
 
 
     if (!isFocused) return null;
+    if (!loaded) {
+        return null;
+    }
 
     return (
 
@@ -303,9 +326,11 @@ export default function IngameScreen2({ navigation }) {
                             <Modal visible={modalreveal} animationType="fade" transparent>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <TouchableOpacity onPress={passageau3} style={styles.button}>
-                                            <Text style={styles.textButton}> Triangulation réussie ! La capsule a été localisée.</Text>
-                                        </TouchableOpacity>
+                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
+                                            <TouchableOpacity onPress={passageau3} style={styles.modalefin}>
+                                                <Text style={styles.textButton}> Triangulation réussie ! La capsule a été localisée.       </Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
                                     </View>
                                 </View>
                             </Modal>
@@ -318,6 +343,17 @@ export default function IngameScreen2({ navigation }) {
 
 
 const styles = StyleSheet.create({
+    indicemodal: {
+        width: '100%',
+        height: '100%',
+    },
+    modalefin: {
+        width: '90%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+
+    },
 
     modal: {
         width: '80%',
@@ -420,7 +456,7 @@ const styles = StyleSheet.create({
         elevation: 10,
     },
     flashOverlay: {
-        // position: "absolute",
+        position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
@@ -442,14 +478,17 @@ const styles = StyleSheet.create({
             height: 4,
         },
         width: 350,
-        height: 450,
+        height: 350,
+        // backgroundColor: 'red',
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
     },
     textButton: {
         color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
+        fontSize: 22,
+        fontFamily: "PressStart2P-Regular.ttf",
+        lineHeight: 40,
+        textAlign: 'center',
     },
 });

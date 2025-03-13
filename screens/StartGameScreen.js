@@ -26,10 +26,6 @@ export default function StartGameScreen({ navigation }) {
         }
     }, [loaded]);
 
-    // Retourner null tant que la police n'est pas chargée
-    if (!loaded) {
-        return null;
-    }
 
 
 
@@ -50,6 +46,11 @@ export default function StartGameScreen({ navigation }) {
     //////////////////////////////////////// a verifier /////////////////////////////////////////
 
     console.log('textlogg', text)
+
+    // Retourner null tant que la police n'est pas chargée
+    if (!loaded) {
+        return null;
+    }
 
     return (
         <View style={styles.container}>
@@ -77,11 +78,7 @@ export default function StartGameScreen({ navigation }) {
 
 
 const styles = StyleSheet.create({
-    text: {
-        color: 'green',
-        fontSize: 20,
-        fontFamily: "Goldman-Regular.ttf",
-    },
+
     textcontainer: {
         width: '80%',
         height: '75%',
@@ -143,9 +140,10 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "white",
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
+        fontSize: 16,
+        fontFamily: "PressStart2P-Regular.ttf",
+        lineHeight: 24,
+        textAlign: 'center',
     },
     textContainer2: {
         justifyContent: 'center',
@@ -163,10 +161,11 @@ const styles = StyleSheet.create({
 
     },
     textButton: {
-        color: "green",
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
+        color: "white",
+        fontSize: 25,
+        fontFamily: "PressStart2P-Regular.ttf",
+        lineHeight: 40,
+        textAlign: 'center',
 
     }
 
