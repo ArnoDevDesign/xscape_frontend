@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     },
     controlsContainer: {
     },
-    //css
+
     textButton: {
         color: "white",
         fontSize: 25,

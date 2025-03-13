@@ -187,7 +187,7 @@ export default function Ingame3Screen({ navigation }) {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Image source={require('../assets/imgsAventure/modaleSimpleX.png')} />
-                        <Text style={styles.modalText}>PAS MAL CAAAAAAA LAAAAAAAAA </Text>
+                        <Text style={styles.modalText}>{title}</Text>
                         <TouchableOpacity onPress={finishGame} style={styles.modalButton}>
                             <Text style={styles.modalButtonText}>FINI !!!!!!!!!!</Text>
                         </TouchableOpacity>
@@ -198,7 +198,7 @@ export default function Ingame3Screen({ navigation }) {
     );
 }
 
-// -- STYLES --//
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
         height: "100%",
         padding: 10,
     },
-    //TITRE
+
     titleContainer: {
         width: "100%",
         height: "25%",
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
         color: "yellow",
         marginTop: 5,
     },
-    //BOUTON
+
     buttonContainer: {
         width: "100%",
         height: "15%",

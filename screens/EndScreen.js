@@ -19,7 +19,7 @@ export default function EndScreen({ navigation }) {
     const confettiRef = useRef(null);
     const rocketRef = useRef(null);
 
-    //Récupération des données du scénario
+    //RECUPERATION DONNEES SCENARIO
     useEffect(() => {
         fetch(`${URL}/scenarios/${userRedux.scenario}`)
             .then(response => response.json())
@@ -65,7 +65,7 @@ export default function EndScreen({ navigation }) {
         }
     }, [textHeight]); // Attendre d'avoir la hauteur du texte
 
-    // -- JSX -- //
+
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -116,7 +116,6 @@ export default function EndScreen({ navigation }) {
     )
 }
 
-// -- STYLES -- //
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -125,12 +124,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: 'center'
     },
-    //Title Box
-    titleBox: {
+   
+    titleBox: { //Title Box
         flex: 1,
         width: '80%',
         // backgroundColor: 'green',
-        // opacity: 0.4,
         justifyContent: "center",
         alignItems: 'center'
     },
@@ -140,13 +138,11 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center'
     },
-    //Conclusion Box
-    conclusionBox: {
+    
+    conclusionBox: {//Conclusion Box
         flex: 1,
         width: '80%',
         // backgroundColor: 'blue',
-        // opacity: 0.4,
-        // paddingTop: 150,
         height: 100, // Taille fixe
         overflow: 'hidden', // Masque le texte dépassant
         justifyContent: 'center',
@@ -160,12 +156,11 @@ const styles = StyleSheet.create({
         position: 'absolute', // Permet d'appliquer `translateY`
 
     },
-    //Points Box
-    pointsBox: {
+    
+    pointsBox: {//Points Box
         flex: 1,
         width: '80%',
         // backgroundColor: 'yellow',
-        // opacity: 0.4,
         justifyContent: "center",
         alignItems: 'center'
     },
@@ -175,12 +170,11 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
     },
-    //Button Container
-    buttonContainer: {
+    
+    buttonContainer: {//Button Container
         flex: 1,
         width: '80%',
         // backgroundColor: 'red',
-        // opacity: 0.4,
         justifyContent: "center",
         alignItems: 'center'
     },
@@ -205,8 +199,8 @@ const styles = StyleSheet.create({
         top: '50%',
         transform: [{ translateY: -15 }] // Ajuste la position verticale
     },
-    // Animation Confetti
-    confetti: {
+    
+    confetti: { // Animation 
         position: 'absolute',
         // backgroundColor: 'blue',
         // opacity: 0.2,

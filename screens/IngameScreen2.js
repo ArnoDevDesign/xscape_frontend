@@ -17,6 +17,7 @@ const useIsFocused = require('@react-navigation/native').useIsFocused;
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { counterEvent } from "react-native/Libraries/Performance/Systrace";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -275,7 +276,7 @@ export default function IngameScreen2({ navigation }) {
                     <Animated.View style={[styles.flashOverlay, {
                         opacity: flashAnim,
                         backgroundColor: flashColor
-                    }]} />
+                    }]} pointerEvents="none"/>
                     {
                         indiceModal && (
                             <Modal visible={indiceModal} animationType="fade" transparent>
@@ -352,7 +353,6 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-
     },
 
     modal: {
