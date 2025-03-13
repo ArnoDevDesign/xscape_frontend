@@ -23,8 +23,8 @@ export default function IngameScreen2({ navigation }) {
     const isFocused = useIsFocused();
 
     const cameraRef = useRef(null);
-    const { indice2, setIndice2 } = useState('');
-    const { indice3, setIndice3 } = useState('');
+    const [indice2, setIndice2] = useState('');
+    const [indice3, setIndice3] = useState('');
     const [hasPermission, setHasPermission] = useState(false);
     const [indiceModal2, setIndicemodal2] = useState(false);
     const [indiceModal3, setIndicemodal3] = useState(false);
@@ -67,8 +67,8 @@ export default function IngameScreen2({ navigation }) {
             .then(data => {
                 console.log(data)
                 setGoodQRcode1(data.expectedAnswer1);
-                setGoodQRcode2(data.expectedAnswer2);
                 setGoodQRcode3(data.expectedAnswer3);
+                setGoodQRcode2(data.expectedAnswer2);
                 setIndice1(data.indice1)
                 setIndice2(data.indice2)
                 setIndice3(data.indice3);
@@ -191,16 +191,16 @@ export default function IngameScreen2({ navigation }) {
                 <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} resizeMode='stretch' style={styles.imageBackground}>
                     <View style={styles.VideoContainer}>
                         <View style={styles.cadrevideo}>
-                            <View style={styles.CameraView} >
-                                {hasPermission && (
-                                    <CameraView
-                                        onBarcodeScanned={({ data }) => scanQR(data)}
-                                        style={styles.Camera}
-                                        ref={cameraRef}
-                                    />
-                                )}
-                            </View >
                             <ImageBackground source={require('../assets/imgsAventure/MmodaleVX.png')} resizeMode='stretch' style={styles.CameraViews}>
+                                <View style={styles.CameraView} >
+                                    {hasPermission && (
+                                        <CameraView
+                                            onBarcodeScanned={({ data }) => scanQR(data)}
+                                            style={styles.Camera}
+                                            ref={cameraRef}
+                                        />
+                                    )}
+                                </View >
                             </ImageBackground>
                         </View>
                     </View>
@@ -359,11 +359,11 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     VideoContainer: {
+        margintop: 20,
         width: '100%',
         height: '60%',
         justifyContent: 'center',
         alignItems: 'center',
-
         // backgroundColor: 'red',
     },
     CameraViews: {
@@ -371,16 +371,12 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        zIndex: 9
     },
     cadrevideo: {
         width: '80%',
         height: '80%',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        zIndex: 1
     },
     imageBackground: {
         width: '100%',
@@ -395,21 +391,17 @@ const styles = StyleSheet.create({
 
     },
     CameraView: {
-        width: '98%',
-        height: '98%',
-        borderWidth: 5,
+        width: '92%',
+        height: '93%',
+        // borderWidth: 5,
         // borderColor: 'black',
         position: 'absolute',
-        borderRadius: 70,
-        overflow: 'hidden',
-        zIndex: 1,
-
+        borderRadius: 60,
+        overflow: 'hidden'
     },
     Camera: {
         width: '100%',
         height: '100%',
-        position: 'absolute',
-        zIndex: 1,
     },
     lightContainer: {
         width: '100%',
@@ -428,7 +420,7 @@ const styles = StyleSheet.create({
         elevation: 10,
     },
     flashOverlay: {
-        position: "absolute",
+        // position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
