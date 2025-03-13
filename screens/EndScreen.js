@@ -90,10 +90,7 @@ export default function EndScreen({ navigation }) {
 
             <View style={styles.conclusionBox}>
                 <Animated.View style={{ transform: [{ translateY }] }}>
-                    <Text
-                        onLayout={(event) => setTextHeight(event.nativeEvent.layout.height)}
-                        style={styles.textConclusion}
-                    >
+                    <Text onLayout={(event) => setTextHeight(event.nativeEvent.layout.height)} style={styles.textConclusion}>
                         {validated ? conclusionScenario : conclucionscenariofailed}
                     </Text>
                 </Animated.View>
@@ -107,8 +104,9 @@ export default function EndScreen({ navigation }) {
 
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
+                        <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton}>
                         <Text style={styles.textButton}>Retour à l'accueil</Text>
+                        </ImageBackground>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -144,10 +142,7 @@ const styles = StyleSheet.create({
     conclusionBox: {
         flex: 1,
         width: '80%',
-        // backgroundColor: 'blue',
-        // opacity: 0.4,
-        // paddingTop: 150,
-        height: 100, // Taille fixe
+        height: 100, 
         overflow: 'hidden', // Masque le texte dépassant
         justifyContent: 'center',
     },
@@ -190,26 +185,22 @@ const styles = StyleSheet.create({
         width: '50%',
     },
     ImageButton: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'contain', // Ajuste l'image sans déformation
-        position: 'absolute', // Place l'image en arrière-plan
+        width: 280,
+        height: 80,
+        alignItems: "center",
+        justifyContent: "center",
     },
+
     textButton: {
-        fontFamily: 'PressStart2P-Regular.ttf',
-        fontSize: 16,
-        color: 'white',
-        textAlign: 'center',
-        position: 'absolute', // Place le texte au-dessus de l'image
-        width: '100%',
-        top: '50%',
-        transform: [{ translateY: -15 }] // Ajuste la position verticale
+        fontFamily: 'Goldman-Regular.ttf',
+        fontSize: 25,
+        color: "white",
+        textAlign: "center",
+        width: "100%",
     },
     // Animation Confetti
     confetti: {
         position: 'absolute',
-        // backgroundColor: 'blue',
-        // opacity: 0.2,
         width: '100%',
         height: '100%',
     },

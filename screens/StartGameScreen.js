@@ -67,7 +67,7 @@ export default function StartGameScreen({ navigation }) {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
                         <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
-                            <Text style={styles.text}>Go !</Text>
+                            <Text style={styles.text}>GO !</Text>
                         </ImageBackground>
                     </TouchableOpacity>
                 </View >

@@ -120,19 +120,19 @@ export default function IngameScreen1({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 console.log("retour fetch ", data);
-                if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
-                if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
-                if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
-                if (data.indice1 !== indice1) setIndice1(data.indice1);
-                if (data.indice2 !== indice2) setIndice2(data.indice2);
-                if (data.indice3 !== indice3) setIndice3(data.indice3);
+               setGoodFrequence1(data.expectedAnswer1);
+               setGoodFrequence2(data.expectedAnswer2);
+               setGoodFrequence3(data.expectedAnswer3);
+               setIndice1(data.indice1);
+               setIndice2(data.indice2);
+               setIndice3(data.indice3);
                 setSCORE(data.score);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-    }, [userRedux.userID, userRedux.scenarioID, isFocused])
-
+        }, [userRedux.userID, userRedux.scenarioID, isFocused])
+        
 
 
     function testInput1(value) {
@@ -310,7 +310,7 @@ export default function IngameScreen1({ navigation }) {
                                             />
                                         </ImageBackground>
                                     </View>
-                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                    <TouchableOpacity onPress={() => { setIndicemodal2(true) }} style={styles.indicebutton}>
                                         <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
                                         </ImageBackground>
                                     </TouchableOpacity>
@@ -338,7 +338,7 @@ export default function IngameScreen1({ navigation }) {
                                             />
                                         </ImageBackground>
                                     </View>
-                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                    <TouchableOpacity onPress={() => { setIndicemodal3(true) }} style={styles.indicebutton}>
                                         <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
                                         </ImageBackground>
                                     </TouchableOpacity>
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     },
     controlsContainer: {
     },
-    //css
+
     textButton: {
         color: "white",
         fontSize: 25,
@@ -579,7 +579,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingBottom: 30,
-        // backgroundColor: 'red'
 
     },
     input1: {
