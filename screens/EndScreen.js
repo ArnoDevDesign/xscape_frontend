@@ -105,7 +105,7 @@ export default function EndScreen({ navigation }) {
                     {validated && <Text style={styles.textPointsTotal}> {userRedux.scoreSession} points !</Text>}
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Map')}>
                     <View style={styles.button}>
                         <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton}>
                             <Text style={styles.textButton}>Retour à l'accueil</Text>

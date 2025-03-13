@@ -107,7 +107,7 @@ export default function ProfileScreen({ navigation }) {
                 dispatch(userLogout());
                 navigation.navigate('Home');
             }
-            ).catch(error => console.error('❌ Erreur de déconnexion:', error));
+            ).catch(error => console.error('Erreur de déconnexion:', error));
     }
 
     //Modification du username et token au clic 
@@ -120,7 +120,7 @@ export default function ProfileScreen({ navigation }) {
         // Crée un objet à envoyer
         let updateData = { token: userRedux.token };
         if (newUsername) updateData.username = newUsername;
-        if (selectedAvatar) updateData.avatar = selectedAvatar; // ✅ Ne pas écraser l'ancien avatar
+        if (selectedAvatar) updateData.avatar = selectedAvatar; // Ne pas écraser l'ancien avatar
 
         fetch(`${URL}/users/updateProfil`, {
             method: 'PUT',
@@ -133,15 +133,15 @@ export default function ProfileScreen({ navigation }) {
                     setUsername(newUsername);
                     dispatch(addUserToStore({ username: newUsername, avatar: userRedux.avatar }));
                     setUserModalVisible(false);
-                    console.log("✅ Username mis à jour !");
+                    console.log("Username mis à jour !");
                     alert('Pseudo mis à jour');
                 } else {
-                    console.log('❌ Erreur mise à jour username', data.error);
+                    console.log('Erreur mise à jour username', data.error);
                     alert('Erreur mise à jour pseudo');
                 }
             })
             .catch(error => {
-                console.error('❌ Erreur de mise à jour username:', error);
+                console.error('Erreur de mise à jour username:', error);
                 alert("Erreur de connexion au serveur");
             });
     };
@@ -161,15 +161,15 @@ export default function ProfileScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
-                    console.log("✅ Avatar mis à jour avec succès !");
+                    console.log("Avatar mis à jour avec succès !");
                     setAvatarModalVisible(false);
                 } else {
-                    console.log("❌ Erreur mise à jour avatar", data.error);
+                    console.log("Erreur mise à jour avatar", data.error);
                     alert("Erreur mise à jour avatar");
                 }
             })
             .catch(error => {
-                console.error('❌ Erreur de mise à jour avatar:', error);
+                console.error('Erreur de mise à jour avatar:', error);
                 alert("Erreur de connexion au serveur");
             });
     };
@@ -183,26 +183,26 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.generalContainer}>
 
             <View style={styles.containerButtonLogOut}>
-                <TouchableOpacity style={styles.buttonLogOut}>
+                <TouchableOpacity onPress={()=>handleLogout()} style={styles.buttonLogOut}>
                     <FontAwesome name='sign-out' size={30} color='#85CAE4' borderRadius='100' />
                 </TouchableOpacity>
             </View>
             <View backgroundColor='#85CAE4' height='200' width='100%' />
 
-            {/* Avatar */}
+
             <View style={styles.avatarContainerMain}>
                 <TouchableOpacity onPress={() => setAvatarModalVisible(true)}  >
                     <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
                 </TouchableOpacity>
             </View>
 
-            {/* Modal Modification de l'avatar */}
+
             {modalAvatarVisible && (
                 <Modal visible={modalAvatarVisible} transparent animationType="slide">
                     <View style={styles.centeredViewAvatar}>
                         <View style={styles.modalViewAvatar}>
                             <Text style={styles.textChangeUsernameView}>Nouvel avatar</Text>
-                            {/* Carousel d'avatars */}
+
                             <FlatList
                                 data={images}
                                 horizontal
@@ -228,7 +228,7 @@ export default function ProfileScreen({ navigation }) {
                 </Modal>
             )}
 
-            {/* Infos utilisateur */}
+
             <View style={styles.usernameView}>
                 <Text style={styles.textUsernameView}>{userRedux.username}</Text>
                 <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit2} >
@@ -237,14 +237,13 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.textEmailUsernameView}>{email}</Text>
             </View>
 
-            {/* Modal Modification de l'username */}
+
             {modalUserVisible && (
                 <Modal visible={modalUserVisible} animationType="fade" opacity={0.1} backgroundColor={'#85CAE4'}>
                     <View style={styles.centeredViewUser}>
                         <View style={styles.modalViewUser}>
                             <View style={styles.titleModalView}>
                                 <Text style={styles.titleModal1}>Choisir un nouveau pseudo</Text>
-                                {/* <Text style={styles.titleModal2}>nouveau pseudo</Text> */}
                             </View>
                             <TextInput
                                 placeholderTextColor={'black'}
@@ -264,14 +263,12 @@ export default function ProfileScreen({ navigation }) {
                     </View>
                 </Modal>
             )}
-            {/* Infos Score */}
             <View style={styles.scoreView}>
                 <Text style={styles.scoretxt}>Score :</Text>
                 <Text style={styles.scorePoint}>{score}</Text>
                 <Text style={[styles.pointTxt]}>points</Text>
             </View>
 
-            {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
                     <View style={styles.c1}>
@@ -288,18 +285,15 @@ export default function ProfileScreen({ navigation }) {
                     (<Text>Aucune aventure terminée...pour le moment ! </Text>)}
             </View>
 
-            {/* Boutons */}
             <View style={styles.mapIconView}>
                 <TouchableOpacity onPress={() => navigation.navigate('Map')}>
                     <FontAwesome name='map-o' size={32} color="white" justifyContent='center' alignItems='center' />
                 </TouchableOpacity>
             </View>
-            {/* <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} /> */}
         </View>
     );
 }
 
-// -- CSS STYLE --
 const styles = StyleSheet.create({
 
     generalContainer: {
@@ -398,7 +392,7 @@ const styles = StyleSheet.create({
         textAlign: 'center', 
         color: '#009EBA',
         fontFamily: "Fustat-Bold.ttf",
-        fontSize: 30,
+        fontSize: 28,
         paddingTop: 20,
         lineHeight: 30,
         // backgroundColor: 'red',
