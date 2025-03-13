@@ -77,7 +77,6 @@ export default function MapScreen({ navigation }) {
 
   // Retourner null tant que la police n'est pas chargée
 
-
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -104,25 +103,21 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0));
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
 
   const userRedux = useSelector((state) => state.users.value);
-
 
   const dispatch = useDispatch();
 
   const mapRef = useRef(null);
 
-
   const newFormatAvatar = userRedux.avatar.includes("/upload/")
     ? userRedux.avatar.replace("/upload/", "/upload/w_230,h_230,r_30/")
     : userRedux.avatar;
 
-
   const gameMarker = {
     scenario: require("../assets/pinGameok.png"),
   };
-
 
   const choosenScenario = (data) => {
     console.log("data =>", data);
@@ -152,37 +147,32 @@ export default function MapScreen({ navigation }) {
         .then((data) => {
           console.log("log de creation de session", data.validatedEpreuves);
           if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
-            console.log("zero etape fini")
+            console.log("zero etape fini");
             navigation.navigate("Scenario");
           } else if (data.validatedEpreuves !== 0) {
-            setModalInfo(false)
-            setModalExpanded(false)
+            setModalInfo(false);
+            setModalExpanded(false);
             setModalChoice(true);
-            console.log(" quelques etapes finis modal affichee ")
+            console.log(" quelques etapes finis modal affichee ");
             if (response === true) {
-              console.log("reponse true envoi au scenario")
-              setResponse('')
-              navigation.navigate('Scenario')
+              console.log("reponse true envoi au scenario");
+              setResponse("");
+              navigation.navigate("Scenario");
             } else if (response === false) {
-              console.log("reponse false envoi au ingame screens")
-              setResponse('')
+              console.log("reponse false envoi au ingame screens");
+              setResponse("");
               navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
             }
           }
-        })
+        });
     }
-  }, [userRedux, response])
-
-
-
+  }, [userRedux, response]);
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-
       if (status === "granted" && isFocused) {
-
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
           setIsLoading(false);
@@ -216,6 +206,10 @@ export default function MapScreen({ navigation }) {
 
     isFocused && fetchScenarios();
   }, [isFocused]);
+
+  const goProfil = () => {
+    navigation.navigate("Profil");
+  };
 
   const recenterMapOnPinUser = () => {
     const { latitude, longitude } = userLocation;
@@ -292,86 +286,113 @@ export default function MapScreen({ navigation }) {
           </View>
         </View>
 
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../assets/imgsAventure/LogoXw.png")}
+            style={styles.logo}
+          />
+        </View>
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={recenterMapOnPinUser}
-          >
+          <TouchableOpacity onPress={recenterMapOnPinUser}>
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
           </TouchableOpacity>
         </View>
 
+        <View style={styles.buttonProfilContainer}>
+          <TouchableOpacity onPress={goProfil}>
+            <FontAwesome name="user-circle-o" size={42} color="#85CAE4" />
+          </TouchableOpacity>
+        </View>
 
         {modalChoice && (
           <Modal visible={modalChoice} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity onPress={() => { setResponse(false), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre a la derniere sauvegarde</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { setResponse(true), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre depuis le debut</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        )
-        }
-
-
-
-        {
-          modalInfo && (
-            <Modal visible={modalInfo} animationType="fade" transparent>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setModalInfo(false);
-                  setModalExpanded(false);
-                }}
-              >
-                <View style={styles.centeredView}>
-                  <Pressable
-                    style={[
-                      styles.modalView,
-                      modalExpanded && styles.expandedModal,
-                    ]}
-                    onPress={() => !modalExpanded && setModalExpanded(true)}
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setModalChoice(false);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalTitle}>{modalGameName}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setResponse(false);
+                      setModalChoice(false);
+                    }}
+                    style={styles.modalButton}
                   >
-                    <Text style={styles.modalTitle}>{modalGameName}</Text>
-                    <Text style={styles.modalTheme}>{modalGameTheme}</Text>
-                    <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
-                    {modalExpanded && (
-                      <>
-                        <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
-                        {isUserNear ? (
-                          <TouchableOpacity
-                            style={styles.startGameButton}
-                            onPress={() =>
-                              choosenScenario({
-                                scenario: modalGameName,
-                                scenarioID: selectedScenario,
-                              })
-                            }
-                          >
-                            <Text style={styles.startGameButtonText}>
-                              Lancer l'aventure
-                            </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <Text style={styles.textGoAventure}>
-                            Rends-toi sur place pour commencer l'aventure.
-                          </Text>
-                        )}
-                      </>
-                    )}
-                  </Pressable>
+                    <Text style={styles.modalButtonText}>
+                      Reprendre ma partie
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setResponse(true);
+                      setModalChoice(false);
+                    }}
+                    style={styles.modalButton}
+                  >
+                    <Text style={styles.modalButtonText}>Recommencer</Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableWithoutFeedback>
-            </Modal>
-          )
-        }
-      </Animated.View >
-    </SafeAreaView >
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        )}
+
+        {modalInfo && (
+          <Modal visible={modalInfo} animationType="fade" transparent>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setModalInfo(false);
+                setModalExpanded(false);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <Pressable
+                  style={[
+                    styles.modalView,
+                    modalExpanded && styles.expandedModal,
+                  ]}
+                  onPress={() => !modalExpanded && setModalExpanded(true)}
+                >
+                  <Text style={styles.modalTitle}>{modalGameName}</Text>
+                  <Text style={styles.modalTheme}>{modalGameTheme}</Text>
+                  <Text style={styles.additionalInfo}>
+                    Durée : {modalGameDuration} min
+                  </Text>
+                  {modalExpanded && (
+                    <>
+                      <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
+                      {isUserNear ? (
+                        <TouchableOpacity
+                          style={styles.startGameButton}
+                          onPress={() =>
+                            choosenScenario({
+                              scenario: modalGameName,
+                              scenarioID: selectedScenario,
+                            })
+                          }
+                        >
+                          <Text style={styles.startGameButtonText}>
+                            Lancer l'aventure
+                          </Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text style={styles.textGoAventure}>
+                          Rends-toi sur place pour commencer l'aventure.
+                        </Text>
+                      )}
+                    </>
+                  )}
+                </Pressable>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        )}
+      </Animated.View>
+    </SafeAreaView>
   );
 }
 
@@ -386,7 +407,6 @@ const styles = StyleSheet.create({
     height: 70,
     justifyContent: "center",
     alignItems: "center",
-
   },
   imageBackground: {
     width: "100%",
@@ -429,29 +449,66 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-
-  }, modalButton: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "#FF8527",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
   },
+
+  modalButton: {
+    width: "90%",
+    height: 62,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF8527",
+    padding: 10,
+    borderRadius: 16,
+    marginTop: 20,
+    marginBottom: 20,
+    elevation: 3,
+  },
+
   modal: {
     direction: "row",
     justifyContent: "space-between",
-    marginTop: 20,
-    // alignItems: "center",
   },
+
+  logoContainer: {
+    position: "absolute",
+    alignSelf: "center",
+    width: 110,
+    height: 80,
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 16,
+    backgroundColor: "#85CAE4",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "white",
+  },
+
+  logo: {
+    width: "65%",
+    height: "70%",
+  },
+
   buttonContainer: {
     position: "absolute",
     bottom: 60,
     right: 0,
     flex: 1,
-    width: 64,
-    height: 64,
+    width: 72,
+    height: 72,
+    borderTopLeftRadius: 40,
+    borderBottomLeftRadius: 40,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+  },
+
+  buttonProfilContainer: {
+    position: "absolute",
+    bottom: 160,
+    right: 0,
+    flex: 1,
+    width: 72,
+    height: 72,
     borderTopLeftRadius: 40,
     borderBottomLeftRadius: 40,
     backgroundColor: "white",
@@ -466,13 +523,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-
   modalView: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 30,
-    // width: "80%",
+    width: "80%",
     // height: "50%",
     padding: 18,
     elevation: 3,
