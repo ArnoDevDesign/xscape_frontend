@@ -102,6 +102,15 @@ export default function App() {
     "Goldman-Regular.ttf": require("./assets/fonts/Goldman-Regular.ttf"),
     "Goldman-Bold.ttf": require("./assets/fonts/Goldman-Bold.ttf"),
     "FugazOne-Regular.ttf": require("./assets/fonts/FugazOne-Regular.ttf"),
+    "Exo2-SemiBold.ttf": require("./assets/fonts/Exo2-SemiBold.ttf"),
+    "Exo2-Regular.ttf": require("./assets/fonts/Exo2-Regular.ttf"),
+    "Exo2-Medium.ttf": require("./assets/fonts/Exo2-Medium.ttf"),
+    "Exo2-ExtraBold.ttf": require("./assets/fonts/Exo2-ExtraBold.ttf"),
+    "Exo2-Bold.ttf": require("./assets/fonts/Exo2-Bold.ttf"),
+    "Exo2-Black.ttf": require("./assets/fonts/Exo2-Black.ttf"),
+    "Doto-Regular.ttf": require("./assets/fonts/Doto-Regular.ttf"),
+    "Doto-Bold.ttf": require("./assets/fonts/Doto-Bold.ttf"),
+    "Doto-Black.ttf": require("./assets/fonts/Doto-Black.ttf"),
   });
 
   useEffect(() => {
