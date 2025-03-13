@@ -32,39 +32,90 @@ export default function StartGameScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
-            <View style={styles.imgcontainer}>
-                <Text style={styles.textButton}>{text}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Map')}>
-                    <Text style={styles.text}>sortir</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
-                    <Text style={styles.text}>Go !</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+            <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} resizeMode='stretch' style={styles.imageBackground}>
+
+                <SafeAreaView />
+                <View style={styles.imgContainer}>
+                    <ImageBackground source={require('../assets/imgsAventure/MmodaleX.png')} resizeMode='stretch' style={styles.imageBackground}>
+                        <View style={styles.textcontainer}>
+                            <Text style={styles.text}>{text}</Text>
+                        </View>
+                    </ImageBackground>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Map')}>
+                        <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
+
+                            <Text style={styles.text}>sortir</Text>
+                        </ImageBackground>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
+                        <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
+                            <Text style={styles.text}>Go !</Text>
+                        </ImageBackground>
+                    </TouchableOpacity>
+                </View >
+            </ImageBackground>
+        </View >
     );;
 }
 
 
 const styles = StyleSheet.create({
+    text: {
+        color: 'green',
+    },
+    textcontainer: {
+        width: '80%',
+        height: '75%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        // borderColor: 'red',
+        // borderWidth: 5,
+    },
+    imgBtn: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    button: {
+        width: '90%',
+        height: 70,
+        marginTop: 20,
+    },
+    imageBackground: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+    },
+
+    imgContainer: {
+        width: '90%',
+        height: '70%',
+        // backgroundColor: 'red',
+        // justifyContent: 'center',
+        alignItems: 'center',
+    },
 
     container: {
         flex: 1,
         height: '100%',
         width: '100%',
-        padding: 20,
+
         backgroundColor: 'black',
-        jusityfyContent: 'space-between',
+        jusityfyContent: 'center',
         alignItems: 'center',
     },
     buttonContainer: {
+        // backgroundColor: 'blue',
         width: '100%',
-        height: '40%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        height: '30%',
+        // flexDirection: 'row',
+        // justifyContent: 'center',
         alignItems: 'center',
     },
     imgcontainer: {
@@ -84,7 +135,8 @@ const styles = StyleSheet.create({
         height: 200,
     },
     textContainer: {
-        // borderWidth: 5,
+        borderWidth: 5,
+        borderColor: 'green',
         // justifyContent: 'center',
         // alignItems: 'center',
         width: 220,

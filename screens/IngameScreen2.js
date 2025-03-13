@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { ImageBackground } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     StyleSheet,
@@ -22,10 +23,11 @@ export default function IngameScreen2({ navigation }) {
     const isFocused = useIsFocused();
 
     const cameraRef = useRef(null);
-
-
+    const { indice2, setIndice2 } = useState('');
+    const { indice3, setIndice3 } = useState('');
     const [hasPermission, setHasPermission] = useState(false);
-
+    const [indiceModal2, setIndicemodal2] = useState(false);
+    const [indiceModal3, setIndicemodal3] = useState(false);
 
     const [scanned1, setScanned1] = useState(false);
     const [scanned2, setScanned2] = useState(false);
@@ -67,7 +69,9 @@ export default function IngameScreen2({ navigation }) {
                 setGoodQRcode1(data.expectedAnswer1);
                 setGoodQRcode2(data.expectedAnswer2);
                 setGoodQRcode3(data.expectedAnswer3);
-                setIndice1(data.indice1);
+                setIndice1(data.indice1)
+                setIndice2(data.indice2)
+                setIndice3(data.indice3);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
@@ -132,7 +136,9 @@ export default function IngameScreen2({ navigation }) {
 
     function INDICE() {
         setSCORE(prevScore => prevScore - 100)
-        setIndicemodal(false);
+        if (indiceModal === true) setIndicemodal(false);
+        if (indiceModal2 === true) setIndicemodal2(false);
+        if (indiceModal3 === true) setIndicemodal3(false);
     }
 
 
@@ -182,124 +188,244 @@ export default function IngameScreen2({ navigation }) {
 
         isFocused && (
             <View style={styles.container} >
-                <SafeAreaView />
+                <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} resizeMode='stretch' style={styles.imageBackground}>
+                    <View style={styles.VideoContainer}>
+                        <View style={styles.cadrevideo}>
+                            <View style={styles.CameraView} >
+                                {hasPermission && (
+                                    <CameraView
+                                        onBarcodeScanned={({ data }) => scanQR(data)}
+                                        style={styles.Camera}
+                                        ref={cameraRef}
+                                    />
+                                )}
+                            </View >
+                            <ImageBackground source={require('../assets/imgsAventure/MmodaleVX.png')} resizeMode='stretch' style={styles.CameraViews}>
+                            </ImageBackground>
+                        </View>
+                    </View>
+                    <View style={styles.lightContainer}>
+                        <View style={styles.light}>
+                            <ImageBackground
+                                source={scanned1
+                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
+                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                }
+                                resizeMode='stretch'
+                                style={styles.lightimg}
+                            />
+                        </View>
+                        <View style={styles.light}>
+                            <ImageBackground
+                                source={scanned2
+                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
+                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                }
+                                resizeMode='stretch'
+                                style={styles.lightimg}
+                            />
+                        </View>
+                        <View style={styles.light} >
+                            <ImageBackground
+                                source={scanned3
+                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
+                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                }
+                                resizeMode='stretch'
+                                style={styles.lightimg}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={() => setIndicemodal(true)} style={styles.button}>
+                            <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indice} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setIndicemodal2(true)} style={styles.button}>
+                            <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indice} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setIndicemodal3(true)} style={styles.button}>
+                            <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indice} />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.CameraView} >
-                    {hasPermission && (
-                        <CameraView
-                            onBarcodeScanned={({ data }) => scanQR(data)}
-                            style={styles.Camera}
-                            ref={cameraRef}
-                        />
-                    )}
-                </View >
-                <View style={styles.lightContainer}>
-                    <Animated.View style={[styles.light, scanned1 ? styles.greenLight : styles.redLight, animatedStyle]} />
-                    <Animated.View style={[styles.light, scanned2 ? styles.greenLight : styles.redLight, animatedStyle]} />
-                    <Animated.View style={[styles.light, scanned3 ? styles.greenLight : styles.redLight, animatedStyle]} />
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={() => setIndicemodal(true)} style={styles.button}>
-                        <Text style={styles.textButton}>Indice</Text>
-                    </TouchableOpacity>
-                </View>
 
-
-                <Animated.View style={[styles.flashOverlay, {
-                    opacity: flashAnim,
-                    backgroundColor: flashColor
-                }]} />
-
-
-
-                {
-                    indiceModal && (
-                        <Modal visible={indiceModal} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <TouchableOpacity onPress={INDICE} style={styles.button}>
-                                        <Text style={styles.textButton}>{indice1}</Text>
-                                    </TouchableOpacity>
+                    <Animated.View style={[styles.flashOverlay, {
+                        opacity: flashAnim,
+                        backgroundColor: flashColor
+                    }]} />
+                    {
+                        indiceModal && (
+                            <Modal visible={indiceModal} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
+                                            <TouchableOpacity onPress={INDICE} style={styles.modal}>
+                                                <Text style={styles.textButton}>{indice1}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
                                 </View>
-                            </View>
-                        </Modal>
-                    )
-                }
-                {
-                    modalreveal && (
-                        <Modal visible={modalreveal} animationType="fade" transparent>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <TouchableOpacity onPress={passageau3} style={styles.button}>
-                                        <Text style={styles.textButton}>✅ Triangulation réussie ! La capsule a été localisée.</Text>
-                                    </TouchableOpacity>
+                            </Modal>
+                        )
+                    }
+                    {
+                        indiceModal2 && (
+                            <Modal visible={indiceModal2} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
+                                            <TouchableOpacity onPress={INDICE} style={styles.modal}>
+                                                <Text style={styles.textButton}>{indice2}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
                                 </View>
-                            </View>
-                        </Modal>
-                    )
-                }
-            </View >))
+                            </Modal>
+                        )
+                    }
+                    {
+                        indiceModal3 && (
+                            <Modal visible={indiceModal3} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
+                                            <TouchableOpacity onPress={INDICE} style={styles.modal}>
+                                                <Text style={styles.textButton}>{indice3}</Text>
+                                            </TouchableOpacity>
+                                        </ImageBackground>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )
+                    }
+                    {
+                        modalreveal && (
+                            <Modal visible={modalreveal} animationType="fade" transparent>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <TouchableOpacity onPress={passageau3} style={styles.button}>
+                                            <Text style={styles.textButton}> Triangulation réussie ! La capsule a été localisée.</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </Modal>
+                        )
+                    }
+                </ImageBackground>
+            </View >
+        ))
 }
 
 
 const styles = StyleSheet.create({
-    light: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 3,
-        borderColor: 'white',
-        elevation: 10,
+
+    modal: {
+        width: '80%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    greenLight: {
-        backgroundColor: 'rgba(0, 255, 0, 0.7)',
-        shadowColor: 'rgba(0, 255, 0, 1)',
+    indicemodal: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    redLight: {
-        backgroundColor: 'rgba(255, 0, 0, 0.7)',
-        shadowColor: 'rgba(255, 0, 0, 1)',
+    indice: {
+        width: '100%',
+        height: '100%',
+    },
+    button: {
+        // backgroundColor: "#1E90FF",
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+
+
+    },
+    buttonContainer: {
+        width: '100%',
+        height: '10%',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        flexDirection: 'row',
+        // backgroundColor: 'blue',
+        paddingRight: 20,
+        // paddingBottom: 20,
+    },
+    lightimg: {
+        width: '100%',
+        height: '100%',
+    },
+    VideoContainer: {
+        width: '100%',
+        height: '60%',
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        // backgroundColor: 'red',
+    },
+    CameraViews: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        zIndex: 9
+    },
+    cadrevideo: {
+        width: '80%',
+        height: '80%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        zIndex: 1
+    },
+    imageBackground: {
+        width: '100%',
+        height: '100%',
     },
     container: {
         flex: 1,
         width: '100%',
+        height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
+
     },
     CameraView: {
-        width: '100%',
-        height: '50%',
+        width: '98%',
+        height: '98%',
         borderWidth: 5,
-        borderColor: 'gray',
+        // borderColor: 'black',
+        position: 'absolute',
+        borderRadius: 70,
+        overflow: 'hidden',
+        zIndex: 1,
+
     },
     Camera: {
         width: '100%',
         height: '100%',
+        position: 'absolute',
+        zIndex: 1,
     },
     lightContainer: {
+        width: '100%',
+        height: '25%',
+        // backgroundColor: "yellow",
         flexDirection: 'row',
         justifyContent: 'space-around',
-        width: '100%',
-        marginVertical: 20,
+        alignItems: 'center',
+
     },
     light: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 3,
-        borderColor: 'white',
-        shadowColor: 'rgba(255, 255, 255, 0.8)',
-        shadowOpacity: 1,
-        shadowRadius: 20,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+
         elevation: 10,
-    },
-    greenLight: {
-        backgroundColor: 'rgba(0, 255, 0, 0.7)',
-        shadowColor: 'rgba(0, 255, 0, 1)',
-    },
-    redLight: {
-        backgroundColor: 'rgba(255, 0, 0, 0.7)',
-        shadowColor: 'rgba(255, 0, 0, 1)',
     },
     flashOverlay: {
         position: "absolute",
@@ -314,18 +440,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
     modalView: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: 30,
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 2,
+            height: 4,
+        },
+        width: 350,
+        height: 450,
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
         elevation: 5,
-    },
-    button: {
-        backgroundColor: "#1E90FF",
-        padding: 15,
-        borderRadius: 10,
-        marginTop: 20,
     },
     textButton: {
         color: "white",

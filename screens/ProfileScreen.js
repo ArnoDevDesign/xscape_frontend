@@ -269,7 +269,7 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.text}>Retour MAP</Text>
             </TouchableOpacity>
 
-            <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} />
+            <Button title="Go to Home" onPress={() => navigation.navigate('Ingame2')} />
 
         </View>
     );
