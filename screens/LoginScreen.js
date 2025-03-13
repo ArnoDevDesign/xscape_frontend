@@ -139,7 +139,6 @@ export default function LoginScreen({ navigation }) {
 
         <View style={styles.generalContainer}>
             <SafeAreaView />
-            {/* lorsque la modale apparait, les boutons d'inscription et de connexion disparaissent */}
             {!modalLogIn && !modalSignUp && (
                 <View style={styles.signContainer}>
                     <Image source={require('../assets/LogoXscapeOkWhite.png')} style={styles.logo} />
@@ -151,7 +150,7 @@ export default function LoginScreen({ navigation }) {
                     </TouchableOpacity>
                 </View>
             )}
-            {/* Modal Log in */}
+
             {modalLogIn && (
                 <Modal visible={modalLogIn} animationType="slide" transparent>
                     <View style={styles.centeredView}>
@@ -191,7 +190,6 @@ export default function LoginScreen({ navigation }) {
             )
             }
 
-            {/* Modal Sign up */}
             {
                 modalSignUp && (
                     <Modal visible={modalSignUp} animationType="slide" transparent>
@@ -217,7 +215,6 @@ export default function LoginScreen({ navigation }) {
                                         onChangeText={setSignUpPassword}
                                         value={signUpPassword}
                                     />
-                                    {/* incorporation de l'icone de visibilité du MDP. */}
                                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                         <FontAwesome name={showPassword ? 'eye' : 'eye-slash'} color={'#636773'} size={20} paddingRight={12} />
                                     </TouchableOpacity>
@@ -332,14 +329,7 @@ const styles = StyleSheet.create({
         color: "white",
         padding: 10,
     },
-    // Bouton pour développement, passer l'étape.
-    // textButtonBlue: {
-    //     fontSize: 20,
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     // color: "white",
-    //     padding: 10,
-    // },
+
     centeredView: {
         flex: 1,
         justifyContent: 'center',

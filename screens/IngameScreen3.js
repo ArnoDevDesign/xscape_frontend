@@ -9,7 +9,7 @@ const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 export default function Ingame3Screen({ navigation }) {
     const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
-    const [title, setTitle] = useState("Activez les boutons dans le bon ordre  pour DEMINIATURISER LA CAPSULE!");
+    const [title, setTitle] = useState("Activez les boutons dans le bon ordre pour déminiaturiser La Capsule !");
     const [pressedOrder, setPressedOrder] = useState([]);
     const [attempts, setAttempts] = useState(3);
     const [gameOver, setGameOver] = useState(false);
@@ -39,7 +39,7 @@ export default function Ingame3Screen({ navigation }) {
             setPressedOrder(newOrder);
 
             if (newOrder.length === correctSequence.length) {
-                setTitle("YES !!! Vous avez réussi à déminaturiser la capsule !");
+                setTitle("YES !!! Vous avez réussi à déminiaturiser la capsule ! ");
                 setGame3(true);
             }
         } else {
@@ -133,36 +133,36 @@ export default function Ingame3Screen({ navigation }) {
                         </ImageBackground>
                     </View>
                 </View>
-
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                        <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
-                            <Text style={styles.textButton}>{bouton1}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
+                <View style={styles.buttonContainerUp}>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton1}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(2)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton2}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(3)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton3}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(4)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} resizeMode='stretch' style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton4}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity disabled={gameOver} onPress={() => handlePress(2)} style={styles.metalButton}>
-                        <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
-                            <Text style={styles.textButton}>{bouton2}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity disabled={gameOver} onPress={() => handlePress(3)} style={styles.metalButton}>
-                        <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
-                            <Text style={styles.textButton}>{bouton3}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity disabled={gameOver} onPress={() => handlePress(4)} style={styles.metalButton}>
-                        <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
-                            <Text style={styles.textButton}>{bouton4}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                </View>
-
 
                 <Modal visible={modalVisible} animationType="slide" transparent>
                     <View style={styles.modalContainer}>
@@ -229,9 +229,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     title: {
-        fontSize: 20,
+        fontSize: 15,
         fontFamily: "PressStart2P-Regular.ttf",
-        color: "#72BF11",
+        color: "white",
         textAlign: "center",
         padding: 50,
         lineHeight: 28,
@@ -255,19 +255,28 @@ const styles = StyleSheet.create({
         color: "white",
         marginTop: 5,
     },
-
-    buttonContainer: {    //BOUTON
+    buttonContainerUp: {
         width: "100%",
-        height: "10%",
+        alignItems: "center",
+        justifyContent: "spacebetween",
+    },
+    buttonContainer: {    //BOUTON
+        width: "80%",
+        height: "16%",
         alignItems: "center",
         justifyContent: "center",
         marginVertical: 5,
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
-
+    metalButton: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
     ImageButton: {
         width: 300,
-        height: "100%",
+        height: "91%",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -319,11 +328,11 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontFamily: 'PressStart2P-Regular.ttf',
-        fontSize: 25,
+        fontSize: 18,
         color: "red",
         textAlign: "center",
         padding: 20,
-        lineHeight: 35,
+        lineHeight: 40,
     },
     modalButtonText: {
         fontFamily: 'Goldman-Regular.ttf',

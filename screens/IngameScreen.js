@@ -187,7 +187,6 @@ export default function IngameScreen1({ navigation }) {
     };
 
 
-
     const finalButton = () => {
         setGame1(true);
 
@@ -214,8 +213,6 @@ export default function IngameScreen1({ navigation }) {
     };
 
 
-
-
     if (!loaded) {
         return null;
     }
@@ -232,7 +229,6 @@ export default function IngameScreen1({ navigation }) {
 
 
 
-
                         <View style={styles.contentContainer}>
                             <View style={styles.videoContainer}>
                                 <ImageBackground source={require('../assets/imgsAventure/modaleVideoX.png')} resizeMode='stretch' style={styles.videobackground}>
@@ -246,10 +242,6 @@ export default function IngameScreen1({ navigation }) {
                         </View>
                         {showInputs && (
                             <View style={styles.inputContainer}>
-
-
-
-
 
 
 
@@ -280,12 +272,6 @@ export default function IngameScreen1({ navigation }) {
                                         </ImageBackground>
                                     </TouchableOpacity>
                                 </View>
-
-
-
-
-
-
 
 
 
@@ -633,7 +619,6 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 11,
         fontFamily: "PressStart2P-Regular.ttf",
-        // lineHeight: 40,
         textAlign: 'center',
     }
 })

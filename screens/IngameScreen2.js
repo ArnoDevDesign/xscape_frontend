@@ -127,12 +127,12 @@ export default function IngameScreen2({ navigation }) {
             flashScreen("green");
             setScanned1(true);
             setIsScanning(false);
-            setTimeout(() => setIsScanning(true), 3000);
+            setTimeout(() => setIsScanning(true), 1500);
         } else if (!scanned2 && scanned1 && data === goodQRcode2) {
             flashScreen("green");
             setScanned2(true);
             setIsScanning(false);
-            setTimeout(() => setIsScanning(true), 3000);
+            setTimeout(() => setIsScanning(true), 1500);
         } else if (!scanned3 && scanned1 && scanned2 && data === goodQRcode3) {
             flashScreen("green");
             setScanned3(true);
@@ -231,8 +231,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light}>
                             <ImageBackground
                                 source={scanned1
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png') 
+                                    : require('../assets/imgsAventure/lumRX.png') 
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -241,8 +241,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light}>
                             <ImageBackground
                                 source={scanned2
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png')  
+                                    : require('../assets/imgsAventure/lumRX.png')  
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -251,8 +251,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light} >
                             <ImageBackground
                                 source={scanned3
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png') 
+                                    : require('../assets/imgsAventure/lumRX.png')  
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -273,7 +273,6 @@ export default function IngameScreen2({ navigation }) {
 
 
                     <Animated.View style={[styles.flashOverlay, {
-                        // pointerEvents: "none",
                         opacity: flashAnim,
                         backgroundColor: flashColor
                     }]} pointerEvents="none"/>
@@ -329,7 +328,8 @@ export default function IngameScreen2({ navigation }) {
                                     <View style={styles.modalView}>
                                         <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
                                             <TouchableOpacity onPress={passageau3} style={styles.modalefin}>
-                                                <Text style={styles.textButton}>Triangulation réussie ! La capsule a été localisée.</Text>
+                                                <Text style={styles.textButton}>Triangulation réussie !</Text>
+                                                <Text style={styles.textButton}>La capsule a été localisée.</Text>
                                             </TouchableOpacity>
                                         </ImageBackground>
                                     </View>
