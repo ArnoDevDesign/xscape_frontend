@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions, Animated, ScrollView, ScrollViewBase } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
@@ -11,7 +11,30 @@ import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
+const { width } = Dimensions.get("window");
+
+
 export default function ProfileScreen({ navigation }) {
+
+    const [loaded] = useFonts({
+        "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+        "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+        "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+        "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+        "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+        "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+        "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+        "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+    });
+
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
     const isFocused = useIsFocused();
@@ -27,6 +50,7 @@ export default function ProfileScreen({ navigation }) {
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [finishedScenario, setFinishedScenarios] = useState(0);
     const [modalaventures, setModalaventures] = useState(false);
+
 
     // Images d'avatarts pour test
     const images = [
@@ -148,23 +172,27 @@ export default function ProfileScreen({ navigation }) {
                 console.error('❌ Erreur de mise à jour avatar:', error);
                 alert("Erreur de connexion au serveur");
             });
+    };
+
+    if (!loaded) {
+        return null;
     }
 
-    // console.log("Selected Avatar:", selectedAvatar);
-    // console.log("Avatar affiché:", userRedux.avatar);
-    // console.log("Liste d'images disponibles:", images);
 
     return (
         <View style={styles.generalContainer}>
-            <SafeAreaView />
+
+            <View style={styles.containerButtonLogOut}>
+                <TouchableOpacity style={styles.buttonLogOut}>
+                    <FontAwesome name='sign-out' size={30} color='#85CAE4' borderRadius='100' />
+                </TouchableOpacity>
+            </View>
+            <View backgroundColor='#85CAE4' height='200' width='100%' />
 
             {/* Avatar */}
             <View style={styles.avatarContainerMain}>
-                <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
-
-                {/* <Image source={avatar ? { uri: avatar } : require('../assets/Avatar_jojo.png')} style={styles.avatar} /> */}
-                <TouchableOpacity onPress={() => setAvatarModalVisible(true)} style={styles.iconEdit} >
-                    <FontAwesome name='pencil' size={20} color='black' style={styles.updateUser} />
+                <TouchableOpacity onPress={() => setAvatarModalVisible(true)}  >
+                    <Image source={{ uri: userRedux.avatar }} style={styles.avatar} />
                 </TouchableOpacity>
             </View>
 
@@ -173,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
                 <Modal visible={modalAvatarVisible} transparent animationType="slide">
                     <View style={styles.centeredViewAvatar}>
                         <View style={styles.modalViewAvatar}>
-                            <Text style={styles.text}>Choisis ton avatar</Text>
+                            <Text style={styles.textChangeUsernameView}>Nouvel avatar</Text>
                             {/* Carousel d'avatars */}
                             <FlatList
                                 data={images}
@@ -192,8 +220,8 @@ export default function ProfileScreen({ navigation }) {
                                     </TouchableOpacity>
                                 )}
                             />
-                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.buttonBack}>
-                                <Text style={styles.text}>Fermer</Text>
+                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.usernameValidateView}>
+                                <Text style={styles.closeModalTextButton}>Valider</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -202,75 +230,71 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Infos utilisateur */}
             <View style={styles.usernameView}>
-                <Text style={styles.text}>Username : {userRedux.username}</Text>
-
-                <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit} >
-                    <FontAwesome name='pencil' size={20} color="black" style={styles.updateUser} />
+                <Text style={styles.textUsernameView}>{userRedux.username}</Text>
+                <TouchableOpacity onPress={() => setUserModalVisible(true)} style={styles.iconEdit2} >
+                    <FontAwesome name='pencil' size={24} color="#85CAE4" />
                 </TouchableOpacity>
-                <Text style={styles.text}>Email : {email}</Text>
+                <Text style={styles.textEmailUsernameView}>{email}</Text>
             </View>
 
             {/* Modal Modification de l'username */}
             {modalUserVisible && (
-                <Modal visible={modalUserVisible} animationType="fade" transparent>
+                <Modal visible={modalUserVisible} animationType="fade" opacity={0.1} backgroundColor={'#85CAE4'}>
                     <View style={styles.centeredViewUser}>
                         <View style={styles.modalViewUser}>
-                            <Text style={styles.textButton}>Choisissez un nouveau Pseudo</Text>
+                            <View style={styles.titleModalView}>
+                                <Text style={styles.titleModal1}>Choisir un nouveau pseudo</Text>
+                                {/* <Text style={styles.titleModal2}>nouveau pseudo</Text> */}
+                            </View>
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
-                                placeholder="Nouveau Pseudo"
+                                placeholder="Nouveau pseudo"
                                 onChangeText={setNewUsername}
                                 value={newUsername}
                             />
-                            <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>GO!</Text>
+
+                            <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8} style={styles.changeUsernameButton}>
+                                <Text style={styles.textChangeUsernameButton}>Changer</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setUserModalVisible(false)} activeOpacity={0.8}>
-                                <Text style={styles.textButton}>Annuler</Text>
+                                <Text style={styles.closeTextButton}>Annuler</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </Modal>
             )}
-
-            {/* Infos Scrore */}
-            <Text style={[styles.text, styles.score]}>Score : {score}</Text>
+            {/* Infos Score */}
+            <View style={styles.scoreView}>
+                <Text style={styles.scoretxt}>Score :</Text>
+                <Text style={styles.scorePoint}>{score}</Text>
+                <Text style={[styles.pointTxt]}>points</Text>
+            </View>
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
-                    <View>
-                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonBack}>
-                            <Text style={styles.text}>Aventures terminées : </Text>
-                        </TouchableOpacity>
-                        {modalaventures && (
-                            <Modal visible={modalaventures} animationType="slide" transparent>
-                                <View style={styles.centeredView}>
-                                    <TouchableOpacity onPress={() => setModalaventures(false)} style={styles.button}>
-                                        <View style={styles.modalView}>
-                                            <Text style={styles.textButton}>{finishedScenario}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </Modal>)}
+                    <View style={styles.c1}>
+                        <View style={styles.c2}>
+                            <Text style={styles.textFinishedAdventure}>Aventures terminées :</Text>
+                        </View>
+                        <ScrollView contentContainerStyle={styles.c3}>
+                            <Text style={styles.textButtonFinishedAdventure}>
+                                {finishedScenario}
+                            </Text>
+                        </ScrollView>
                     </View>
                 ) :
-                    (<Text style={styles.text}>Aucune aventure terminée...pour le moment ! </Text>
-                    )}
+                    (<Text>Aucune aventure terminée...pour le moment ! </Text>)}
             </View>
 
             {/* Boutons */}
-            <TouchableOpacity style={styles.buttonLogOut}>
-                <Text onPress={() => handleLogout()} style={styles.text}>Déconnexion</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Map')} style={styles.buttonBack}>
-                <Text style={styles.text}>Retour MAP</Text>
-            </TouchableOpacity>
-
-            <Button title="Go to Home" onPress={() => navigation.navigate('Ingame2')} />
-
+            <View style={styles.mapIconView}>
+                <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+                    <FontAwesome name='map-o' size={32} color="white" justifyContent='center' alignItems='center' />
+                </TouchableOpacity>
+            </View>
+            {/* <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} /> */}
         </View>
     );
 }
@@ -280,10 +304,12 @@ const styles = StyleSheet.create({
 
     generalContainer: {
         flex: 1,
-        justifyContent: 'space-around',
+        // justifyContent: 'space-around',
         alignItems: 'center',
         width: '100%',
-        paddingVertical: 20,
+        paddingBottom: 20,
+        backgroundColor: 'white',
+        position: 'relative',
     },
     centeredView: {
         flex: 1,
@@ -304,37 +330,34 @@ const styles = StyleSheet.create({
         },
     },
     // Icon style
-    iconEdit: {
+    iconEdit1: {
         position: "absolute",
-        top: 5,
+        top: 170,
         right: 5,
+        opacity: 0.8,
+        boderRadius: 10,
+        padding: 5,
+    },
+    iconEdit2: {
+        position: "absolute",
+        bottom: 70,
+        right: 70,
         // backgroundColor: 'white',
         opacity: 0.8,
         boderRadius: 10,
         padding: 5,
-        // elevation: 1, //effet d'ombre Android
-        // shadowColor: '#000', //effet d'ombre IOS
-        // shadowOffset: {width: 0, height: 2},
-        // shadowOpacity: 0.2,
-        // shadowRadius: 2,
     },
-
-    // Avatar style
     avatarContainerMain: {
-        width: '45%',
-        height: '25%',
-        borderRadius: 50,
-        overflow: 'hidden',
-        borderWidth: 2,
-        borderColor: 'gray',
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: -140,
+        // backgroundColor: "blue",
     },
 
     avatar: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
+        width: width * 0.5, // Taille des avatars ajustée
+        height: width * 0.5,
+        borderRadius: 100, // Correcte au lieu de "50%"
+        marginHorizontal: 30,
+        elevation: 3
     },
     //Modal Avatar Style
 
@@ -342,150 +365,312 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+        backgroundColor: '#85CAE4', // Semi-transparent background
     },
     modalViewAvatar: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
+        paddingHorizontal: -20,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        // height: '60%',
+        width: '90%',
+
+    },
+    modalViewUser: {
+        backgroundColor: '#FFFFFF',
+        width: '90%',
+        // paddingTop: 30,
+        paddingBottom: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        elevation: 3,
+    },
+    titleModalView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    titleModal1: {
+        // height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center', 
+        color: '#009EBA',
+        fontFamily: "Fustat-Bold.ttf",
+        fontSize: 30,
+        paddingTop: 20,
+        lineHeight: 30,
+        // backgroundColor: 'red',
+    },
+    titleModal2: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#009EBA',
+        fontFamily: "Fustat-Bold.ttf",
+        fontSize: 30,
+        Top: 20,
+        // backgroundColor: 'red',
     },
     image: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        margin: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+        width: width * 0.5, // Taille des avatars ajustée
+        height: width * 0.5,
+        borderRadius: 100, // Correcte au lieu de "50%"
+        marginHorizontal: 30,
+        elevation: 3,
+        marginBottom: 50,
     },
 
     selectedImage: {
         borderWidth: 2,
-        borderColor: 'blue',
+        borderColor: 'white',
     },
-
-    buttonBack: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: 'red',
-        borderRadius: 10,
-    },
-    text: {
-        color: 'white',
-        fontSize: 16,
-    },
-
-    // MODAL STYLE FABIO : A VERIFIER !!!
-    // avatarContainer: {
-    //     width: '100%',
-    //     height: '60%',
-    //     alignItems: 'center',
-    //     backgroundColor: 'grey',
-    //     opacity: 0.5,
-    // },
-
-    // carousel: {
-    //     paddingHorizontal: 10,
-    //     alignItems: "center",
-    //     backgroundColor: 'green',
-    //     opacity: 0.5,
-    // },
-    // image: {
-    //     width: 'width' * 0.25, // 25% de la largeur de l'écran
-    //     height: 'width' * 0.25, // Garde une forme carrée
-    //     borderRadius: 9999, // Assure un cercle parfait
-    //     marginHorizontal: 10,
-    //     backgroundColor: 'transparent', // Supprime le bleu
-    // },
-
-
     // Username style
     usernameView: {
-        backgroundColor: 'blue',
-        opacity: 0.5,
-        padding: 10,
-        width: '80%',
         alignItems: 'center',
-        borderRadius: 10,
+        width: '100%',
+        height: 100,
+        top: 14,
+    },
+    usernameValidateView: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+        width: '80%',
+        height: 64,
+        backgroundColor: "#FF8527",
+        marginBottom: 20,
+
+    },
+
+    textUsernameView: {
+        fontSize: 28,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        justifyContent: 'center',
+        color: "#003046",
+    },
+
+    textEmailUsernameView: {
+        fontSize: 18,
+        fontFamily: "Fustat-Regular.ttf",
+        justifyContent: 'center',
+        color: "#FF8527",
+        bottom: 14,
+    },
+
+    closeModalTextButton: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "white",
+    },
+
+    textChangeUsernameView: {
+        fontSize: 30,
+        fontFamily: "Fustat-SemiBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#009EBA",
+        paddingBottom: 35,
+        // backgroundColor: 'black',
     },
 
     //Modal Username Style
     centeredViewUser: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
-    },
-    modalViewUser: {
-        backgroundColor: 'orange',
-        borderRadius: 30,
         alignItems: 'center',
-        width: 300,
-        height: 200,
-        elevation: 5,
+        backgroundColor: '#85CAE4'
     },
+
     inp1: {
-        width: '70%',
-        height: 50,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        paddingLeft: 10
-    },
-    textButton: {
-        fontSize: 20
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '90%',
+        height: 70,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 12,
+        margin: 12,
+        paddingLeft: 20
     },
 
-    // Score Style
-    score: {
-        backgroundColor: 'yellow',
-        opacity: 0.5,
-        padding: 10,
-        width: '80%',
-        textAlign: 'center',
-        borderRadius: 10,
+    changeUsernameButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '90%',
+        height: 72,
+        backgroundColor: '#FF8527',
+        margin: 20,
+        borderRadius: 20,
+        elevation: 3,
     },
+    textChangeUsernameButton: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,
+    },
+
+    closeTextButton: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        alignContent: 'flex-end',
+        justifyContent: 'center',
+        color: "#85CAE4",
+        padding: 10,
+    },
+
+    scoreView: {
+        justifyContent: "center",
+        alignItems: 'center',
+        width: "90%",
+        height: "25%",
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#B3B4BA',
+        paddingTop: 30,
+        paddingBottom: 30,
+
+        // backgroundColor: "blue",
+    },
+
+    scoretxt: {
+        fontSize: 18,
+        fontFamily: "Fustat-Regular.ttf",
+        color: "#636773",
+        paddingTop: 10,
+        // backgroundColor: "black",
+    },
+
+    scorePoint: {
+        fontSize: 70,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        color: "#FF8527",
+        // backgroundColor: 'red',
+        height: '51%',
+    },
+
+    pointTxt: {
+        marginTop: 5,
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: "#FF8527",
+        // backgroundColor: 'blue',
+    },
+
+
     //Scenario Style
-    aventureView: {
-        backgroundColor: 'green',
-        opacity: 0.5,
-        padding: 10,
-        width: '80%',
-        alignItems: 'center',
-        borderRadius: 10,
-    },
 
-    //Bouton Style
+
+    containerButtonLogOut: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        width: '100%',
+        paddingHorizontal: '20',
+        position: 'absolute',
+        top: 55,
+        right: 5,
+        zIndex: 3,
+    },
     buttonLogOut: {
-        padding: 15,
-        backgroundColor: 'orange',
-        opacity: 0.5,
-        borderRadius: 10,
-        width: '40%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 60,
+        height: 60,
+        backgroundColor: 'white',
+        borderRadius: 100,
+        elevation: 3,
+        paddingLeft: 5,
+    },
+    textButtonLogOut: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: "white",
+        padding: 10,
+    },
+    aventureView: {
+        width: '90%',
+        height: "15%",
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: '#B3B4BA',
+        marginBottom: 35,
+        // backgroundColor: 'red'
+    },
+    c1: {
+        height: '100%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        // backgroundColor: "pink",
+    },
+    c2: {
+        height: '20%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: "yellow",
+    },
+    c3: {
+        height: '80%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1,
+
+        // contentContainerStyle: 'center',
+        // backgroundColor: "orange",
+    },
+
+    textFinishedAdventure: {
+        height: 60,
+        fontFamily: "Fustat-Regular.ttf",
+        fontSize: 20,
+        color: "#636773",
+        paddingTop: 40,
+    },
+    textButtonFinishedAdventure: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        color: "#FF8527",
+    },
+
+    scrollView: {
+        height: 10,
+        width: '100%',
+        // backgroundColor: "yellow",
+
+    },
+    buttonFinishedAdventure: {
+        width: 300,
+        // backgroundColor: '#FF8527',
+        padding: 10,
+        borderRadius: 80,
         alignItems: 'center',
     },
 
-    buttonBack: {
-        padding: 15,
-        backgroundColor: 'red',
-        opacity: 0.5,
-        borderRadius: 10,
-        width: '40%',
-        alignItems: 'center',
-    },
-
-    text: {
-        color: 'black',
-        fontSize: 16,
-    },
     selectedImage: {
-        borderWidth: 3,
-        borderColor: "orange",
-    }
+        borderWidth: 5,
+        borderColor: "White",
+    },
+    mapIconView: {
+        backgroundColor: '#FF8527',
+        borderRadius: 100,
+        padding: 20,
+        // backgroundColor: "green"
+
+    },
 });
