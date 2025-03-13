@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
@@ -15,6 +15,31 @@ const { width } = Dimensions.get("window");
 
 
 export default function ProfileScreen({ navigation }) {
+
+    const [loaded] = useFonts({
+        "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
+        "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
+        "Fustat-ExtraLight.ttf": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+        "Fustat-Light.ttf": require("../assets/fonts/Fustat-Light.ttf"),
+        "Fustat-Medium.ttf": require("../assets/fonts/Fustat-Medium.ttf"),
+        "Fustat-Regular.ttf": require("../assets/fonts/Fustat-Regular.ttf"),
+        "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
+        "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+    });
+
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+    if (!loaded) {
+        return null;
+    }
+
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
     const isFocused = useIsFocused();
@@ -154,9 +179,7 @@ export default function ProfileScreen({ navigation }) {
             });
     }
 
-    // console.log("Selected Avatar:", selectedAvatar);
-    // console.log("Avatar affiché:", userRedux.avatar);
-    // console.log("Liste d'images disponibles:", images);
+
 
     return (
         <View style={styles.generalContainer}>
@@ -243,30 +266,20 @@ export default function ProfileScreen({ navigation }) {
                 </Modal>
             )}
             {/* Infos Score */}
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <View style={styles.scoreView}>
-                    <Text style={styles.score}>Score :</Text>
-                    <Text style={[styles.score, { fontSize: 60 }]}>{score} </Text>
-                    <Text style={[styles.score, { fontSize: 30 }]}>points</Text>
-                </View>
+            <View style={styles.scoreView}>
+                <Text style={styles.scoretxt}>Score :</Text>
+                <Text style={styles.scorePoint}>{score} </Text>
+                <Text style={[styles.pointTxt]}>points</Text>
             </View>
+
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
                     <View>
-                        <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonFinishedAdventure}>
-                            <Text style={styles.textButtonFinishedAdventure}>Aventures terminées</Text>
-                        </TouchableOpacity>
-                        {modalaventures && (
-                            <Modal visible={modalaventures} animationType="slide" transparent>
-                                <View style={styles.centeredView}>
-                                    <TouchableOpacity onPress={() => setModalaventures(false)}>
-                                        <View style={styles.modalViewUser}>
-                                            <Text style={styles.textButton}>{finishedScenario}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </Modal>)}
+                        <Text style={styles.textButtonFinishedAdventure}>Aventures terminées</Text>
+                        <Text style={styles.textButton}>{finishedScenario}</Text>
+                        {/* <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonFinishedAdventure}> */}
+
                     </View>
                 ) :
                     (<Text>Aucune aventure terminée...pour le moment ! </Text>
@@ -274,12 +287,12 @@ export default function ProfileScreen({ navigation }) {
             </View>
 
             {/* Boutons */}
-            <TouchableOpacity onPress={() => navigation.navigate('Map')}>
-                <FontAwesome name='map-o' size={32} color="#85CAE4" justifyContent='center' alignItems='center' />
-            </TouchableOpacity>
-
+            <View style={styles.mapIconView}>
+                <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+                    <FontAwesome name='map-o' size={32} color="white" justifyContent='center' alignItems='center' />
+                </TouchableOpacity>
+            </View>
             {/* <Button title="Go to Home" onPress={() => navigation.navigate('StartGame')} /> */}
-
         </View>
     );
 }
@@ -289,7 +302,7 @@ const styles = StyleSheet.create({
 
     generalContainer: {
         flex: 1,
-        justifyContent: 'space-around',
+        // justifyContent: 'space-around',
         alignItems: 'center',
         width: '100%',
         paddingBottom: 20,
@@ -325,15 +338,16 @@ const styles = StyleSheet.create({
     },
     iconEdit2: {
         position: "absolute",
-        bottom: 45,
-        right: 35,
+        bottom: 70,
+        right: 70,
         // backgroundColor: 'white',
         opacity: 0.8,
         boderRadius: 10,
         padding: 5,
     },
     avatarContainerMain: {
-        marginTop: -200,
+        marginTop: -140,
+        // backgroundColor: "blue",
     },
 
     avatar: {
@@ -383,48 +397,29 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'white',
     },
-
-    buttonBack: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: 'red',
-        borderRadius: 10,
-    },
-    text: {
-        color: 'white',
-        fontSize: 16,
-    },
-
     // Username style
     usernameView: {
-        justifyContent: 'flex-end',
         alignItems: 'center',
-        width: '80%',
-        height: 80,
-        backgroundColor: 'transparent',
-        borderRadius: 20,
-        bottom: 40
+        width: '100%',
+        height: 100,
+        top: 14,
     },
+
     textUsernameView: {
         fontSize: 28,
         fontFamily: "Fustat-ExtraBold.ttf",
-        alignItems: 'center',
-        alignContent: 'flex-start',
         justifyContent: 'center',
         color: "#003046",
-        // bottom: 32,
     },
+
     textEmailUsernameView: {
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: "Fustat-Regular.ttf",
-        alignItems: 'center',
-        alignContent: 'flex-end',
         justifyContent: 'center',
         color: "#FF8527",
-        // bottom: 45,
-
-
+        bottom: 14,
     },
+
     closeModalTextButton: {
         fontSize: 32,
         fontFamily: "Fustat-ExtraBold.ttf",
@@ -491,11 +486,7 @@ const styles = StyleSheet.create({
         color: "white",
         padding: 10,
     },
-    scoreView: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        bottom: 50,
-    },
+
     closeTextButton: {
         fontSize: 20,
         fontFamily: "Fustat-ExtraBold.ttf",
@@ -505,25 +496,52 @@ const styles = StyleSheet.create({
         color: "#85CAE4",
         padding: 10,
     },
-    // Score Style
-    score: {
-        fontSize: 32,
+
+    scoreView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: "90%",
+        height: "25%",
+        paddingTop: 20,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#B3B4BA',
+        // backgroundColor: "black",
+    },
+
+    scoretxt: {
+        fontSize: 18,
+        fontFamily: "Fustat-Regular.ttf",
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: "#636773",
+    },
+
+    scorePoint: {
+        fontSize: 80,
         fontFamily: "Fustat-ExtraBold.ttf",
         justifyContent: 'center',
         alignItems: 'center',
         color: "#FF8527",
-
+        // backgroundColor: 'red',
+        height: '60%',
+        marginBottom: -20,
     },
-    //Scenario Style
-    aventureView: {
-        backgroundColor: 'white',
-        padding: 10,
-        width: '80%',
+
+    pointTxt: {
+        fontSize: 32,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 20,
+        marginBottom: 30,
+        color: "#FF8527",
+        // backgroundColor: 'blue',
     },
 
-    //Bouton Style
+
+    //Scenario Style
+
+
     containerButtonLogOut: {
         display: 'flex',
         flexDirection: 'row',
@@ -554,23 +572,37 @@ const styles = StyleSheet.create({
         color: "white",
         padding: 10,
     },
-
+    aventureView: {
+        width: '80%',
+        alignItems: 'center',
+        borderRadius: 20,
+        padding: 10,
+        marginTop: 42,
+        // backgroundColor: "blue",
+    },
     buttonFinishedAdventure: {
         width: 300,
-        padding: 15,
-        backgroundColor: '#FF8527',
+        // backgroundColor: '#FF8527',
+        padding: 10,
         borderRadius: 80,
         alignItems: 'center',
     },
 
     textButtonFinishedAdventure: {
         fontSize: 20,
-        fontFamily: "Fustat-ExtraBold.ttf",
+        fontFamily: "Fustat-Regular.ttf",
         alignItems: 'center',
-        color: "#FFFFFF",
+        color: "#636773",
     },
     selectedImage: {
-        borderWidth: 3,
-        borderColor: "orange",
-    }
+        borderWidth: 5,
+        borderColor: "White",
+    },
+    mapIconView: {
+        backgroundColor: '#FF8527',
+        borderRadius: 100,
+        padding: 18,
+        margin: 40,
+
+    },
 });
