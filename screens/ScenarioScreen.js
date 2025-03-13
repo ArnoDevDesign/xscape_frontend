@@ -98,7 +98,7 @@ export default function ScenarioScreen({ navigation }) {
               <Text style={styles.textTitre}>{userRedux.scenario}</Text>
 
               <Text style={styles.textInfo}>
-                [{theme}] [{duree}min] [{difficulte}]
+                {theme},  {duree}min,  {difficulte}
               </Text>
 
               <ScrollView style={styles.ScrollView}>
@@ -119,7 +119,7 @@ export default function ScenarioScreen({ navigation }) {
           <View style={styles.buttonplace}>
             <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.replace('Map')}>
               <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.buttonImg}>
-                <Text style={styles.text}>sortir</Text>
+                <Text style={styles.text}>SORTIR</Text>
               </ImageBackground>
             </TouchableOpacity>
           </View>

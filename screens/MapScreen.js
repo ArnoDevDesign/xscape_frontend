@@ -306,10 +306,10 @@ export default function MapScreen({ navigation }) {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <TouchableOpacity onPress={() => { setResponse(false), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre a la derniere sauvegarde</Text>
+                  <Text style={styles.modalButtonText}>Reprendre a la derniere sauvegarde</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { setResponse(true), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre depuis le debut</Text>
+                  <Text style={styles.modalButtonText}>Reprendre depuis le debut</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -352,14 +352,10 @@ export default function MapScreen({ navigation }) {
                               })
                             }
                           >
-                            <Text style={styles.startGameButtonText}>
-                              Lancer l'aventure
-                            </Text>
+                            <Text style={styles.startGameButtonText}>Lancer l'aventure</Text>
                           </TouchableOpacity>
                         ) : (
-                          <Text style={styles.textGoAventure}>
-                            Rends-toi sur place pour commencer l'aventure.
-                          </Text>
+                          <Text style={styles.textGoAventure}>Rends-toi sur place pour commencer l'aventure.</Text>
                         )}
                       </>
                     )}
