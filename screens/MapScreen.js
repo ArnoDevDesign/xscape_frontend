@@ -68,6 +68,7 @@ export default function MapScreen({ navigation }) {
     "Fustat-SemiBold.ttf": require("../assets/fonts/Fustat-SemiBold.ttf"),
     "Homenaje-Regular.ttf": require("../assets/fonts/Homenaje-Regular.ttf"),
     "FugazOne-Regular.ttf": require("../assets/fonts/FugazOne-Regular.ttf"),
+    "Exo2-ExtraBold.ttf": require("../assets/fonts/Exo2-ExtraBold.ttf"),
   });
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -266,6 +267,8 @@ export default function MapScreen({ navigation }) {
                 longitudeDelta: 0.008,
               }}
             >
+
+
               {userLocation && (
                 <Marker
                   coordinate={userLocation}
@@ -303,6 +306,7 @@ export default function MapScreen({ navigation }) {
             </MapView>
           </View>
         </View>
+        
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={recenterMapOnPinUser}>
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
@@ -465,9 +469,9 @@ const styles = StyleSheet.create({
   expandedModal: {},
 
   modalTitle: {
-    fontFamily: "FugazOne-Regular.ttf",
-    fontSize: 40,
-    lineHeight: 46,
+    fontFamily: "Exo2-ExtraBold.ttf",
+    fontSize: 36,
+    lineHeight: 40,
     color: "#009EBA",
     textAlign: "center",
     marginTop: 20,
