@@ -4,13 +4,34 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useFonts } from "expo-font";
 
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
+import * as SplashScreen from "expo-splash-screen";
 
+SplashScreen.preventAutoHideAsync();
 
 
 
 export default function StartGameScreen({ navigation }) {
+    const [loaded] = useFonts({
+        "PressStart2P-Regular.ttf": require("../assets/fonts/PressStart2P-Regular.ttf"),
+        "Goldman-Regular.ttf": require("../assets/fonts/Goldman-Regular.ttf"),
+        "Goldman-Bold.ttf": require("../assets/fonts/Goldman-Bold.ttf"),
+    });
+    useEffect(() => {
+        // cacher l'écran de démarrage si la police est chargée ou s'il y a une erreur
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    // Retourner null tant que la police n'est pas chargée
+    if (!loaded) {
+        return null;
+    }
+
+
 
     const userRedux = useSelector((state) => state.users.value);
     const [text, setText] = useState('');
@@ -43,13 +64,6 @@ export default function StartGameScreen({ navigation }) {
                     </ImageBackground>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Map')}>
-                        <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
-
-                            <Text style={styles.text}>sortir</Text>
-                        </ImageBackground>
-
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
                         <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
                             <Text style={styles.text}>Go !</Text>
@@ -65,6 +79,8 @@ export default function StartGameScreen({ navigation }) {
 const styles = StyleSheet.create({
     text: {
         color: 'green',
+        fontSize: 20,
+        fontFamily: "Goldman-Regular.ttf",
     },
     textcontainer: {
         width: '80%',
@@ -94,8 +110,10 @@ const styles = StyleSheet.create({
     },
 
     imgContainer: {
+
+        paddingTop: 70,
         width: '90%',
-        height: '70%',
+        height: '80%',
         // backgroundColor: 'red',
         // justifyContent: 'center',
         alignItems: 'center',
@@ -112,6 +130,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         // backgroundColor: 'blue',
+        marginTop: 20,
         width: '100%',
         height: '30%',
         // flexDirection: 'row',

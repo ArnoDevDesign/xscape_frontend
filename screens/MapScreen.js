@@ -5,6 +5,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  ImageBackground,
   Text,
   Modal,
   Pressable,
@@ -74,6 +75,9 @@ export default function MapScreen({ navigation }) {
     }
   }, [loaded]);
 
+  // Retourner null tant que la police n'est pas chargée
+
+
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -91,102 +95,99 @@ export default function MapScreen({ navigation }) {
   const [modalGameInfo, setModalGameInfo] = useState("");
   const [modalGameTheme, setModalGameTheme] = useState("");
   const [passageaujeu, setPassageaujeu] = useState(false);
-  // État pour envoyer la bonne aventure
+
   const [selectedScenario, setSelectedScenario] = useState(null);
   const [modalChoice, setModalChoice] = useState(false);
-  // État pour l'activation du bouton de démarrage de l'aventure
+
   const [isUserNear, setIsUserNear] = useState(false);
 
-  // États pour gérer les transitions et erreurs
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
-  const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-  const [response, setResponse] = useState("");
+  const [fadeIn, setFadeIn] = useState(new Animated.Value(0));
+  const [response, setResponse] = useState('');
 
-  // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
 
-  // Initialisation du dispatch pour envoyé les données
+
   const dispatch = useDispatch();
 
-  // Référence pour la carte
   const mapRef = useRef(null);
 
-  // modification de l'url de l'image de l'avatar pour la mettre au bon format afin de l'utiliser comme marker
+
   const newFormatAvatar = userRedux.avatar.includes("/upload/")
     ? userRedux.avatar.replace("/upload/", "/upload/w_230,h_230,r_30/")
     : userRedux.avatar;
 
-  // Personnalisation du Marker jeux
+
   const gameMarker = {
     scenario: require("../assets/pinGameok.png"),
   };
 
-  // Fonction pour choisir le scénario
+
   const choosenScenario = (data) => {
-    console.log("data", data);
+    console.log("data =>", data);
     dispatch(
       addUserToStore({
-        scenario: data.scenario, // Met à jour la clé scenario
-        scenarioID: data.scenarioID, // Met à jour la clé scenarioID
+        scenario: data.scenario,
+        scenarioID: data.scenarioID,
       })
     );
   };
 
-  //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
   useEffect(() => {
-    fetch(
-      `${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scenarioId: userRedux.scenarioID,
-          userId: userRedux.userID,
-          restart: response,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("log de creation de session", data.validatedEpreuves);
-        if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
-          console.log("zero etape fini");
-          navigation.navigate("Scenario");
-        } else if (data.validatedEpreuves !== 0) {
-          setModalChoice(true);
-          console.log(" quelques etapes finis modal affichee ");
-          if (response === true) {
-            console.log("reponse true envoi au scenario");
-            setResponse("");
-            navigation.navigate("Scenario");
-          } else if (response === false) {
-            console.log("reponse false envoi au ingame screens");
-            setResponse("");
-            navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
-          }
+    if (userRedux.scenarioID && userRedux.userID) {
+      fetch(
+        `${URL}/scenarios/createSession/${userRedux.scenarioID}/${userRedux.userID}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scenarioId: userRedux.scenarioID,
+            userId: userRedux.userID,
+            restart: response,
+          }),
         }
-      });
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("log de creation de session", data.validatedEpreuves);
+          if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
+            console.log("zero etape fini")
+            navigation.navigate("Scenario");
+          } else if (data.validatedEpreuves !== 0) {
+            setModalInfo(false)
+            setModalExpanded(false)
+            setModalChoice(true);
+            console.log(" quelques etapes finis modal affichee ")
+            if (response === true) {
+              console.log("reponse true envoi au scenario")
+              setResponse('')
+              navigation.navigate('Scenario')
+            } else if (response === false) {
+              console.log("reponse false envoi au ingame screens")
+              setResponse('')
+              navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
+            }
+          }
+        })
+    }
+  }, [userRedux, response])
 
-    setTimeout(() => {
-      setModalInfo(false);
-    }, 500);
-  }, [userRedux, response]);
-  //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
 
-  // Géolocalisation de l'utilisateur
+
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-      // Demande de permission pour la géolocalisation
+
       if (status === "granted" && isFocused) {
-        // Si autorisation alors on récupère la position
+
         Location.watchPositionAsync({ distanceInterval: 10 }, (loc) => {
           setUserLocation(loc.coords);
-          setIsLoading(false); // État de chargement à false
-          setGeolocationError(false); // Pas d'erreur de géolocalisation
-          // Animation de fondu de 0 à 1 (faire apparaître la carte)
+          setIsLoading(false);
+          setGeolocationError(false);
+
           Animated.timing(fadeIn, {
             toValue: 1,
             duration: 1000,
@@ -195,7 +196,7 @@ export default function MapScreen({ navigation }) {
         });
       } else {
         setIsLoading(false);
-        setGeolocationError(true); // Erreur si la géolocalisation est refusée
+        setGeolocationError(true);
       }
     })();
   }, [isFocused]);
@@ -206,7 +207,7 @@ export default function MapScreen({ navigation }) {
       try {
         const response = await fetch(`${URL}/scenarios`);
         const data = await response.json();
-        setScenariosData(data); // Stocke les données des scénarios dans l'état "scenariosData"
+        setScenariosData(data);
         console.log("selectedScenario", selectedScenario);
       } catch (error) {
         console.error("Erreur : ", error);
@@ -228,25 +229,14 @@ export default function MapScreen({ navigation }) {
       1000
     );
   };
-
-  // Retourner null tant que la police n'est pas chargée
   if (!loaded) {
     return null;
   }
-
-  return isLoading ? (
+  return isLoading || geolocationError ? (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#009EBA" />
         <Text style={styles.loaderText}>Chargement...</Text>
-      </View>
-    </SafeAreaView>
-  ) : geolocationError ? (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.loaderContainer}>
-        <Text style={styles.errorMessage}>
-          Accès à la géolocalisation refusé
-        </Text>
       </View>
     </SafeAreaView>
   ) : (
@@ -310,96 +300,101 @@ export default function MapScreen({ navigation }) {
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
           </TouchableOpacity>
         </View>
+
+
         {modalChoice && (
-          <Modal visible={modalChoice} animationType="slide" transparent>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <View style={styles.modalButtonContainer}>
-                  {/* <Text style={styles.modalText}> reprendre a la dernniere sauvegarde ?</Text> */}
-                  <TouchableOpacity
-                    onPress={() => {
-                      setResponse(false);
-                      setModalChoice(false);
-                    }}
-                    style={styles.modalButton}
-                  >
-                    <Text style={styles.modalButtonText}>
-                      reprendre a la derniere sauvegarde
-                    </Text>
-                  </TouchableOpacity>
-                  {/* <Text style={styles.modalText}> reprendre depuis de debut ? (sauvegarde supprimee)</Text> */}
-                  <TouchableOpacity
-                    onPress={() => {
-                      setResponse(true);
-                      setModalChoice(false);
-                    }}
-                    style={styles.modalButton}
-                  >
-                    <Text style={styles.modalButtonText}>
-                      reprendre depuis le debut
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+          <Modal visible={modalChoice} animationType="fade" transparent>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity onPress={() => { setResponse(false), setModalChoice(false) }} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>reprendre a la derniere sauvegarde</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { setResponse(true), setModalChoice(false) }} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>reprendre depuis le debut</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
-        )}
-        {modalInfo && (
-          <Modal visible={modalInfo} animationType="fade" transparent>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setModalInfo(false);
-                setModalExpanded(false);
-              }}
-            >
-              <View style={styles.centeredView}>
-                <Pressable
-                  style={[
-                    styles.modalView,
-                    modalExpanded && styles.expandedModal,
-                  ]}
-                  onPress={() => !modalExpanded && setModalExpanded(true)}
-                >
-                  <Text style={styles.modalTitle}>{modalGameName}</Text>
-                  <Text style={styles.modalTheme}>{modalGameTheme}</Text>
-                  <Text style={styles.additionalInfo}>
-                    Durée : {modalGameDuration} min
-                  </Text>
-                  {modalExpanded && (
-                    <>
-                      <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
-                      {isUserNear ? (
-                        <TouchableOpacity
-                          style={styles.startGameButton}
-                          onPress={() =>
-                            choosenScenario({
-                              scenario: modalGameName,
-                              scenarioID: selectedScenario,
-                            })
-                          }
-                        >
-                          <Text style={styles.startGameButtonText}>
-                            Lancer l'aventure
+        )
+        }
+
+
+
+        {
+          modalInfo && (
+            <Modal visible={modalInfo} animationType="fade" transparent>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setModalInfo(false);
+                  setModalExpanded(false);
+                }}
+              >
+                <View style={styles.centeredView}>
+                  <Pressable
+                    style={[
+                      styles.modalView,
+                      modalExpanded && styles.expandedModal,
+                    ]}
+                    onPress={() => !modalExpanded && setModalExpanded(true)}
+                  >
+                    <Text style={styles.modalTitle}>{modalGameName}</Text>
+                    <Text style={styles.modalTheme}>{modalGameTheme}</Text>
+                    <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
+                    {modalExpanded && (
+                      <>
+                        <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
+                        {isUserNear ? (
+                          <TouchableOpacity
+                            style={styles.startGameButton}
+                            onPress={() =>
+                              choosenScenario({
+                                scenario: modalGameName,
+                                scenarioID: selectedScenario,
+                              })
+                            }
+                          >
+                            <Text style={styles.startGameButtonText}>
+                              Lancer l'aventure
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <Text style={styles.textGoAventure}>
+                            Rends-toi sur place pour commencer l'aventure.
                           </Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <Text style={styles.textGoAventure}>
-                          Rends-toi sur place pour commencer l'aventure.
-                        </Text>
-                      )}
-                    </>
-                  )}
-                </Pressable>
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
-        )}
-      </Animated.View>
-    </SafeAreaView>
+                        )}
+                      </>
+                    )}
+                  </Pressable>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          )
+        }
+      </Animated.View >
+    </SafeAreaView >
   );
 }
 
 const styles = StyleSheet.create({
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Fustat-ExtraBold.ttf",
+  },
+  btnBackground: {
+    width: "100%",
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+
+  },
+  imageBackground: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   container: {
     justifyContent: "center",
     alignItems: "center",
@@ -434,9 +429,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-  },
-  modalButton: {
-    width: "100%",
+
+  }, modalButton: {
+    width: "80%",
     height: 50,
     backgroundColor: "#FF8527",
     borderRadius: 10,
@@ -469,16 +464,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "rgba(0, 0, 0, 0.5)", // Fond assombri derrière la modale
   },
+
 
   modalView: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 30,
-    alignItems: "center",
-    width: "80%",
+    // width: "80%",
+    // height: "50%",
     padding: 18,
     elevation: 3,
   },
