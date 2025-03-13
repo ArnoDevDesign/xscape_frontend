@@ -68,10 +68,10 @@ export default function IngameScreen1({ navigation }) {
 
 
     const videoSource =
-        video1 ? require('../assets/Video_1.mp4') :
-            video2 ? require('../assets/Video_2.mp4') :
-                video3 ? require('../assets/Video_3.mp4') :
-                    video4 ? require('../assets/jojo.mp4') :
+        video1 ? ('https://res.cloudinary.com/dpyozodnm/video/upload/v1741889839/Video_1_eb3qp7.mp4') :
+            video2 ? ('https://res.cloudinary.com/dpyozodnm/video/upload/v1741889839/Video_2_ywowhj.mp4') :
+                video3 ? ('https://res.cloudinary.com/dpyozodnm/video/upload/v1741889839/Video_3_ruqtiy.mp4') :
+                    video4 ? ('https://res.cloudinary.com/dpyozodnm/video/upload/v1741889840/jojo_lroxkm.mp4') :
                         null
 
     const player = useVideoPlayer(videoSource, (player) => {
@@ -335,7 +335,7 @@ export default function IngameScreen1({ navigation }) {
                         {showfinalbutton && (
                             <View style={styles.inputContainer}>
                                 <View style={styles.finalbuttonbox}>
-                                    <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.finalbuttonBackground}>
+                                    <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/Sonar.png')} style={styles.finalbuttonBackground}>
                                         <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
                                             <Text style={styles.textButton}>Declenche le scanner QRCODIQUE</Text>
                                         </TouchableOpacity>
@@ -415,8 +415,8 @@ export default function IngameScreen1({ navigation }) {
 
 const styles = StyleSheet.create({
     finalbuttonbox: {
-        width: '80%',
-        height: '80%',
+        width: 330,
+        height: 330,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
 
     textButton: {
         color: "white",
-        fontSize: 25,
+        fontSize: 22,
         fontFamily: "PressStart2P-Regular.ttf",
         lineHeight: 40,
         textAlign: 'center',

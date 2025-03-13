@@ -233,8 +233,6 @@ const styles = StyleSheet.create({
         borderRadius: 100, // Correcte au lieu de "50%"
         marginHorizontal: 30,
         elevation: 3
-        // borderColor: 'white',
-        // borderWidth: 5,
     },
     selectedImage: {
         borderWidth: 3,
