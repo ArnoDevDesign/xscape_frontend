@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions, Animated } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Image, Modal, TextInput, FlatList, Dimensions, Animated, ScrollView, ScrollViewBase } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUserToStore, userLogout } from '../reducers/users'
@@ -34,11 +34,6 @@ export default function ProfileScreen({ navigation }) {
             SplashScreen.hideAsync();
         }
     }, [loaded]);
-
-    // Retourner null tant que la police n'est pas chargée
-    if (!loaded) {
-        return null;
-    }
 
     const dispatch = useDispatch();
     const userRedux = useSelector((state) => state.users.value)
@@ -177,13 +172,15 @@ export default function ProfileScreen({ navigation }) {
                 console.error('❌ Erreur de mise à jour avatar:', error);
                 alert("Erreur de connexion au serveur");
             });
-    }
+    };
 
+    if (!loaded) {
+        return null;
+    }
 
 
     return (
         <View style={styles.generalContainer}>
-            {/* bouton déconnexion */}
 
             <View style={styles.containerButtonLogOut}>
                 <TouchableOpacity style={styles.buttonLogOut}>
@@ -204,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
                 <Modal visible={modalAvatarVisible} transparent animationType="slide">
                     <View style={styles.centeredViewAvatar}>
                         <View style={styles.modalViewAvatar}>
-                            <Text style={styles.textChangeUsernameView}>Choisis ton avatar</Text>
+                            <Text style={styles.textChangeUsernameView}>Nouvel avatar</Text>
                             {/* Carousel d'avatars */}
                             <FlatList
                                 data={images}
@@ -223,8 +220,8 @@ export default function ProfileScreen({ navigation }) {
                                     </TouchableOpacity>
                                 )}
                             />
-                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.usernameView}>
-                                <Text style={styles.closeModalTextButton}>Fermer</Text>
+                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)} style={styles.usernameValidateView}>
+                                <Text style={styles.closeModalTextButton}>Valider</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -242,12 +239,13 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Modal Modification de l'username */}
             {modalUserVisible && (
-                <Modal visible={modalUserVisible} animationType="fade" transparent>
+                <Modal visible={modalUserVisible} animationType="fade" opacity={0.1} backgroundColor={'#85CAE4'}>
                     <View style={styles.centeredViewUser}>
                         <View style={styles.modalViewUser}>
-                            <Text style={{ fontFamily: "Fustat-Bold.ttf", fontSize: 30, color: '#009EBA' }}>Choisissez un</Text>
-                            <Text style={{ fontFamily: "Fustat-Bold.ttf", fontSize: 30, color: '#009EBA', paddingBottom: 40 }}>nouveau pseudo</Text>
-
+                            <View style={styles.titleModalView}>
+                                <Text style={styles.titleModal1}>Choisir un nouveau pseudo</Text>
+                                {/* <Text style={styles.titleModal2}>nouveau pseudo</Text> */}
+                            </View>
                             <TextInput
                                 placeholderTextColor={'black'}
                                 style={styles.inp1}
@@ -255,6 +253,7 @@ export default function ProfileScreen({ navigation }) {
                                 onChangeText={setNewUsername}
                                 value={newUsername}
                             />
+
                             <TouchableOpacity onPress={() => updateUsername()} activeOpacity={0.8} style={styles.changeUsernameButton}>
                                 <Text style={styles.textChangeUsernameButton}>Changer</Text>
                             </TouchableOpacity>
@@ -268,22 +267,25 @@ export default function ProfileScreen({ navigation }) {
             {/* Infos Score */}
             <View style={styles.scoreView}>
                 <Text style={styles.scoretxt}>Score :</Text>
-                <Text style={styles.scorePoint}>{score} </Text>
+                <Text style={styles.scorePoint}>{score}</Text>
                 <Text style={[styles.pointTxt]}>points</Text>
             </View>
 
             {/* Infos scenarios */}
             <View style={styles.aventureView}>
                 {finishedScenario ? (
-                    <View>
-                        <Text style={styles.textButtonFinishedAdventure}>Aventures terminées</Text>
-                        <Text style={styles.textButton}>{finishedScenario}</Text>
-                        {/* <TouchableOpacity onPress={() => setModalaventures(true)} style={styles.buttonFinishedAdventure}> */}
-
+                    <View style={styles.c1}>
+                        <View style={styles.c2}>
+                            <Text style={styles.textFinishedAdventure}>Aventures terminées :</Text>
+                        </View>
+                        <ScrollView contentContainerStyle={styles.c3}>
+                            <Text style={styles.textButtonFinishedAdventure}>
+                                {finishedScenario}
+                            </Text>
+                        </ScrollView>
                     </View>
                 ) :
-                    (<Text>Aucune aventure terminée...pour le moment ! </Text>
-                    )}
+                    (<Text>Aucune aventure terminée...pour le moment ! </Text>)}
             </View>
 
             {/* Boutons */}
@@ -366,31 +368,57 @@ const styles = StyleSheet.create({
         backgroundColor: '#85CAE4', // Semi-transparent background
     },
     modalViewAvatar: {
-        backgroundColor: '#003046',
+        backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
         paddingHorizontal: -20,
         alignItems: 'center',
-        height: '60%',
-        width: '80%',
+        // height: '60%',
+        width: '90%',
 
     },
     modalViewUser: {
         backgroundColor: '#FFFFFF',
         width: '90%',
-        paddingTop: 30,
+        // paddingTop: 30,
         paddingBottom: 30,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 30,
         elevation: 3,
     },
+    titleModalView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    titleModal1: {
+        // height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center', 
+        color: '#009EBA',
+        fontFamily: "Fustat-Bold.ttf",
+        fontSize: 30,
+        paddingTop: 20,
+        lineHeight: 30,
+        // backgroundColor: 'red',
+    },
+    titleModal2: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#009EBA',
+        fontFamily: "Fustat-Bold.ttf",
+        fontSize: 30,
+        Top: 20,
+        // backgroundColor: 'red',
+    },
     image: {
         width: width * 0.5, // Taille des avatars ajustée
         height: width * 0.5,
         borderRadius: 100, // Correcte au lieu de "50%"
         marginHorizontal: 30,
-        elevation: 3
+        elevation: 3,
+        marginBottom: 50,
     },
 
     selectedImage: {
@@ -403,6 +431,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 100,
         top: 14,
+    },
+    usernameValidateView: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+        width: '80%',
+        height: 64,
+        backgroundColor: "#FF8527",
+        marginBottom: 20,
+
     },
 
     textUsernameView: {
@@ -421,30 +459,31 @@ const styles = StyleSheet.create({
     },
 
     closeModalTextButton: {
-        fontSize: 32,
+        fontSize: 20,
         fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
-        color: "#85CAE4",
-        padding: 5,
+        color: "white",
     },
 
     textChangeUsernameView: {
-        fontSize: 32,
-        fontFamily: "Fustat-ExtraBold.ttf",
+        fontSize: 30,
+        fontFamily: "Fustat-SemiBold.ttf",
         alignItems: 'center',
         alignContent: 'flex-end',
         justifyContent: 'center',
-        color: "#85CAE4",
-        paddingBottom: 50,
+        color: "#009EBA",
+        paddingBottom: 35,
+        // backgroundColor: 'black',
     },
 
     //Modal Username Style
     centeredViewUser: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#85CAE4'
     },
 
     inp1: {
@@ -458,15 +497,7 @@ const styles = StyleSheet.create({
         margin: 12,
         paddingLeft: 20
     },
-    textButton: {
-        fontSize: 20,
-        fontFamily: "Fustat-ExtraBold.ttf",
-        alignItems: 'center',
-        alignContent: 'flex-end',
-        justifyContent: 'center',
-        color: "#FF8527",
-        padding: 10,
-    },
+
     changeUsernameButton: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -474,7 +505,6 @@ const styles = StyleSheet.create({
         height: 72,
         backgroundColor: '#FF8527',
         margin: 20,
-        marginTop: 50,
         borderRadius: 20,
         elevation: 3,
     },
@@ -498,42 +528,41 @@ const styles = StyleSheet.create({
     },
 
     scoreView: {
-        justifyContent: 'center',
+        justifyContent: "center",
         alignItems: 'center',
         width: "90%",
         height: "25%",
-        paddingTop: 20,
         borderTopWidth: 1,
         borderBottomWidth: 1,
         borderColor: '#B3B4BA',
-        // backgroundColor: "black",
+        paddingTop: 30,
+        paddingBottom: 30,
+
+        // backgroundColor: "blue",
     },
 
     scoretxt: {
         fontSize: 18,
         fontFamily: "Fustat-Regular.ttf",
-        justifyContent: 'center',
-        alignItems: 'center',
         color: "#636773",
+        paddingTop: 10,
+        // backgroundColor: "black",
     },
 
     scorePoint: {
-        fontSize: 80,
+        fontSize: 70,
         fontFamily: "Fustat-ExtraBold.ttf",
-        justifyContent: 'center',
-        alignItems: 'center',
         color: "#FF8527",
         // backgroundColor: 'red',
-        height: '60%',
-        marginBottom: -20,
+        height: '51%',
     },
 
     pointTxt: {
+        marginTop: 5,
         fontSize: 32,
         fontFamily: "Fustat-ExtraBold.ttf",
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 30,
         color: "#FF8527",
         // backgroundColor: 'blue',
     },
@@ -567,18 +596,63 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: "Fustat-ExtraBold.ttf",
         alignItems: 'center',
-        alignContent: 'flex-end',
         justifyContent: 'center',
         color: "white",
         padding: 10,
     },
     aventureView: {
-        width: '80%',
+        width: '90%',
+        height: "15%",
         alignItems: 'center',
-        borderRadius: 20,
-        padding: 10,
-        marginTop: 42,
-        // backgroundColor: "blue",
+        borderBottomWidth: 1,
+        borderColor: '#B3B4BA',
+        marginBottom: 35,
+        // backgroundColor: 'red'
+    },
+    c1: {
+        height: '100%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        // backgroundColor: "pink",
+    },
+    c2: {
+        height: '20%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: "yellow",
+    },
+    c3: {
+        height: '80%',
+        width: "100%",
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1,
+
+        // contentContainerStyle: 'center',
+        // backgroundColor: "orange",
+    },
+
+    textFinishedAdventure: {
+        height: 60,
+        fontFamily: "Fustat-Regular.ttf",
+        fontSize: 20,
+        color: "#636773",
+        paddingTop: 40,
+    },
+    textButtonFinishedAdventure: {
+        fontSize: 20,
+        fontFamily: "Fustat-ExtraBold.ttf",
+        color: "#FF8527",
+    },
+
+    scrollView: {
+        height: 10,
+        width: '100%',
+        // backgroundColor: "yellow",
+
     },
     buttonFinishedAdventure: {
         width: 300,
@@ -588,12 +662,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    textButtonFinishedAdventure: {
-        fontSize: 20,
-        fontFamily: "Fustat-Regular.ttf",
-        alignItems: 'center',
-        color: "#636773",
-    },
     selectedImage: {
         borderWidth: 5,
         borderColor: "White",
@@ -601,8 +669,8 @@ const styles = StyleSheet.create({
     mapIconView: {
         backgroundColor: '#FF8527',
         borderRadius: 100,
-        padding: 18,
-        margin: 40,
+        padding: 20,
+        // backgroundColor: "green"
 
     },
 });
