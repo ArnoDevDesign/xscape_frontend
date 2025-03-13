@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Map
 import MapView, { Marker } from "react-native-maps";
@@ -30,10 +30,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useIsFocused } from "@react-navigation/native";
 
-
-
 SplashScreen.preventAutoHideAsync();
-
 
 // URL back
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -49,15 +46,14 @@ const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
 
 export default function MapScreen({ navigation }) {
-
   const [loaded] = useFonts({
     "Fustat-Bold.ttf": require("../assets/fonts/Fustat-Bold.ttf"),
     "Fustat-ExtraBold.ttf": require("../assets/fonts/Fustat-ExtraBold.ttf"),
@@ -77,11 +73,6 @@ export default function MapScreen({ navigation }) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
-  // Retourner null tant que la police n'est pas chargée
-  if (!loaded) {
-    return null;
-  }
 
   // État pour la position de l'utilisateur
   const [userLocation, setUserLocation] = useState({
@@ -110,7 +101,7 @@ export default function MapScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [geolocationError, setGeolocationError] = useState(false);
   const [fadeIn, setFadeIn] = useState(new Animated.Value(0)); // Contrôle l'animation de fondu
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
 
   // Récupération des données de l'utilisateur
   const userRedux = useSelector((state) => state.users.value);
@@ -139,8 +130,8 @@ export default function MapScreen({ navigation }) {
         scenario: data.scenario, // Met à jour la clé scenario
         scenarioID: data.scenarioID, // Met à jour la clé scenarioID
       })
-    )
-  }
+    );
+  };
 
   //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
   useEffect(() => {
@@ -160,29 +151,28 @@ export default function MapScreen({ navigation }) {
       .then((data) => {
         console.log("log de creation de session", data.validatedEpreuves);
         if (data.validatedEpreuves == 0 || data.validatedEpreuves == null) {
-          console.log("zero etape fini")
+          console.log("zero etape fini");
           navigation.navigate("Scenario");
         } else if (data.validatedEpreuves !== 0) {
           setModalChoice(true);
-          console.log(" quelques etapes finis modal affichee ")
+          console.log(" quelques etapes finis modal affichee ");
           if (response === true) {
-            console.log("reponse true envoi au scenario")
-            setResponse('')
-            navigation.navigate('Scenario')
+            console.log("reponse true envoi au scenario");
+            setResponse("");
+            navigation.navigate("Scenario");
           } else if (response === false) {
-            console.log("reponse false envoi au ingame screens")
-            setResponse('')
+            console.log("reponse false envoi au ingame screens");
+            setResponse("");
             navigation.navigate(`Ingame${data.validatedEpreuves + 1}`);
           }
         }
-      })
+      });
 
     setTimeout(() => {
-      setModalInfo(false)
+      setModalInfo(false);
     }, 500);
-  }, [userRedux, response])
+  }, [userRedux, response]);
   //////////////////////////////////////////////////////////a verfifier ////////////////////////////////////////////
-
 
   // Géolocalisation de l'utilisateur
   useEffect(() => {
@@ -239,6 +229,11 @@ export default function MapScreen({ navigation }) {
     );
   };
 
+  // Retourner null tant que la police n'est pas chargée
+  if (!loaded) {
+    return null;
+  }
+
   return isLoading ? (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.loaderContainer}>
@@ -249,7 +244,9 @@ export default function MapScreen({ navigation }) {
   ) : geolocationError ? (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.loaderContainer}>
-        <Text style={styles.errorMessage}>Accès à la géolocalisation refusé</Text>
+        <Text style={styles.errorMessage}>
+          Accès à la géolocalisation refusé
+        </Text>
       </View>
     </SafeAreaView>
   ) : (
@@ -267,8 +264,6 @@ export default function MapScreen({ navigation }) {
                 longitudeDelta: 0.008,
               }}
             >
-
-
               {userLocation && (
                 <Marker
                   coordinate={userLocation}
@@ -306,28 +301,49 @@ export default function MapScreen({ navigation }) {
             </MapView>
           </View>
         </View>
-        
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={recenterMapOnPinUser}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={recenterMapOnPinUser}
+          >
             <FontAwesome name="map-marker" size={42} color="#85CAE4" />
           </TouchableOpacity>
         </View>
-        {modalChoice && (<Modal visible={modalChoice} animationType="slide" transparent>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalButtonContainer}>
-                {/* <Text style={styles.modalText}> reprendre a la dernniere sauvegarde ?</Text> */}
-                <TouchableOpacity onPress={() => { setResponse(false), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre a la derniere sauvegarde</Text>
-                </TouchableOpacity>
-                {/* <Text style={styles.modalText}> reprendre depuis de debut ? (sauvegarde supprimee)</Text> */}
-                <TouchableOpacity onPress={() => { setResponse(true), setModalChoice(false) }} style={styles.modalButton}>
-                  <Text style={styles.modalButtonText}>reprendre depuis le debut</Text>
-                </TouchableOpacity>
+        {modalChoice && (
+          <Modal visible={modalChoice} animationType="slide" transparent>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <View style={styles.modalButtonContainer}>
+                  {/* <Text style={styles.modalText}> reprendre a la dernniere sauvegarde ?</Text> */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      setResponse(false);
+                      setModalChoice(false);
+                    }}
+                    style={styles.modalButton}
+                  >
+                    <Text style={styles.modalButtonText}>
+                      reprendre a la derniere sauvegarde
+                    </Text>
+                  </TouchableOpacity>
+                  {/* <Text style={styles.modalText}> reprendre depuis de debut ? (sauvegarde supprimee)</Text> */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      setResponse(true);
+                      setModalChoice(false);
+                    }}
+                    style={styles.modalButton}
+                  >
+                    <Text style={styles.modalButtonText}>
+                      reprendre depuis le debut
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>)}
+          </Modal>
+        )}
         {modalInfo && (
           <Modal visible={modalInfo} animationType="fade" transparent>
             <TouchableWithoutFeedback
@@ -346,7 +362,9 @@ export default function MapScreen({ navigation }) {
                 >
                   <Text style={styles.modalTitle}>{modalGameName}</Text>
                   <Text style={styles.modalTheme}>{modalGameTheme}</Text>
-                  <Text style={styles.additionalInfo}>Durée : {modalGameDuration} min</Text>
+                  <Text style={styles.additionalInfo}>
+                    Durée : {modalGameDuration} min
+                  </Text>
                   {modalExpanded && (
                     <>
                       <Text style={styles.modalInfoText}>{modalGameInfo}</Text>
@@ -416,8 +434,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-
-  }, modalButton: {
+  },
+  modalButton: {
     width: "100%",
     height: 50,
     backgroundColor: "#FF8527",
@@ -446,7 +464,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     elevation: 3,
   },
-
 
   centeredView: {
     flex: 1,
@@ -501,7 +518,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: "#636773",
     textAlign: "left",
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   startGameButton: {
