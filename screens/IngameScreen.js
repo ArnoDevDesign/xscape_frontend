@@ -208,12 +208,13 @@ export default function IngameScreen1({ navigation }) {
 
                 {game1 === false && (
                     <View style={styles.container}>
-                        <View style={styles.videoContainer}>
-                            <ImageBackground source={require('../assets/imgsAventure/modaleVideoX.png')} resizeMode='stretch' style={styles.videobackground}>
+                        <View style={styles.contentContainer}>
+                            <View style={styles.videoContainer}>
+                                <ImageBackground source={require('../assets/imgsAventure/modaleVideoX.png')} resizeMode='stretch' style={styles.videobackground}>
 
-                                <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
-                                <View style={styles.controlsContainer}>
-                                    {/* <Button
+                                    <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
+                                    <View style={styles.controlsContainer}>
+                                        {/* <Button
                                     title={isPlaying ? 'Pause' : 'Play'}
                                     onPress={() => {
                                         if (isPlaying) {
@@ -223,8 +224,10 @@ export default function IngameScreen1({ navigation }) {
                                         }
                                     }}
                                 /> */}
-                                </View>
-                            </ImageBackground>
+                                    </View>
+                                </ImageBackground>
+                            </View>
+
                         </View>
                         {showInputs && (
                             <View style={styles.inputContainer}>
@@ -409,6 +412,16 @@ export default function IngameScreen1({ navigation }) {
 
 
 const styles = StyleSheet.create({
+    contentContainer: {
+        backgroundColor: 'blue',
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    },
+    containerup: {
+        // backgroundColor: 'red',
+
+    },
     indiceX: {
         width: '100%',
         height: '100%',
@@ -437,12 +450,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    // videobackground: {
-    //     width: '90%',
-    //     height: '100%',
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
+    videobackground: {
+        width: '90%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     light: {
         width: '80%',
         height: 80,

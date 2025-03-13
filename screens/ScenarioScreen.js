@@ -7,6 +7,7 @@ import {
   ScrollView,
   ImageBackground,
   Image,
+  TouchableOpacity
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserToStore, userLogout } from "../reducers/users";
@@ -81,56 +82,83 @@ export default function ScenarioScreen({ navigation }) {
     }, 100); // Réinitialiser l'image après 100ms
   };
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <ImageBackground
-          source={require("../assets/imgsAventure/FondAventure01X.png")}
-          style={styles.backgroundImage}
-        >
-          <View style={styles.modaleContainer}>
-            <ImageBackground
-              source={require("../assets/imgsAventure/GmodaleX.png")}
-              style={styles.modaleImg}
-              resizeMode={"stretch"}
-            >
-              <View style={styles.textContainer}>
-                <Text style={styles.textTitre}>{userRedux.scenario}</Text>
+  return (<View style={{ flex: 1 }}>
 
-                <Text style={styles.textInfo}>
-                  [{theme}] [{duree}min] [{difficulte}]
-                </Text>
 
-                <ScrollView style={styles.ScrollView}>
-                  <Text style={styles.textDescripiton}>{description}</Text>
-                </ScrollView>
-              </View>
-            </ImageBackground>
+    <View style={styles.container}>
+      <ImageBackground source={require("../assets/imgsAventure/FondAventure01X.png")} style={styles.backgroundImage}>
+        <SafeAreaView />
+        <View style={styles.modaleContainer}>
+          <ImageBackground
+            source={require("../assets/imgsAventure/GmodaleX.png")}
+            style={styles.modaleImg}
+            resizeMode={"stretch"}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.textTitre}>{userRedux.scenario}</Text>
+
+              <Text style={styles.textInfo}>
+                [{theme}] [{duree}min] [{difficulte}]
+              </Text>
+
+              <ScrollView style={styles.ScrollView}>
+                <Text style={styles.textDescripiton}>{description}</Text>
+              </ScrollView>
+            </View>
+          </ImageBackground>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonplace}>
+            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.replace('StartGame')}>
+              <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.buttonImg}>
+                <Text style={styles.text}>GO !</Text>
+              </ImageBackground>
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.buttonContainer}>
-            <TouchableWithoutFeedback onPress={handleButtonPress}>
-              <View style={styles.buttonStyle}>
-                <ImageBackground
-                  source={buttonImage}
-                  style={styles.buttonImg}
-                  resizeMode={"stretch"}
-                >
-                  <Text style={styles.buttonText}>LANCER LA MISSION</Text>
-                </ImageBackground>
-              </View>
-            </TouchableWithoutFeedback>
+          <View style={styles.buttonplace}>
+            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.replace('Map')}>
+              <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.buttonImg}>
+                <Text style={styles.text}>sortir</Text>
+              </ImageBackground>
+            </TouchableOpacity>
           </View>
-        </ImageBackground>
-      </View>
-    </SafeAreaView>
+        </View>
+
+
+      </ImageBackground>
+    </View>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  text: {
+    color: "white",
+    fontFamily: "Goldman-Bold.ttf",
+    fontSize: 20,
+  },
+  buttonplace: {
+    width: '85%',
+    height: 70,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+
+  },
+  buttonContainer: {
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: "20%",
+    width: "100%",
+    // backgroundColor: 'blue',
+    marginBottom: 100,
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#484D5B",
+
   },
 
   backgroundImage: {
@@ -140,7 +168,7 @@ const styles = StyleSheet.create({
   },
 
   modaleContainer: {
-    height: "80%",
+    height: "65%",
     width: "86%",
     justifyContent: "center",
     alignItems: "center",
@@ -194,14 +222,6 @@ const styles = StyleSheet.create({
 
   // CTA
 
-  buttonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: "20%",
-    width: "100%",
-    paddingBottom: 20,
-    // backgroundColor: "black",
-  },
 
   buttonStyle: {
     justifyContent: "center",
