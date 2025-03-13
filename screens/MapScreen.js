@@ -207,9 +207,11 @@ export default function MapScreen({ navigation }) {
     isFocused && fetchScenarios();
   }, [isFocused]);
 
+
   const goProfil = () => {
     navigation.navigate("Profil");
   };
+
 
   const recenterMapOnPinUser = () => {
     const { latitude, longitude } = userLocation;
@@ -223,9 +225,11 @@ export default function MapScreen({ navigation }) {
       1000
     );
   };
+
   if (!loaded) {
     return null;
   }
+  
   return isLoading || geolocationError ? (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.loaderContainer}>
