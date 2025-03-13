@@ -349,7 +349,7 @@ export default function IngameScreen1({ navigation }) {
                         {showfinalbutton && (
                             <View style={styles.inputContainer}>
                                 <View style={styles.finalbuttonbox}>
-                                    <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.finalbuttonBackground}>
+                                    <ImageBackground resizeMode="stretch" source={require('../assets/imgsAventure/Sonar.png')} style={styles.finalbuttonBackground}>
                                         <TouchableOpacity onPress={() => finalButton()} style={styles.buttonfin}>
                                             <Text style={styles.textButton}>Declenche le scanner QRCODIQUE</Text>
                                         </TouchableOpacity>
@@ -429,8 +429,8 @@ export default function IngameScreen1({ navigation }) {
 
 const styles = StyleSheet.create({
     finalbuttonbox: {
-        width: '80%',
-        height: '80%',
+        width: 330,
+        height: 330,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     //css
     textButton: {
         color: "white",
-        fontSize: 25,
+        fontSize: 22,
         fontFamily: "PressStart2P-Regular.ttf",
         lineHeight: 40,
         textAlign: 'center',
