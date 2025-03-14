@@ -162,7 +162,7 @@ export default function ProfileScreen({ navigation }) {
             .then(data => {
                 if (data.result) {
                     console.log("✅ Avatar mis à jour avec succès !");
-                    setAvatarModalVisible(false);
+                    // setAvatarModalVisible(false);
                 } else {
                     console.log("❌ Erreur mise à jour avatar", data.error);
                     alert("Erreur mise à jour avatar");
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
         // height: 80,
         justifyContent: 'center',
         alignItems: 'center',
-        textAlign: 'center', 
+        textAlign: 'center',
         color: '#009EBA',
         fontFamily: "Fustat-Bold.ttf",
         fontSize: 30,
