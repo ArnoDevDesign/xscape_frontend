@@ -249,9 +249,10 @@ export default function IngameScreen1({ navigation }) {
                                 <View style={styles.inputandindice}>
                                     <View style={styles.light}>
                                         <ImageBackground
-                                            source={frequence1 === goodFrequence1
+             
+                                            source={frequence1 === goodFrequence1 
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence1
+                                                : frequence1 && frequence1.length >= goodFrequence1.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
@@ -280,7 +281,7 @@ export default function IngameScreen1({ navigation }) {
                                         <ImageBackground
                                             source={frequence2 === goodFrequence2
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence2
+                                                : frequence2 && frequence2.length >= goodFrequence2.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
@@ -308,7 +309,7 @@ export default function IngameScreen1({ navigation }) {
                                         <ImageBackground
                                             source={frequence3 === goodFrequence3
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence3
+                                                : frequence3 && frequence3.length >= goodFrequence3.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
