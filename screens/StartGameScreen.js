@@ -138,9 +138,9 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "white",
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: "PressStart2P-Regular.ttf",
-        lineHeight: 24,
+        lineHeight: 22,
         textAlign: 'center',
     },
     textContainer2: {

@@ -116,7 +116,7 @@ export default function Ingame3Screen({ navigation }) {
             // Attends un petit délai pour assurer la mise à jour avant la navigation
             setTimeout(() => {
                 navigation.replace("End");
-            }, 500);
+            }, 100);
 
         } catch (error) {
             console.error('Erreur lors de la requête:', error);
@@ -229,11 +229,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     title: {
-        fontSize: 15,
+        fontSize: 14,
         fontFamily: "PressStart2P-Regular.ttf",
         color: "white",
         textAlign: "center",
-        padding: 50,
+        padding: 40,
         lineHeight: 28,
     },
     titleContainerImage: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     ImageButton: {
-        width: 300,
+        width: "100%",
         height: "91%",
         alignItems: "center",
         justifyContent: "center",
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
 
     textButton: {
         fontFamily: "PressStart2P-Regular.ttf",
-        fontSize: 18,
+        fontSize: 15,
         color: "white",
         textAlign: "center",
         width: "100%",

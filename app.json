@@ -15,7 +15,7 @@
         {
           "image": "./assets/LogoXscapeOkWhite.png",
           "resizeMode": "contain",
-          "backgroundColor": "black"
+          "backgroundColor": "#000000"
         }
       ],
       "expo-font"

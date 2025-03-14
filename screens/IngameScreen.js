@@ -120,19 +120,19 @@ export default function IngameScreen1({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 console.log("retour fetch ", data);
-               setGoodFrequence1(data.expectedAnswer1);
-               setGoodFrequence2(data.expectedAnswer2);
-               setGoodFrequence3(data.expectedAnswer3);
-               setIndice1(data.indice1);
-               setIndice2(data.indice2);
-               setIndice3(data.indice3);
+                setGoodFrequence1(data.expectedAnswer1);
+                setGoodFrequence2(data.expectedAnswer2);
+                setGoodFrequence3(data.expectedAnswer3);
+                setIndice1(data.indice1);
+                setIndice2(data.indice2);
+                setIndice3(data.indice3);
                 setSCORE(data.score);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-        }, [userRedux.userID, userRedux.scenarioID, isFocused])
-        
+    }, [userRedux.userID, userRedux.scenarioID, isFocused])
+
 
 
     function testInput1(value) {
@@ -249,8 +249,8 @@ export default function IngameScreen1({ navigation }) {
                                 <View style={styles.inputandindice}>
                                     <View style={styles.light}>
                                         <ImageBackground
-             
-                                            source={frequence1 === goodFrequence1 
+
+                                            source={frequence1 === goodFrequence1
                                                 ? require('../assets/imgsAventure/InputVX.png')
                                                 : frequence1 && frequence1.length >= goodFrequence1.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
         color: '#8aec54'
     },
     inp1: {
-        color: "white",
+        color: "black",
         fontSize: 11,
         fontFamily: "PressStart2P-Regular.ttf",
         textAlign: 'center',
