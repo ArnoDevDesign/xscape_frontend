@@ -32,7 +32,6 @@ export default function StartGameScreen({ navigation }) {
     const userRedux = useSelector((state) => state.users.value);
     const [text, setText] = useState('');
 
-    //////////////////////////////////////// a verifier /////////////////////////////////////////
     useEffect(() => {
         console.log('scenario id ', userRedux)
         fetch(`${URL}/scenarios/descriptionEpreuve/${userRedux.scenarioID}/${userRedux.userID}`)/////////// averifier
@@ -43,7 +42,6 @@ export default function StartGameScreen({ navigation }) {
             })
             .catch(err => console.log(err))
     }, [userRedux, text])
-    //////////////////////////////////////// a verifier /////////////////////////////////////////
 
     console.log('textlogg', text)
 
@@ -67,7 +65,7 @@ export default function StartGameScreen({ navigation }) {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={() => navigation.replace('Ingame1')} style={styles.button}>
                         <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.imgBtn}>
-                            <Text style={styles.text}>Go !</Text>
+                            <Text style={styles.textButton}>GO !</Text>
                         </ImageBackground>
                     </TouchableOpacity>
                 </View >
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
     textButton: {
         color: "white",
         fontSize: 25,
-        fontFamily: "PressStart2P-Regular.ttf",
+        fontFamily: "Goldman-Bold.ttf",
         lineHeight: 40,
         textAlign: 'center',
 

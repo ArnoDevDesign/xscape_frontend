@@ -19,7 +19,7 @@ export default function EndScreen({ navigation }) {
     const confettiRef = useRef(null);
     const rocketRef = useRef(null);
 
-    //Récupération des données du scénario
+    //RECUPERATION DONNEES SCENARIO
     useEffect(() => {
         fetch(`${URL}/scenarios/${userRedux.scenario}`)
             .then(response => response.json())
@@ -65,7 +65,7 @@ export default function EndScreen({ navigation }) {
         }
     }, [textHeight]); // Attendre d'avoir la hauteur du texte
 
-    // -- JSX -- //
+
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -74,7 +74,7 @@ export default function EndScreen({ navigation }) {
             <LottieView ref={confettiRef} source={require('../assets/Animation_confetti.json')}
                 style={styles.confetti}
                 loop={false}
-                speed={0.75}
+                speed={0.8}
             />
             <LottieView ref={rocketRef} source={require('../assets/Animation_rocket.json')}
                 style={styles.rocket}
@@ -82,18 +82,18 @@ export default function EndScreen({ navigation }) {
                 speed={0.6}
             />
             <View style={styles.titleBox}>
-                {validated ? <Text style={styles.textTitle}>BRAVO !!!</Text>
-                    : <Text style={styles.textTitle}>Dommage {username}, vous n'avez pas réussi à nous sauver à temps...</Text>}
-                {validated ? <Text style={styles.textTitle}>Mission Accomplie {username}, et avec BRIO !!!</Text>
-                    : <Text style={styles.textTitle}>Dommage {username}, vous n'avez pas réussi à nous sauver à temps...</Text>}
+                <ImageBackground source={require('../assets/imgsAventure/modaleSimpleX.png')}
+                    resizeMode="stretch" style={styles.ImageModalContent}>
+                    {validated ? <Text style={styles.textTitle}>BRAVO !!!</Text>
+                        : <Text style={styles.textTitle}>Dommage {username}, vous n'avez pas réussi à nous sauver à temps...</Text>}
+                    {validated ? <Text style={styles.textTitle}>Mission Accomplie {username} !</Text>
+                        : <Text style={styles.textTitle}>Dommage {username}, vous n'avez pas réussi à nous sauver à temps...</Text>}
+                </ImageBackground>
             </View>
 
             <View style={styles.conclusionBox}>
                 <Animated.View style={{ transform: [{ translateY }] }}>
-                    <Text
-                        onLayout={(event) => setTextHeight(event.nativeEvent.layout.height)}
-                        style={styles.textConclusion}
-                    >
+                    <Text onLayout={(event) => setTextHeight(event.nativeEvent.layout.height)} style={styles.textConclusion}>
                         {validated ? conclusionScenario : conclucionscenariofailed}
                     </Text>
                 </Animated.View>
@@ -101,14 +101,15 @@ export default function EndScreen({ navigation }) {
 
             <View style={styles.buttonContainer}>
                 <View style={styles.pointsBox}>
-                    {validated && <Text style={styles.textPoints}>Vous avez gagné : </Text>}
-                    {validated && <Text style={styles.textPoints}> {userRedux.scoreSession} points !</Text>}
+                    {validated && <Text style={styles.textPoints}>Vous avez gagné :</Text>}
+                    {validated && <Text style={styles.textPointsTotal}> {userRedux.scoreSession} points !</Text>}
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Map')}>
                     <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
-                        <Text style={styles.textButton}>Retour à l'accueil</Text>
+                        <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton}>
+                            <Text style={styles.textButton}>Retour à l'accueil</Text>
+                        </ImageBackground>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -116,7 +117,7 @@ export default function EndScreen({ navigation }) {
     )
 }
 
-// -- STYLES -- //
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -125,62 +126,75 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: 'center'
     },
-    //Title Box
-    titleBox: {
+
+    titleBox: { //Title Box
         flex: 1,
-        width: '80%',
+        width: 300,
+        height: 300,
         // backgroundColor: 'green',
-        // opacity: 0.4,
         justifyContent: "center",
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 15,
     },
+    ImageModalContent: {
+        width: "100%",
+        height: "95%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
     textTitle: {
-        fontFamily: 'Goldman-Regular.ttf',
-        fontSize: 35,
-        color: 'white',
-        textAlign: 'center'
+        width: '80%',
+        fontFamily: 'PressStart2P-Regular.ttf',
+        fontSize: 25,
+        color: '#72BF11',
+        textAlign: 'center',
+        lineHeight: 40,
     },
-    //Conclusion Box
-    conclusionBox: {
+
+    conclusionBox: { //Conclusion Box
         flex: 1,
         width: '80%',
-        // backgroundColor: 'blue',
-        // opacity: 0.4,
-        // paddingTop: 150,
-        height: 100, // Taille fixe
+        height: 100,
         overflow: 'hidden', // Masque le texte dépassant
         justifyContent: 'center',
     },
     textConclusion: {
-        fontFamily: 'Goldman-Regular.ttf',
+        fontFamily: 'Goldman-Bold.ttf',
         textAlign: 'justify',
         fontSize: 24,
         color: 'white',
         textAlign: 'center',
         position: 'absolute', // Permet d'appliquer `translateY`
-
     },
-    //Points Box
-    pointsBox: {
+
+    pointsBox: { //Points Box
         flex: 1,
-        width: '80%',
+        width: '100%',
+        height: '50%',
         // backgroundColor: 'yellow',
-        // opacity: 0.4,
         justifyContent: "center",
         alignItems: 'center'
     },
     textPoints: {
         fontFamily: 'Goldman-Regular.ttf',
-        fontSize: 30,
+        fontSize: 25,
         color: 'white',
         textAlign: 'center',
+        marginTop: 25,
     },
-    //Button Container
-    buttonContainer: {
+    textPointsTotal: {
+        fontFamily: 'Goldman-Regular.ttf',
+        fontSize: 50,
+        color: 'white',
+        textAlign: 'center',
+        marginTop: -16,
+    },
+
+    buttonContainer: { //Button Container
         flex: 1,
-        width: '80%',
+        width: '100%',
         // backgroundColor: 'red',
-        // opacity: 0.4,
         justifyContent: "center",
         alignItems: 'center'
     },
@@ -190,35 +204,30 @@ const styles = StyleSheet.create({
         width: '50%',
     },
     ImageButton: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'contain', // Ajuste l'image sans déformation
-        position: 'absolute', // Place l'image en arrière-plan
+        width: 280,
+        height: 80,
+        alignItems: "center",
+        justifyContent: "center",
     },
+
     textButton: {
-        fontFamily: 'PressStart2P-Regular.ttf',
-        fontSize: 16,
-        color: 'white',
-        textAlign: 'center',
-        position: 'absolute', // Place le texte au-dessus de l'image
-        width: '100%',
-        top: '50%',
-        transform: [{ translateY: -15 }] // Ajuste la position verticale
+        fontFamily: 'Goldman-Regular.ttf',
+        fontSize: 25,
+        color: "white",
+        textAlign: "center",
+        width: "100%",
     },
-    // Animation Confetti
-    confetti: {
+
+    confetti: {  // Animation
         position: 'absolute',
-        // backgroundColor: 'blue',
-        // opacity: 0.2,
         width: '100%',
         height: '100%',
     },
     rocket: {
         position: 'absolute',
-        top: 50,
+        top: 275,
         // backgroundColor: 'blue',
-        // opacity: 0.2,
-        width: 780,
-        height: 780,
+        width: 300,
+        height: 300,
     },
 })

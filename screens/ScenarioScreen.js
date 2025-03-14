@@ -110,14 +110,14 @@ export default function ScenarioScreen({ navigation }) {
 
         <View style={styles.buttonContainer}>
           <View style={styles.buttonplace}>
-            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.replace('StartGame')}>
+            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.navigate('StartGame')}>
               <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.buttonImg}>
                 <Text style={styles.text}>GO !</Text>
               </ImageBackground>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonplace}>
-            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.replace('Map')}>
+            <TouchableOpacity style={styles.buttonImg} onPress={() => navigation.goBack()}>
               <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')} resizeMode='stretch' style={styles.buttonImg}>
                 <Text style={styles.text}>SORTIR</Text>
               </ImageBackground>
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     height: 70,
     justifyContent: 'space-between',
     alignItems: 'center',
-    // backgroundColor: 'red',
 
   },
   buttonContainer: {
@@ -151,7 +150,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "20%",
     width: "100%",
-    // backgroundColor: 'blue',
     marginBottom: 100,
   },
 
@@ -173,7 +171,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
-    // backgroundColor: "red",
   },
 
   modaleImg: {
@@ -207,7 +204,6 @@ const styles = StyleSheet.create({
     height: 100,
     marginTop: 20,
     marginBottom: 90,
-    // backgroundColor: "blue",
   },
 
   textDescripiton: {
@@ -219,9 +215,6 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 40,
   },
-
-  // CTA
-
 
   buttonStyle: {
     justifyContent: "center",
@@ -235,7 +228,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "100%",
     width: "100%",
-    // backgroundColor: "red",
   },
 
   buttonText: {

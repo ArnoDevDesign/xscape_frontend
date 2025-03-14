@@ -9,7 +9,7 @@ const URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 export default function Ingame3Screen({ navigation }) {
     const isFocused = useIsFocused();
     const userRedux = useSelector((state) => state.users.value)
-    const [title, setTitle] = useState("Activez les boutons dans le bon ordre  pour DEMINIATURISER LA CAPSULE!");
+    const [title, setTitle] = useState("Activez les boutons dans le bon ordre pour déminiaturiser La Capsule !");
     const [pressedOrder, setPressedOrder] = useState([]);
     const [attempts, setAttempts] = useState(3);
     const [gameOver, setGameOver] = useState(false);
@@ -21,6 +21,7 @@ export default function Ingame3Screen({ navigation }) {
     const [bouton3, setbouton3] = useState('');
     const [bouton4, setbouton4] = useState('');
     const [indice1, setIndice1] = useState('');
+
 
     // Animation
     const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -38,7 +39,7 @@ export default function Ingame3Screen({ navigation }) {
             setPressedOrder(newOrder);
 
             if (newOrder.length === correctSequence.length) {
-                setTitle("YES !!! Vous avez réussi à déminaturiser la capsule !");
+                setTitle("YES !!! Vous avez réussi à déminiaturiser la capsule ! ");
                 setGame3(true);
             }
         } else {
@@ -52,9 +53,9 @@ export default function Ingame3Screen({ navigation }) {
                 setTitle("ATTENTION ! plus qu'une chance , on est pret de l apocalypse !");
                 setGameOver(true);
                 setModalVisible(true);
-                setScore(prevScore => prevScore - 250); // Décrémente le score
+                setScore(prevScore => prevScore - 100); // Décrémente le score
             } else {
-                setTitle(` WOOOOOW ! tu as entendu ce bruit ??? c ets pas bon ca !!! Il reste ${newAttempts} essais.`);
+                setTitle(` WOOOOOW ! tu as entendu ce bruit ??? C'est pas bon ça !!! Il reste ${newAttempts} essais.`);
                 setPressedOrder([]);
             }
         }
@@ -122,207 +123,271 @@ export default function Ingame3Screen({ navigation }) {
         }
     }
 
-    // -- JSX --//
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} style={styles.ImageBackground} />
-            <View>
-                <Animated.View style={[styles.titleContainer, gameOver ? styles.gameOver : shakeAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["#37474F", "#B71C1C"]
-                })]}>
-                    <Image source={require('../assets/imgsAventure/modaleSimpleX.png')} />
-                    <Text style={styles.title}>{title}</Text>
-                    {/* <Text style={styles.score}>Score: {score}</Text> */}
-                </Animated.View>
-            </View>
-
-
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                    <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
-                        <Text style={styles.textButton}>{bouton1}</Text>
+            <ImageBackground source={require('../assets/imgsAventure/FondAventure01X.png')} style={styles.ImageBackground}>
+                <View style={styles.titleContainer}>
+                    <View style={styles.titleContainerImage} >
+                        <ImageBackground source={require('../assets/imgsAventure/modaleSimpleX.png')} style={styles.ImageTextHaut}>
+                            <Text style={styles.title}>{title}</Text>
+                        </ImageBackground>
                     </View>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                    <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
-                        <Text style={styles.textButton}>{bouton2}</Text>
+                </View>
+                <View style={styles.buttonContainerUp}>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton1}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                    <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
-                        <Text style={styles.textButton}>{bouton3}</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(2)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton2}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity disabled={gameOver} onPress={() => handlePress(1)} style={styles.metalButton}>
-                    <View style={styles.button}>
-                        <Image source={require('../assets/imgsAventure/bbtnOffX.png')} style={styles.ImageButton} />
-                        <Text style={styles.textButton}>{bouton4}</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(3)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton3}</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-            </View>
-
-            {/* Modal pour afficher un indice */}
-            <Modal visible={modalVisible} animationType="slide" transparent>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>{indice1}</Text>
-                        <TouchableOpacity onPress={resetGame} style={styles.modalButton}>
-                            <Image source={require('../assets/imgsAventure/bbtnOffX.png')} />
-                            <Text style={styles.modalButtonText}>Réessayer</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity disabled={gameOver} onPress={() => handlePress(4)} style={styles.metalButton}>
+                            <ImageBackground source={require('../assets/imgsAventure/btnOffX.png')} resizeMode='stretch' style={styles.ImageButton}>
+                                <Text style={styles.textButton}>{bouton4}</Text>
+                            </ImageBackground>
                         </TouchableOpacity>
                     </View>
                 </View>
-            </Modal>
-            {game3 && (<Modal visible={game3} animationType="slide" transparent>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Image source={require('../assets/imgsAventure/modaleSimpleX.png')} />
-                        <Text style={styles.modalText}>PAS MAL CAAAAAAA LAAAAAAAAA </Text>
-                        <TouchableOpacity onPress={finishGame} style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>FINI !!!!!!!!!!</Text>
-                        </TouchableOpacity>
+
+                <Modal visible={modalVisible} animationType="slide" transparent>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContentUp}>
+                            <ImageBackground source={require('../assets/imgsAventure/modaleSimpleX.png')}
+                                resizeMode="stretch" style={styles.ImageModalContent}>
+                                <Text style={styles.modalText}>{indice1}</Text>
+                            </ImageBackground>
+                        </View>
+                        <View style={styles.modalContentDown}>
+                            <TouchableOpacity onPress={resetGame} style={styles.modalButton}>
+                                <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')}
+                                    resizeMode="stretch" style={styles.modalButton}>
+                                    <Text style={styles.modalButtonText}>Réessayer</Text>
+                                </ImageBackground>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </Modal>)}
+                </Modal>
+                {game3 &&
+                    (<Modal visible={game3} animationType="slide" transparent>
+                        <View style={styles.modalContainerSuccess}>
+                            <View style={styles.modalContentUpSuccess}>
+                                <ImageBackground source={require('../assets/imgsAventure/modaleSimpleX.png')}
+                                    resizeMode="stretch" style={styles.ImageModalContentSuccess}>
+                                    <Text style={styles.modalTextSuccess}>{title}</Text>
+                                </ImageBackground>
+                            </View>
+                            <View style={styles.modalContentDownSuccess}>
+                                <TouchableOpacity onPress={finishGame} style={styles.modalButtonSuccess}>
+                                    <ImageBackground source={require('../assets/imgsAventure/bbtnOffX.png')}
+                                        resizeMode="stretch" style={styles.modalButtonSuccess}>
+                                        <Text style={styles.modalButtonTextSuccess}>On passe à la suite !</Text>
+                                    </ImageBackground>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>)}
+            </ImageBackground>
         </View>
     );
 }
 
-// -- STYLES --//
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: "black",
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
         height: "100%",
-        padding: 10,
     },
-    //TITRE
-    titleContainer: {
+    ImageBackground: {
+        flex: 1,
         width: "100%",
-        height: "25%",
+        height: "100%",
+        resizeMode: "cover",
+    },
+
+    titleContainer: {    //TITRE
+        width: "100%",
+        height: "50%",
         alignItems: "center",
         justifyContent: "center",
-        position: "relative",  // Définit une position relative pour les enfants
     },
     title: {
-        fontSize: 25,
-        fontFamily: 'Goldman-Regular.ttf',
-        padding: 50,
+        fontSize: 15,
+        fontFamily: "PressStart2P-Regular.ttf",
         color: "white",
-        position: "absolute",  // Superpose le texte à l’image
-        top: "30%",            // Centre verticalement
-        left: "10%",           // Centre horizontalement
-        transform: [{ translateX: -50 }, { translateY: -50 }], // Ajuste le centrage
         textAlign: "center",
-        width: "100%",
+        padding: 50,
+        lineHeight: 28,
     },
+    titleContainerImage: {
+        width: 300,
+        height: 300,
+    },
+    ImageTextHaut: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
     gameOver: {
         backgroundColor: "#B71C1C",
     },
     score: {
         fontSize: 16,
-        color: "yellow",
+        color: "white",
         marginTop: 5,
     },
-    //BOUTON
-    buttonContainer: {
+    buttonContainerUp: {
         width: "100%",
-        height: "15%",
         alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        marginVertical: 5,
-        shadowColor: "#000",
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 5,
+        justifyContent: "spacebetween",
     },
-    button: {
-        position: "relative",  // Permet aux enfants d'être positionnés par rapport à ce conteneur
+    buttonContainer: {    //BOUTON
+        width: "80%",
+        height: "16%",
         alignItems: "center",
         justifyContent: "center",
+        marginVertical: 5,
+        paddingVertical: 5,
+    },
+    metalButton: {
         width: "100%",
         height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
     },
+    ImageButton: {
+        width: 300,
+        height: "91%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
     textButton: {
-        fontFamily: 'Goldman-Bold.ttf',
-        fontSize: 30,
-        color: "green",
-        position: "absolute",  // Superpose le texte à l’image
-        top: "80%",            // Place au milieu verticalement
-        left: "15%",           // Place au milieu horizontalement
-        transform: [{ translateX: -50 }, { translateY: -50 }], // Centre parfaitement
+        fontFamily: "PressStart2P-Regular.ttf",
+        fontSize: 18,
+        color: "white",
         textAlign: "center",
         width: "100%",
     },
 
-    // metalButton: {
-    //     width: "70%",
-    //     height: "100%",
-    //     backgroundColor: "#607D8B",
-    //     alignItems: "center",
-    //     justifyContent: "center",
-    //     borderRadius: 10,
-    //     borderWidth: 2,
-    //     borderColor: "#B0BEC5",
-    //     shadowColor: "#000",
-    //     shadowOffset: { width: 2, height: 2 },
-    //     shadowOpacity: 0.8,
-    //     shadowRadius: 5,
-    // },
-    // metalButtonText: {
-    //     fontSize: 16,
-    //     fontWeight: "bold",
-    //     color: "white",
-    // },
-    modalContainer: {
+    modalContainer: {    //MODAL SI PERDUE
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    modalContent: {
-        width: "80%",
-        // backgroundColor: "#37474F",
-        padding: 20,
-        borderRadius: 10,
-        alignItems: "center",
-    },
-    modalText: {
-        fontSize: 18,
-        color: "white",
-        marginBottom: 15,
-        textAlign: "center", // Centre le texte dans la modal
-    },
-    modalButton: {
-        position: "relative",  // Permet aux enfants d'être positionnés par rapport à ce conteneur
-        alignItems: "center",
-        justifyContent: "center",
         width: "100%",
         height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+
+    modalContentUp: {
+        width: 300,
+        height: 300,
+        aspectRatio: 1,  // Garde un format carré propre
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    modalContentDown: {  // Corrigé ici (ancien doublon `modalContentUp`)
+        width: "100%",
+        height: "20%",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 50,
+    },
+    ImageModalContent: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalButton: {
+        width: 300,  // Taille standard pour un bouton
+        height: 80,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 30,
+    },
+    modalText: {
+        fontFamily: 'PressStart2P-Regular.ttf',
+        fontSize: 18,
+        color: "red",
+        textAlign: "center",
+        padding: 20,
+        lineHeight: 40,
     },
     modalButtonText: {
-        fontFamily: 'Goldman-Bold.ttf',
-        fontSize: 45,
+        fontFamily: 'Goldman-Regular.ttf',
+        fontSize: 30,
         color: "white",
-        position: "absolute",  // Superpose le texte à l’image
-        top: "52%",            // Place au milieu verticalement
-        left: "20%",           // Place au milieu horizontalement
-        transform: [{ translateX: -50 }, { translateY: -50 }], // Centre parfaitement
         textAlign: "center",
+    },
+
+    modalContainerSuccess: {    //MODAL SI SUCCESS
+        flex: 1,
         width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+    modalContentUpSuccess: {
+        width: 300,
+        height: 300,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    modalContentDownSuccess: {
+        width: "80%",
+        height: "15%",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 15,
+    },
+    modalTextSuccess: {
+        fontFamily: 'PressStart2P-Regular.ttf',
+        fontSize: 20,
+        color: "#72BF11",
+        textAlign: "center",
+        padding: 20,
+        lineHeight: 35,
+    },
+    ImageModalContentSuccess: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalButtonSuccess: {
+        width: 300,
+        height: 80,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalButtonTextSuccess: {
+        fontFamily: 'Goldman-Regular.ttf',
+        fontSize: 25,
+        color: "white",
+        textAlign: "center",
+        padding: 10,
     },
 });

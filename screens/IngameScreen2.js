@@ -17,6 +17,7 @@ const useIsFocused = require('@react-navigation/native').useIsFocused;
 const URL = process.env.EXPO_PUBLIC_BACKEND_URL
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { counterEvent } from "react-native/Libraries/Performance/Systrace";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -43,6 +44,7 @@ export default function IngameScreen2({ navigation }) {
     const isFocused = useIsFocused();
 
     const cameraRef = useRef(null);
+    const [indice1, setIndice1] = useState('');
     const [indice2, setIndice2] = useState('');
     const [indice3, setIndice3] = useState('');
     const [hasPermission, setHasPermission] = useState(false);
@@ -63,7 +65,6 @@ export default function IngameScreen2({ navigation }) {
     const [goodQRcode1, setGoodQRcode1] = useState('https://qr.codes/vUIYq1');
     const [goodQRcode2, setGoodQRcode2] = useState('https://qr.codes/FBPR2y');
     const [goodQRcode3, setGoodQRcode3] = useState('https://qr-code.click/i/67bf284e705af');
-    const [indice1, setIndice1] = useState('SCANNE TOUS LES QR CODES POSSIBLES ATTENTION L ORDRE DE SCAN EST PRIMORDIAL');
 
     const flashAnim = useRef(new Animated.Value(0)).current;
 
@@ -127,12 +128,12 @@ export default function IngameScreen2({ navigation }) {
             flashScreen("green");
             setScanned1(true);
             setIsScanning(false);
-            setTimeout(() => setIsScanning(true), 3000);
+            setTimeout(() => setIsScanning(true), 1500);
         } else if (!scanned2 && scanned1 && data === goodQRcode2) {
             flashScreen("green");
             setScanned2(true);
             setIsScanning(false);
-            setTimeout(() => setIsScanning(true), 3000);
+            setTimeout(() => setIsScanning(true), 1500);
         } else if (!scanned3 && scanned1 && scanned2 && data === goodQRcode3) {
             flashScreen("green");
             setScanned3(true);
@@ -231,8 +232,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light}>
                             <ImageBackground
                                 source={scanned1
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png') 
+                                    : require('../assets/imgsAventure/lumRX.png') 
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -241,8 +242,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light}>
                             <ImageBackground
                                 source={scanned2
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png')  
+                                    : require('../assets/imgsAventure/lumRX.png')  
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -251,8 +252,8 @@ export default function IngameScreen2({ navigation }) {
                         <View style={styles.light} >
                             <ImageBackground
                                 source={scanned3
-                                    ? require('../assets/imgsAventure/LumVX.png')  // Image si `scanned1` est `true`
-                                    : require('../assets/imgsAventure/lumRX.png')  // Image par défaut
+                                    ? require('../assets/imgsAventure/LumVX.png') 
+                                    : require('../assets/imgsAventure/lumRX.png')  
                                 }
                                 resizeMode='stretch'
                                 style={styles.lightimg}
@@ -275,7 +276,7 @@ export default function IngameScreen2({ navigation }) {
                     <Animated.View style={[styles.flashOverlay, {
                         opacity: flashAnim,
                         backgroundColor: flashColor
-                    }]} />
+                    }]} pointerEvents="none"/>
                     {
                         indiceModal && (
                             <Modal visible={indiceModal} animationType="fade" transparent>
@@ -328,7 +329,8 @@ export default function IngameScreen2({ navigation }) {
                                     <View style={styles.modalView}>
                                         <ImageBackground source={require('../assets/imgsAventure/PmodaleX.png')} resizeMode='stretch' style={styles.indicemodal} >
                                             <TouchableOpacity onPress={passageau3} style={styles.modalefin}>
-                                                <Text style={styles.textButton}> Triangulation réussie ! La capsule a été localisée.       </Text>
+                                                <Text style={styles.textButton}>Triangulation réussie !</Text>
+                                                <Text style={styles.textButton}>La capsule a été localisée.</Text>
                                             </TouchableOpacity>
                                         </ImageBackground>
                                     </View>
@@ -352,7 +354,6 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-
     },
 
     modal: {
@@ -372,7 +373,6 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     button: {
-        // backgroundColor: "#1E90FF",
         width: 50,
         height: 50,
         justifyContent: 'center',
@@ -386,9 +386,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         flexDirection: 'row',
-        // backgroundColor: 'blue',
         paddingRight: 20,
-        // paddingBottom: 20,
     },
     lightimg: {
         width: '100%',
@@ -400,7 +398,6 @@ const styles = StyleSheet.create({
         height: '60%',
         justifyContent: 'center',
         alignItems: 'center',
-        // backgroundColor: 'red',
     },
     CameraViews: {
         width: '100%',
@@ -429,8 +426,6 @@ const styles = StyleSheet.create({
     CameraView: {
         width: '92%',
         height: '93%',
-        // borderWidth: 5,
-        // borderColor: 'black',
         position: 'absolute',
         borderRadius: 60,
         overflow: 'hidden'
@@ -442,7 +437,6 @@ const styles = StyleSheet.create({
     lightContainer: {
         width: '100%',
         height: '25%',
-        // backgroundColor: "yellow",
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
@@ -479,13 +473,12 @@ const styles = StyleSheet.create({
         },
         width: 350,
         height: 350,
-        // backgroundColor: 'red',
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
     },
     textButton: {
-        color: "white",
+        color: "#72BF11",
         fontSize: 22,
         fontFamily: "PressStart2P-Regular.ttf",
         lineHeight: 40,

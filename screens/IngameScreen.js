@@ -120,19 +120,19 @@ export default function IngameScreen1({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 console.log("retour fetch ", data);
-                if (data.expectedAnswer1 !== goodFrequence1) setGoodFrequence1(data.expectedAnswer1);
-                if (data.expectedAnswer2 !== goodFrequence2) setGoodFrequence2(data.expectedAnswer2);
-                if (data.expectedAnswer3 !== goodFrequence3) setGoodFrequence3(data.expectedAnswer3);
-                if (data.indice1 !== indice1) setIndice1(data.indice1);
-                if (data.indice2 !== indice2) setIndice2(data.indice2);
-                if (data.indice3 !== indice3) setIndice3(data.indice3);
+               setGoodFrequence1(data.expectedAnswer1);
+               setGoodFrequence2(data.expectedAnswer2);
+               setGoodFrequence3(data.expectedAnswer3);
+               setIndice1(data.indice1);
+               setIndice2(data.indice2);
+               setIndice3(data.indice3);
                 setSCORE(data.score);
             })
             .catch((error) => {
                 console.error('Error:', error.message);
             });
-    }, [userRedux.userID, userRedux.scenarioID, isFocused])
-
+        }, [userRedux.userID, userRedux.scenarioID, isFocused])
+        
 
 
     function testInput1(value) {
@@ -187,7 +187,6 @@ export default function IngameScreen1({ navigation }) {
     };
 
 
-
     const finalButton = () => {
         setGame1(true);
 
@@ -214,8 +213,6 @@ export default function IngameScreen1({ navigation }) {
     };
 
 
-
-
     if (!loaded) {
         return null;
     }
@@ -229,7 +226,6 @@ export default function IngameScreen1({ navigation }) {
 
                 {game1 === false && (
                     <View style={styles.container}>
-
 
 
 
@@ -250,16 +246,13 @@ export default function IngameScreen1({ navigation }) {
 
 
 
-
-
-
-
                                 <View style={styles.inputandindice}>
                                     <View style={styles.light}>
                                         <ImageBackground
-                                            source={frequence1 === goodFrequence1
+             
+                                            source={frequence1 === goodFrequence1 
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence1
+                                                : frequence1 && frequence1.length >= goodFrequence1.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
@@ -283,18 +276,12 @@ export default function IngameScreen1({ navigation }) {
 
 
 
-
-
-
-
-
-
                                 <View style={styles.inputandindice}>
                                     <View style={styles.light}>
                                         <ImageBackground
                                             source={frequence2 === goodFrequence2
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence2
+                                                : frequence2 && frequence2.length >= goodFrequence2.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
@@ -310,7 +297,7 @@ export default function IngameScreen1({ navigation }) {
                                             />
                                         </ImageBackground>
                                     </View>
-                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                    <TouchableOpacity onPress={() => { setIndicemodal2(true) }} style={styles.indicebutton}>
                                         <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
                                         </ImageBackground>
                                     </TouchableOpacity>
@@ -322,7 +309,7 @@ export default function IngameScreen1({ navigation }) {
                                         <ImageBackground
                                             source={frequence3 === goodFrequence3
                                                 ? require('../assets/imgsAventure/InputVX.png')
-                                                : frequence3
+                                                : frequence3 && frequence3.length >= goodFrequence3.length
                                                     ? require('../assets/imgsAventure/InputRX.png')
                                                     : require('../assets/imgsAventure/InputOffX.png')
                                             }
@@ -338,7 +325,7 @@ export default function IngameScreen1({ navigation }) {
                                             />
                                         </ImageBackground>
                                     </View>
-                                    <TouchableOpacity onPress={() => { setIndicemodal1(true) }} style={styles.indicebutton}>
+                                    <TouchableOpacity onPress={() => { setIndicemodal3(true) }} style={styles.indicebutton}>
                                         <ImageBackground source={require('../assets/imgsAventure/IndiceX.png')} resizeMode='stretch' style={styles.indiceX}>
                                         </ImageBackground>
                                     </TouchableOpacity>
@@ -535,7 +522,7 @@ const styles = StyleSheet.create({
     },
     controlsContainer: {
     },
-    //css
+
     textButton: {
         color: "white",
         fontSize: 22,
@@ -579,7 +566,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingBottom: 30,
-        // backgroundColor: 'red'
 
     },
     input1: {
@@ -634,7 +620,6 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 11,
         fontFamily: "PressStart2P-Regular.ttf",
-        // lineHeight: 40,
         textAlign: 'center',
     }
 })
