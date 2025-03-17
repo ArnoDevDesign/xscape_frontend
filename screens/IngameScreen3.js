@@ -116,7 +116,7 @@ export default function Ingame3Screen({ navigation }) {
             // Attends un petit délai pour assurer la mise à jour avant la navigation
             setTimeout(() => {
                 navigation.replace("End");
-            }, 100);
+            }, 500);
 
         } catch (error) {
             console.error('Erreur lors de la requête:', error);
