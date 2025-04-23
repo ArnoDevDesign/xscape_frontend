@@ -1,5 +1,4 @@
 # xscape_frontend
-# xscape_backend
 
 # Xscape GO
 
